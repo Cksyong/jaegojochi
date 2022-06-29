@@ -1,6 +1,6 @@
 # jaegojochi
 
-A new Flutter project.
+3rd Project in JHKOREA
 
 ## Getting Started
 
