@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:jaegojochi/add_Stock_page.dart';
+import 'package:jaegojochi/stock_Detail_Info.dart';
 
 void main() {
   runApp(const MyApp());
@@ -55,34 +57,51 @@ class _mainPageState extends State<mainPage> {
   Widget build(BuildContext context) {
     var stockList = ['1', '2', '3', '4', '5', '7', '8', '9', '0'];
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('재고최고'),
+      appBar: AppBar(
+        title: const Text('재고최고'),
+      ),
+      body: Container(
+        color: Colors.black12,
+        child: ListView.separated(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+          itemCount: stockList.length,
+          scrollDirection: Axis.vertical,
+          itemBuilder: (context, index) {
+            return Container(
+              padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+              color: Colors.white,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Image.asset('assets/image/takoyaki.jpg',
+                      width: 80, height: 80, alignment: Alignment.centerLeft),
+                  Text(stockList[index]),
+                  IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => stock_Detail_Info()));
+                      },
+                      icon: Icon(CupertinoIcons.ellipsis_vertical))
+                ],
+              ),
+            );
+          },
+          separatorBuilder: (BuildContext context, int index) {
+            return const Divider(thickness: 1);
+          },
         ),
-        body: Container(
-          color: Colors.black12,
-          child: ListView.separated(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-            itemCount: stockList.length,
-            scrollDirection: Axis.vertical,
-            itemBuilder: (context, index) {
-              return Container(
-                color: Colors.white,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Image.asset('assets/image/takoyaki.jpg',
-                        width: 80, height: 80, alignment: Alignment.centerLeft),
-                    Text(stockList[index]),
-                    const Icon(CupertinoIcons.ellipsis_vertical)
-                  ],
-                ),
-              );
-            },
-            separatorBuilder: (BuildContext context, int index) {
-              return const Divider(thickness: 1);
-            },
-          ),
-        ));
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const add_Stock_page()));
+        },
+        tooltip: 'Increment',
+        child: const Icon(Icons.add),
+      ),
+    );
     //
     // ElevatedButton(
     //     onPressed: () {
