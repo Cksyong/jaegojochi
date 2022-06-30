@@ -102,25 +102,5 @@ class _mainPageState extends State<mainPage> {
         child: const Icon(Icons.add),
       ),
     );
-    //
-    // ElevatedButton(
-    //     onPressed: () {
-    //       Navigator.push(context,
-    //           MaterialPageRoute(builder: (context) => stock_Detail_Info()));
-    //     },
-    //     child: const Text('detailInfo')),
-    // ElevatedButton(
-    // onPressed: () {
-    // Navigator.push(context,
-    // MaterialPageRoute(builder: (context) => manage_Stock_page()));
-    // },
-    // child: const Text('manage_Stock_page')),
-    // ElevatedButton(
-    // onPressed: () {
-    // Navigator.push(context,
-    // MaterialPageRoute(builder: (context) => add_Stock_page()));
-    // },
-    // child: const Text('add_Stock_page')),
-    // ],
   }
 }

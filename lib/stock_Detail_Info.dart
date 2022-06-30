@@ -47,7 +47,11 @@ class _stock_Detail_InfoState extends State<stock_Detail_Info> {
                 child: const Text('EA',
                     style:
                         TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
-              )],),],),
+              )
+            ],
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
