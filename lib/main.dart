@@ -1,7 +1,5 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:jaegojochi/stock_Detail_Info.dart';
-import 'package:jaegojochi/add_Stock_page.dart';
-import 'package:jaegojochi/manage_Stock_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -43,50 +41,67 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class mainPage extends StatelessWidget {
+class mainPage extends StatefulWidget {
   const mainPage({
     Key? key,
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('widget.title'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              'counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-            ElevatedButton(
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => stock_Detail_Info()));
-                },
-                child: const Text('detailInfo')),
-            ElevatedButton(
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => manage_Stock_page()));
-                },
-                child: const Text('manage_Stock_page')),
-            ElevatedButton(
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => add_Stock_page()));
-                },
-                child: const Text('add_Stock_page')),
-          ],
-        ),
-      ),
-    );
-  }
+  State<mainPage> createState() => _mainPageState();
 }
 
+class _mainPageState extends State<mainPage> {
+  @override
+  Widget build(BuildContext context) {
+    var stockList = ['1', '2', '3', '4', '5', '7', '8', '9', '0'];
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('재고최고'),
+        ),
+        body: Container(
+          color: Colors.black12,
+          child: ListView.separated(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+            itemCount: stockList.length,
+            scrollDirection: Axis.vertical,
+            itemBuilder: (context, index) {
+              return Container(
+                color: Colors.white,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Image.asset('assets/image/takoyaki.jpg',
+                        width: 80, height: 80, alignment: Alignment.centerLeft),
+                    Text(stockList[index]),
+                    const Icon(CupertinoIcons.ellipsis_vertical)
+                  ],
+                ),
+              );
+            },
+            separatorBuilder: (BuildContext context, int index) {
+              return const Divider(thickness: 1);
+            },
+          ),
+        ));
+    //
+    // ElevatedButton(
+    //     onPressed: () {
+    //       Navigator.push(context,
+    //           MaterialPageRoute(builder: (context) => stock_Detail_Info()));
+    //     },
+    //     child: const Text('detailInfo')),
+    // ElevatedButton(
+    // onPressed: () {
+    // Navigator.push(context,
+    // MaterialPageRoute(builder: (context) => manage_Stock_page()));
+    // },
+    // child: const Text('manage_Stock_page')),
+    // ElevatedButton(
+    // onPressed: () {
+    // Navigator.push(context,
+    // MaterialPageRoute(builder: (context) => add_Stock_page()));
+    // },
+    // child: const Text('add_Stock_page')),
+    // ],
+  }
+}
