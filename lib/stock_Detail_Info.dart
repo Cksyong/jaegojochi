@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:jaegojochi/main.dart';
 import 'package:jaegojochi/manage_Stock_page.dart';
 
 class stock_Detail_Info extends StatefulWidget {
-  const stock_Detail_Info({Key? key}) : super(key: key);
+  final StockTable stockIn;
+  const stock_Detail_Info({Key? key, required this.stockIn}) : super(key: key);
 
   @override
   State<stock_Detail_Info> createState() => _stock_Detail_InfoState();
@@ -23,8 +25,8 @@ class _stock_Detail_InfoState extends State<stock_Detail_Info> {
           Container(
             color: Colors.yellow,
             margin: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-            child: const Text(
-              '상품명',
+            child: Text(
+              widget.stockIn.name,
               style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
             ),
           ),
@@ -57,7 +59,7 @@ class _stock_Detail_InfoState extends State<stock_Detail_Info> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => const manage_Stock_page()));
+                  builder: (context) => manage_Stock_page(name: widget.stockIn.name, unit: widget.stockIn.unit,)));
         },
         child: const Icon(Icons.edit_calendar_rounded),
       ),

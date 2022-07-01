@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:jaegojochi/add_Stock_page.dart';
 import 'package:jaegojochi/stock_Detail_Info.dart';
 
@@ -38,14 +39,27 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: createMaterialColor(Color(0xfff5f5dc)),
       ),
-      home: const mainPage(),
+      home: mainPage(
+        stock: List.generate(10, (i) => StockTable('상품 ${i+1}', 'EA'))
+      ),
     );
   }
 }
 
+class StockTable {
+  final String name;
+  final String unit;
+
+  StockTable(this.name, this.unit);
+
+}
+
+
 class mainPage extends StatefulWidget {
+
+  final List<StockTable> stock;
   const mainPage({
-    Key? key,
+    Key? key, required this.stock,
   }) : super(key: key);
 
   @override
@@ -53,6 +67,7 @@ class mainPage extends StatefulWidget {
 }
 
 class _mainPageState extends State<mainPage> {
+
   @override
   Widget build(BuildContext context) {
     var stockList = ['1', '2', '3', '4', '5', '7', '8', '9', '0'];
@@ -64,7 +79,7 @@ class _mainPageState extends State<mainPage> {
         color: Colors.black12,
         child: ListView.separated(
           padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-          itemCount: stockList.length,
+          itemCount: widget.stock.length,
           scrollDirection: Axis.vertical,
           itemBuilder: (context, index) {
             return Container(
@@ -75,13 +90,13 @@ class _mainPageState extends State<mainPage> {
                 children: [
                   Image.asset('assets/image/takoyaki.jpg',
                       width: 80, height: 80, alignment: Alignment.centerLeft),
-                  Text(stockList[index]),
+                  Text(widget.stock[index].name),
                   IconButton(
                       onPressed: () {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => stock_Detail_Info()));
+                                builder: (context) => stock_Detail_Info(stockIn: widget.stock[index],)));
                       },
                       icon: Icon(CupertinoIcons.ellipsis_vertical))
                 ],
