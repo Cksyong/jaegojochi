@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: createMaterialColor(Color(0xfff5f5dc)),
       ),
       home: mainPage(
-        stock: List.generate(10, (i) => StockTable('상품 ${i+1}', 'EA'))
+        stock: List.generate(10, (i) => StockTable('상품 ${i+1}', 'EA', 85))
       ),
     );
   }
@@ -49,8 +49,9 @@ class MyApp extends StatelessWidget {
 class StockTable {
   final String name;
   final String unit;
+  final double amount;
 
-  StockTable(this.name, this.unit);
+  StockTable(this.name, this.unit, this.amount);
 
 }
 

@@ -38,7 +38,7 @@ class _stock_Detail_InfoState extends State<stock_Detail_Info> {
               Container(
                 color: Colors.blue,
                 alignment: Alignment.centerRight,
-                child: const Text('8',
+                child: Text(widget.stockIn.amount.toString(),
                     style:
                         TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
               ),
@@ -59,7 +59,7 @@ class _stock_Detail_InfoState extends State<stock_Detail_Info> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => manage_Stock_page(name: widget.stockIn.name, unit: widget.stockIn.unit,)));
+                  builder: (context) => manage_Stock_page(name: widget.stockIn.name, unit: widget.stockIn.unit, amount: widget.stockIn.amount,)));
         },
         child: const Icon(Icons.edit_calendar_rounded),
       ),

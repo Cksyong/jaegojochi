@@ -5,7 +5,8 @@ import 'package:jaegojochi/main.dart';
 class manage_Stock_page extends StatefulWidget {
   final String name;
   final String unit;
-  const manage_Stock_page({Key? key, required this.name, required this.unit}) : super(key: key);
+  final double amount;
+  const manage_Stock_page({Key? key, required this.name, required this.unit, required this.amount}) : super(key: key);
 
   @override
   State<manage_Stock_page> createState() => _manage_Stock_pageState();
@@ -99,7 +100,7 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                     const Text('현재 수량 : '),
-                    Text('?? '),
+                    Text('${widget.amount.toString()} '),
                   Text(widget.unit)
                 ],
               ),
