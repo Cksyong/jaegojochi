@@ -3,8 +3,8 @@ import 'package:jaegojochi/main.dart';
 import 'package:jaegojochi/manage_Stock_page.dart';
 
 class stock_Detail_Info extends StatefulWidget {
-  final StockTable stockIn;
-  const stock_Detail_Info({Key? key, required this.stockIn}) : super(key: key);
+  // final StockTable stockIn;
+  const stock_Detail_Info({Key? key, /*required this.stockIn*/}) : super(key: key);
 
   @override
   State<stock_Detail_Info> createState() => _stock_Detail_InfoState();
@@ -26,7 +26,7 @@ class _stock_Detail_InfoState extends State<stock_Detail_Info> {
             color: Colors.yellow,
             margin: const EdgeInsets.fromLTRB(0, 10, 0, 0),
             child: Text(
-              widget.stockIn.name,
+              'widget.stockIn.name',
               style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
             ),
           ),
@@ -38,7 +38,7 @@ class _stock_Detail_InfoState extends State<stock_Detail_Info> {
               Container(
                 color: Colors.blue,
                 alignment: Alignment.centerRight,
-                child: Text(widget.stockIn.amount.toString(),
+                child: Text('widget.stockIn.amount.toString()',
                     style:
                     TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
               ),
@@ -59,7 +59,7 @@ class _stock_Detail_InfoState extends State<stock_Detail_Info> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => manage_Stock_page(name: widget.stockIn.name, unit: widget.stockIn.unit, amount: widget.stockIn.amount,)));
+                  builder: (context) => manage_Stock_page(name: 'widget.stockIn.name', unit: /*widget.stockIn.unit*/'EA', amount: /*widget.stockIn.amount*/35.0,)));
         },
         child: const Icon(Icons.edit_calendar_rounded),
       ),
