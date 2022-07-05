@@ -8,6 +8,8 @@ class manage_Stock_page extends StatefulWidget {
   final double amount;
   const manage_Stock_page({Key? key, required this.name, required this.unit, required this.amount}) : super(key: key);
 
+
+
   @override
   State<manage_Stock_page> createState() => _manage_Stock_pageState();
 }
@@ -19,11 +21,65 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
 
     final productAmountController = TextEditingController();
 
+    void _showAlertDialog(String way, String message) {
+      showDialog(
+          context: context,
+          //barrierDismissible - Dialog 제외한 다른 화면 터치 x
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              // RoundedRectangleBorder - Dialog 화면 모서리 둥글게 조절
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0)),
+              //Dialog Main Title
+              title: Column(
+                children: const <Widget>[
+                  Text("수량을 확인하세요."),
+                ],
+              ),
+              //
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    message,
+                  ),
+                ],
+              ),
+              actions: <Widget>[
+                TextButton(
+                  style: TextButton.styleFrom(
+                    primary: Colors.black,
+                  ),
+                  onPressed: () { //TODO DB(내부저장소든 뭐든)에 추가하는 코드
+                    Navigator.pop(context);
+                  },
+                  child: const Text("확인"),
+                ),
+              ],
+            );
+          });
+    }
+
     void editProductState(String method) {
-      var amount = double.parse(productAmountController.text);
-      if (amount.toString() == "") {
-        //showToast('수량');
-      } else {
+      double amount = 0;
+      if (productAmountController.text != '') {
+        amount = double.parse(productAmountController.text);
+      }
+      if (amount == 0) {
+        _showAlertDialog('', '추가/소진할 수량을 입력해주세요.');
+      } else if (method == '소진' && widget.amount < amount) {
+        _showAlertDialog('', '소진할 수량은 현재 수량을 초과할 수 없습니다.');
+      }
+      else
+       {
+        double finalAmount = 0;
+        if (method == '추가') {
+          finalAmount = widget.amount + amount;
+        } else if (method == '소진') {
+          finalAmount = widget.amount - amount;
+        }
         showDialog(
             context: context,
             //barrierDismissible - Dialog 제외한 다른 화면 터치 x
@@ -45,8 +101,10 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      '\n수량 : ' + amount.toString() + ' (' +
-                          widget.unit + ')\n' + method + '하시겠습니까?',
+                      '현재 수량 : ${widget.amount} ${widget.unit}'
+                          '\n변경 수량 : ' + amount.toString() + ' (' +
+                          widget.unit + ')\n'
+                          '최종 수량 : ${finalAmount}\n' + method + '하시겠습니까?',
                     ),
                   ],
                 ),
@@ -76,6 +134,8 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
 
     }
 
+
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('재고 추가/소진'),
@@ -99,8 +159,7 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
-                    const Text('현재 수량 : '),
-                    Text('${widget.amount.toString()} '),
+                    Text('현재 수량 : ${widget.amount.toString()} '),
                   Text(widget.unit)
                 ],
               ),
@@ -114,7 +173,7 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                     height: 50,
                     child: TextField(
                       keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'(^\d*\.?\d*)'))],
                       decoration: const InputDecoration(
                           enabledBorder: OutlineInputBorder(
                               borderSide: BorderSide(color: Colors.black)),

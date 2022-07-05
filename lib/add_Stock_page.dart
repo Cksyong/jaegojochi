@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
 
 class add_Stock_page extends StatefulWidget {
   const add_Stock_page({Key? key}) : super(key: key);
@@ -10,6 +13,9 @@ class add_Stock_page extends StatefulWidget {
 }
 
 class _add_Stock_pageState extends State<add_Stock_page> {
+
+  final ImagePicker _picker = ImagePicker();
+  dynamic _imageFile;
   final _unitValue = ['EA', 'kg', 'g', 'L', 'ml', 'cm', 'm', 'oz'];
   var _selectedValue = 'EA';
   final productNameController = TextEditingController();
@@ -87,7 +93,22 @@ class _add_Stock_pageState extends State<add_Stock_page> {
       }
     }
 
+  bool _textVisibility = true;
+    bool _imageVisibility = false;
 
+    void _textHide() {
+      setState(() {
+        _textVisibility = false;
+        _imageVisibility = true;
+      });
+    }
+
+    void _textShow() {
+      setState(() {
+        _textVisibility = true;
+        _imageVisibility = false;
+      });
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -107,12 +128,40 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                 width: double.infinity,
                 height: 300,
                 child: TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    _textHide();
+                    showModalBottomSheet(context: context, builder: ((builder) => bottomSheet()));
+                  },
                   style: TextButton.styleFrom(
                       primary: Colors.black,
                       onSurface: Colors.grey,
-                      backgroundColor: Colors.grey),
-                  child: const Icon(Icons.add),
+                      backgroundColor: Colors.grey,),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Visibility(
+                        visible: _textVisibility,
+                        child:
+                        Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          CircularProgressIndicator(),
+                          // const Icon(Icons.add),
+                          // const Text('이미지 추가'),
+                        ],
+                      ),
+                      ),
+                      Visibility(
+                        visible: true,
+                          child:
+                      Image(image: _imageFile == null
+                          ? const AssetImage('assets/image/add_image_button.jpg') as ImageProvider
+                      : FileImage(File(_imageFile.path)),
+                      )
+                      )
+                    ],
+                  ),
                 ),
                 // TextButton.icon(
                 //   onPressed: () {},
@@ -144,7 +193,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                   height: 50,
                   child: TextField(
                     keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'(^\d*\.?\d*)'))], //double 타입 전용 조건
                     decoration: const InputDecoration(
                       enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
                       focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
@@ -179,9 +228,56 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                         onSurface: Colors.grey,
                         backgroundColor: Colors.grey),
                     child: const Text('추가하기')))
+
           ],
         ),
       ),
     );
   }
+
+
+
+  Widget bottomSheet() {
+    return Container(
+      height: 120,
+      width: MediaQuery.of(context).size.width,
+      margin: EdgeInsets.symmetric(
+        horizontal: 20,
+        vertical: 20
+      ),
+      child: Column(
+        children: <Widget>[
+          Text('사진 선택'),
+          SizedBox(
+            height: 25,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              TextButton.icon(onPressed: () {
+                takePhoto(ImageSource.camera);
+                Navigator.pop(context);
+              },
+                icon: Icon(Icons.camera, size: 50,),
+                label: Text('Camera'),),
+              TextButton.icon(onPressed: () {
+                takePhoto(ImageSource.gallery);
+                Navigator.pop(context);
+              },
+                icon: Icon(Icons.photo_library, size: 50,),
+                label: Text('Gallery'),),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  takePhoto(ImageSource source) async {
+    final pickedFile = await _picker.pickImage(source: source);
+    setState(() {
+      _imageFile = pickedFile;
+    });
+  }
+
 }
