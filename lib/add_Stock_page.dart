@@ -228,7 +228,6 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                         onSurface: Colors.grey,
                         backgroundColor: Colors.grey),
                     child: const Text('추가하기')))
-
           ],
         ),
       ),

@@ -40,7 +40,7 @@ class _stock_Detail_InfoState extends State<stock_Detail_Info> {
                 alignment: Alignment.centerRight,
                 child: Text(widget.stockIn.amount.toString(),
                     style:
-                        TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
+                    TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
               ),
               Container(
                 margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
@@ -48,7 +48,7 @@ class _stock_Detail_InfoState extends State<stock_Detail_Info> {
                 alignment: Alignment.centerRight,
                 child: const Text('EA',
                     style:
-                        TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
+                    TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
               )
             ],
           ),
