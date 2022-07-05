@@ -5,6 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'db/Stock.dart';
+import 'main.dart';
+
 class add_Stock_page extends StatefulWidget {
   const add_Stock_page({Key? key}) : super(key: key);
 
@@ -23,6 +26,17 @@ class _add_Stock_pageState extends State<add_Stock_page> {
 
   @override
   Widget build(BuildContext context) {
+    List<Stock> stockList = [];
+
+    void _addToDB() async {
+      String name = productNameController.text;
+      int amount = int.parse('$productAmountController');
+      String unit = _selectedValue;
+      setState(() {
+        stockList.insert(0, Stock(name: name, amount: amount, unit: unit));
+      });
+    }
+
 
     void showToast(String message) {
       Fluttertoast.showToast(msg: message + '을 입력해주세요.',
@@ -82,7 +96,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                     style: TextButton.styleFrom(
                       primary: Colors.black,
                     ),
-                    onPressed: () { //TODO DB(내부저장소든 뭐든)에 추가하는 코드
+                    onPressed: () { _addToDB();
                       Navigator.pop(context);
                     },
                     child: const Text("확인"),

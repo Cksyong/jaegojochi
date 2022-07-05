@@ -1,10 +1,9 @@
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'add_Stock_page.dart';
 import 'db/Stock.dart';
 import 'db/DatabaseHelper.dart';
-import 'stock_Detail_Info.dart';
 
 void main() {
   runApp(const MyApp());
@@ -41,7 +40,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: createMaterialColor(Color(0xfff5f5dc)),
       ),
-      home: const mainPage(title: 'Listify'),
+      home: const mainPage(title : 'Listify'),
     );
   }
 }
@@ -56,18 +55,16 @@ class mainPage extends StatefulWidget {
 }
 
 class _mainPageState extends State<mainPage> {
+
   TextEditingController textController = new TextEditingController();
 
   //여기부터 디비용
-  void initState() {
+  void initState(){
     super.initState();
-    DatabaseHelper.instance.queryAllRows().then((value) {
+    DatabaseHelper.instance.queryAllRows().then((value){
       setState(() {
         value.forEach((element) {
-          stockList.add(Stock(
-              name: element['name'],
-              amount: element['amount'],
-              unit: element['unit']));
+          stockList.add(Stock(name: element['name'], amount: element['amount'], unit: element['unit']));
         });
       });
     }).catchError((error) {
@@ -75,12 +72,12 @@ class _mainPageState extends State<mainPage> {
     });
   }
 
-  void _addToDB() async {
+  void _addToDB() async{
     String name = textController.text;
     int amount = 50;
     String unit = 'EA';
-    setState(() {
-      stockList.insert(0, Stock(name: name, amount: amount, unit: unit));
+    setState((){
+      stockList.insert(0,Stock(name: name, amount: amount, unit: unit) );
     });
     textController.text = "";
   }
@@ -102,59 +99,40 @@ class _mainPageState extends State<mainPage> {
         ),
         body: Container(
           alignment: Alignment.topLeft,
+          padding: EdgeInsets.all(20),
           child: Column(
             children: <Widget>[
-              Expanded(
-                  child: Container(
-                child: stockList.isEmpty
-                    ? Container()
-                    : ListView.builder(
-                        padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-                        scrollDirection: Axis.vertical,
-                        itemBuilder: (ctx, index) {
-                          if (index == stockList.length) {
-                            return Text('${stockList.length}');
-                          }
-                          return Container(
-                            padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
-                            color: Colors.white,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Image.asset('assets/image/takoyaki.jpg',
-                                    width: 80,
-                                    height: 80,
-                                    alignment: Alignment.centerLeft),
-                                Text(stockList[index].name),
-                                Text(
-                                    '${stockList[index].amount}${stockList[index].unit}'),
-                                IconButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  stock_Detail_Info()));
-                                    },
-                                    icon:
-                                        Icon(CupertinoIcons.ellipsis_vertical))
-                              ],
-                            ),
-                          );
-                        }),
+              Row(
+                children: <Widget>[
+                  Expanded(child: TextFormField(
+                    decoration: InputDecoration(hintText:"Enter a task"),
+                    controller: textController,
+                  ),),
+                  IconButton(onPressed: _addToDB, icon: Icon(Icons.add))
+                ],
+              ),
+              SizedBox(height: 20),
+              Expanded(child: Container(
+                child:stockList.isEmpty ?Container() :
+                ListView.builder(
+                    itemBuilder: (ctx, index){
+                      if (index == stockList.length) { return Text('${stockList.length}');}
+                      return ListTile(
+                          title : Text(stockList[index].name),
+                          leading: Text(stockList[index].amount.toString() + stockList[index].unit),
+                          trailing: IconButton(
+                            icon: Icon(Icons.delete),
+                            onPressed: ()=> _deleteTask(stockList[index].name),
+                          )
+                      );
+                    }),
               ))
             ],
           ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const add_Stock_page()));
-          },
-          tooltip: 'Increment',
-          child: const Icon(Icons.add),
-        ));
+
+
+
+        )
+    );
   }
 }
