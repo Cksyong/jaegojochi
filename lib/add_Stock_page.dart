@@ -87,8 +87,6 @@ class _add_Stock_pageState extends State<add_Stock_page> {
       }
     }
 
-
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('품목 추가'),
@@ -146,10 +144,10 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     decoration: const InputDecoration(
-                      enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                      focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                      labelText: '수량',
-                      labelStyle: TextStyle(color: Colors.black)
+                        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                        labelText: '수량',
+                        labelStyle: TextStyle(color: Colors.black)
                     ),
                     controller: productAmountController,
                   ),
@@ -170,7 +168,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
               ],
             ),
             SizedBox(
-              width: double.infinity,
+                width: double.infinity,
                 child: TextButton(
                     onPressed: () => addProductDialog()
                     ,

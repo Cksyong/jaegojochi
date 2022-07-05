@@ -1,25 +1,22 @@
-import 'dart:core';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:jaegojochi/add_Stock_page.dart';
-import 'package:jaegojochi/stock_Detail_Info.dart';
-import 'package:localstorage/localstorage.dart';
+
+import 'add_Stock_page.dart';
+import 'db/Stock.dart';
+import 'db/DatabaseHelper.dart';
+import 'stock_Detail_Info.dart';
 
 void main() {
   runApp(const MyApp());
 }
-// 앱바 색깔 설정
+
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
   MaterialColor createMaterialColor(Color color) {
     List strengths = <double>[.05];
     Map<int, Color> swatch = {};
-    final int r = color.red,
-        g = color.green,
-        b = color.blue;
+    final int r = color.red, g = color.green, b = color.blue;
 
     for (int i = 1; i < 10; i++) {
       strengths.add(0.1 * i);
@@ -44,154 +41,120 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: createMaterialColor(Color(0xfff5f5dc)),
       ),
-      home: mainPage(),
+      home: const mainPage(title: 'Listify'),
     );
   }
 }
 
 class mainPage extends StatefulWidget {
+  const mainPage({Key? key, required this.title}) : super(key: key);
 
-  // final List<Stock> = List
-  const mainPage({
-    Key? key,
-  }) : super(key: key);
+  final String title;
 
   @override
   State<mainPage> createState() => _mainPageState();
 }
 
-class StockItem {
-  String title;
-  int amount;
-
-  StockItem({required this.title, required this.amount});
-
-  toJSONEncodable() {
-    Map<String, dynamic> m = new Map();
-    m['title'] = title;
-    m['amount'] = amount;
-
-    return m;
-  }
-}
-
-class StockList {
-  List<StockItem> items = [];
-
-  toJSONEncodable() {
-    return items.map((item) {
-      return item.toJSONEncodable();
-    }).toList();
-  }
-}
-
-
-//메인 시작
 class _mainPageState extends State<mainPage> {
+  TextEditingController textController = new TextEditingController();
 
-  //여기서부터 로컬 db 시작
-  final StockList list = new StockList();
-  final LocalStorage storage = new LocalStorage('stock_app');
-  bool initialized = false;
-
-  _addItem(String title, int amount) {
-    setState(() {
-      final item = StockItem(title: title, amount: amount);
-      list.items.add(item);
-      _saveToStorage;
+  //여기부터 디비용
+  void initState() {
+    super.initState();
+    DatabaseHelper.instance.queryAllRows().then((value) {
+      setState(() {
+        value.forEach((element) {
+          stockList.add(Stock(
+              name: element['name'],
+              amount: element['amount'],
+              unit: element['unit']));
+        });
+      });
+    }).catchError((error) {
+      print(error);
     });
   }
 
-  _saveToStorage() {
-    storage.setItem('stocks', list.toJSONEncodable());
+  void _addToDB() async {
+    String name = textController.text;
+    int amount = 50;
+    String unit = 'EA';
+    setState(() {
+      stockList.insert(0, Stock(name: name, amount: amount, unit: unit));
+    });
+    textController.text = "";
   }
 
-  _clearStorage() async {
-    await storage.clear();
-
+  void _deleteTask(String name) async {
+    await DatabaseHelper.instance.delete(name);
     setState(() {
-      list.items = storage.getItem('stocks') ?? [];
+      stockList.removeWhere((element) => element.name == name);
     });
   }
+
+  List<Stock> stockList = [];
 
   @override
   Widget build(BuildContext context) {
-    //var stockList = ['1', '2', '3', '4', '5', '7', '8', '9', '0'];
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('재고최고'),
-      ),
-      body: Container(
-        child: FutureBuilder(
-          future: storage.ready,
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.data == null) {
-              return Center(
-                child : CircularProgressIndicator(),
-              );
-            }
-            if(!initialized){
-              var items = storage.getItem('stocks');
-
-              if(items != null){
-                list.items = List<StockItem>.from (
-                    (items as List).map(
-                        (item) => StockItem(
-                          title : item['title'],
-                          amount : item['amount'],
-                        ),
-                    ),
-                );
-              }
-              initialized = true;
-            }
-
-            List<Widget> widgets = list.items.map((item) {
-                return ListView.separated(itemBuilder: (context, index) {
-                  return Container(padding: const EdgeInsets.fromLTRB(
-                      15, 0, 0, 0),
-                      color: Colors.white,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Image.asset('assets/image/takoyaki.jpg',
-                              width: 80,
-                              height: 80,
-                              alignment: Alignment.centerLeft),
-                          Text(item.title),
-                          IconButton(
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            stock_Detail_Info()));
-                              },
-                              icon: Icon(CupertinoIcons.ellipsis_vertical))
-                        ],
-                      ));
-                }, separatorBuilder: (BuildContext context, int index) {
-                  return const Divider(thickness: 1);
-                }, itemCount: list.items.length);
-              }).toList();
-
-            return Column(
-              children: <Widget>[
-                Expanded(child: ListView(children: widgets,itemExtent: 50.0,))
-              ]
-            );
-            }
-        )
-      ),
-
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const add_Stock_page()));
-        },
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
-    );
+        appBar: AppBar(
+          title: const Text('재고최고'),
+        ),
+        body: Container(
+          alignment: Alignment.topLeft,
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                  child: Container(
+                child: stockList.isEmpty
+                    ? Container()
+                    : ListView.builder(
+                        padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+                        scrollDirection: Axis.vertical,
+                        itemBuilder: (ctx, index) {
+                          if (index == stockList.length) {
+                            return Text('${stockList.length}');
+                          }
+                          return Container(
+                            padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+                            color: Colors.white,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Image.asset('assets/image/takoyaki.jpg',
+                                    width: 80,
+                                    height: 80,
+                                    alignment: Alignment.centerLeft),
+                                Text(stockList[index].name),
+                                Text(
+                                    '${stockList[index].amount}${stockList[index].unit}'),
+                                IconButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  stock_Detail_Info()));
+                                    },
+                                    icon:
+                                        Icon(CupertinoIcons.ellipsis_vertical))
+                              ],
+                            ),
+                          );
+                        }),
+              ))
+            ],
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const add_Stock_page()));
+          },
+          tooltip: 'Increment',
+          child: const Icon(Icons.add),
+        ));
   }
 }
