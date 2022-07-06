@@ -51,5 +51,9 @@ class DatabaseHelper {
     return await db.delete(table, where: '$columnname = ?', whereArgs: [name]);
   }
 
+  Future<List<Map<String, Object?>>> clearTable() async {
+    Database db = await instance.database;
+    return await db.rawQuery("DELETE FROM $table");
+  }
 
 }
