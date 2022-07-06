@@ -1,6 +1,6 @@
 class Stock{
   String name;
-  int amount;
+  String amount;
   String unit;
 
   Stock({

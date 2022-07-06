@@ -29,7 +29,7 @@ class DatabaseHelper {
     await db.execute('''
     create table $table(
     $columnname TEXT PRIMARY KEY,
-    $columnamount INTEGER,
+    $columnamount TEXT,
     $columnunit TEXT)
     ''');
   }

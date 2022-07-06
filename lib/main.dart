@@ -49,6 +49,7 @@ class MyApp extends StatelessWidget {
 class mainPage extends StatefulWidget {
   const mainPage({Key? key}) : super(key: key);
 
+
   @override
   State<mainPage> createState() => _mainPageState();
 }
@@ -71,18 +72,6 @@ class _mainPageState extends State<mainPage> {
     }).catchError((error) {
       print(error);
     });
-  }
-
-  void _addToDB() async {
-    String name = textController.text;
-    int amount = 50;
-    String unit = 'EA';
-    setState(() {
-      stockList.insert(0, Stock(name: name, amount: amount, unit: unit));
-    });
-    textController.text = "";
-    await DatabaseHelper.instance
-        .insert(Stock(name: name, amount: amount, unit: unit));
   }
 
   void _deleteTask(String name) async {
@@ -112,7 +101,7 @@ class _mainPageState extends State<mainPage> {
                       itemCount: stockList.length,
                       itemBuilder: (ctx, index) {
                         return Container(
-                          padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+                          padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
                           color: Colors.white,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,

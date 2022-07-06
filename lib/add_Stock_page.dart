@@ -1,10 +1,12 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'db/DatabaseHelper.dart';
 import 'db/Stock.dart';
 import 'main.dart';
 
@@ -17,6 +19,31 @@ class add_Stock_page extends StatefulWidget {
 
 class _add_Stock_pageState extends State<add_Stock_page> {
 
+  void initState(){
+    super.initState();
+    DatabaseHelper.instance.queryAllRows().then((value){
+      setState(() {
+        value.forEach((element) {
+          stockList.add(Stock(name: element['name'], amount: element['amount'], unit: element['unit']));
+        });
+      });
+    }).catchError((error) {
+      print(error);
+    });
+  }
+
+
+  void _addToDB() async{
+    String name = productNameController.text;
+    String amount = productAmountController.text;
+    String unit = _selectedValue.toString();
+    setState((){
+      stockList.insert(0,Stock(name: name, amount: amount, unit: unit) );
+    });
+    await DatabaseHelper.instance.insert(Stock(name: name, amount: amount, unit: unit));
+  }
+
+  List<Stock> stockList = [];
   final ImagePicker _picker = ImagePicker();
   dynamic _imageFile;
   final _unitValue = ['EA', 'kg', 'g', 'L', 'ml', 'cm', 'm', 'oz'];
@@ -26,17 +53,6 @@ class _add_Stock_pageState extends State<add_Stock_page> {
 
   @override
   Widget build(BuildContext context) {
-    List<Stock> stockList = [];
-
-    void _addToDB() async {
-      String name = productNameController.text;
-      int amount = int.parse('$productAmountController');
-      String unit = _selectedValue;
-      setState(() {
-        stockList.insert(0, Stock(name: name, amount: amount, unit: unit));
-      });
-    }
-
 
     void showToast(String message) {
       Fluttertoast.showToast(msg: message + '을 입력해주세요.',
@@ -49,7 +65,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
 
     void addProductDialog() {
       var name = productNameController.text;
-      var amount = double.parse(productAmountController.text);
+      var amount = productAmountController.text;
       if (name == "") {
         showToast('품목명');
         //TODO Toast외않됌?
@@ -77,7 +93,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      '품목명 : ' + name + '\n수량 : ' + amount.toString() + ' (' +
+                      '품목명 : ' + name + '\n수량 : ' + amount + ' (' +
                           _selectedValue + ')\n추가하시겠습니까?',
                     ),
                   ],
@@ -98,6 +114,8 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                     ),
                     onPressed: () { _addToDB();
                       Navigator.pop(context);
+                      Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => const mainPage()));
                     },
                     child: const Text("확인"),
                   ),
@@ -232,6 +250,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                     })
               ],
             ),
+            // Text(stockList.toString()),
             SizedBox(
               width: double.infinity,
                 child: TextButton(
