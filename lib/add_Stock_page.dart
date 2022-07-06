@@ -114,8 +114,10 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                     ),
                     onPressed: () { _addToDB();
                       Navigator.pop(context);
-                      Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => const mainPage()));
+                      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+                          builder: (BuildContext context) => mainPage()), (route) => false);
+                      // Navigator.pushReplacement(context,
+                      //   MaterialPageRoute(builder: (context) => const mainPage()));
                     },
                     child: const Text("확인"),
                   ),
