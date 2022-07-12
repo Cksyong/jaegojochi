@@ -9,6 +9,7 @@ class Stock{
     required this.unit,
   });
 
+
   Map<String, dynamic> toMap(){
     return{
       'name': name,
