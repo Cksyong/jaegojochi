@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jaegojochi/manage_Stock_page.dart';
 import 'package:sqflite/sqflite.dart';
-
 import 'add_Stock_page.dart';
 import 'db/Stock.dart';
 import 'db/DatabaseHelper.dart';
@@ -11,7 +10,6 @@ import 'db/DatabaseHelper.dart';
 void main() {
   runApp(const MyApp());
 }
-
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -71,8 +69,7 @@ class _mainPageState extends State<mainPage> {
           stockList.add(Stock(
               name: element['name'],
               amount: element['amount'],
-              unit: element['unit']),
-          );
+              unit: element['unit']));
         });
       });
     }).catchError((error) {
