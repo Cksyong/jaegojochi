@@ -1,10 +1,14 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:jaegojochi/db/Utility.dart';
 
 import 'db/DatabaseHelper.dart';
 import 'db/Stock.dart';
@@ -24,7 +28,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
     DatabaseHelper.instance.queryAllRows().then((value){
       setState(() {
         value.forEach((element) {
-          stockList.add(Stock(name: element['name'], amount: element['amount'], unit: element['unit']));
+          stockList.add(Stock(name: element['name'], amount: element['amount'], unit: element['unit'], image: element['image']));
         });
       });
     }).catchError((error) {
@@ -33,14 +37,15 @@ class _add_Stock_pageState extends State<add_Stock_page> {
   }
 
 
-  void _addToDB() async{
+  void _addToDB(dynamic image) async{
     String name = productNameController.text;
     String amount = productAmountController.text;
     String unit = _selectedValue.toString();
+    var imageUse = Base64Decoder().convert(image.toString());
     setState((){
-      stockList.insert(0,Stock(name: name, amount: amount, unit: unit) );
+      stockList.insert(0,Stock(name: name, amount: amount, unit: unit, image: image) );
     });
-    await DatabaseHelper.instance.insert(Stock(name: name, amount: amount, unit: unit));
+    await DatabaseHelper.instance.insert(Stock(name: name, amount: amount, unit: unit, image: image));
   }
 
   List<Stock> stockList = [];
@@ -50,6 +55,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
   var _selectedValue = 'EA';
   final productNameController = TextEditingController();
   final productAmountController = TextEditingController();
+  dynamic imageString;
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +118,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                     style: TextButton.styleFrom(
                       primary: Colors.black,
                     ),
-                    onPressed: () { _addToDB();
+                    onPressed: () { _addToDB(_imageFile);
                       Navigator.pop(context);
                       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
                           builder: (BuildContext context) => mainPage()), (route) => false);

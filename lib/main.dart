@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:jaegojochi/db/Utility.dart';
+import 'package:jaegojochi/stock_Detail_Info.dart';
 import 'package:sqflite/sqflite.dart';
-
 import 'add_Stock_page.dart';
 import 'db/Stock.dart';
 import 'db/DatabaseHelper.dart';
@@ -66,7 +67,8 @@ class _mainPageState extends State<mainPage> {
           stockList.add(Stock(
               name: element['name'],
               amount: element['amount'],
-              unit: element['unit']));
+              unit: element['unit'],
+          image: element['image']));
         });
       });
     }).catchError((error) {
@@ -95,9 +97,9 @@ class _mainPageState extends State<mainPage> {
           children: <Widget>[
             Expanded(
                 child: Container(
-              child: stockList.isEmpty
-                  ? Container()
-                  : ListView.builder(
+                  child: stockList.isEmpty
+                      ? Container()
+                      : ListView.builder(
                       itemCount: stockList.length,
                       itemBuilder: (ctx, index) {
                         return Container(
@@ -106,8 +108,7 @@ class _mainPageState extends State<mainPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Image.asset(
-                                'assets/image/takoyaki.jpg',
+                              Image.memory(stockList[index].image,
                                 width: 80,
                                 height: 80,
                                 alignment: Alignment.centerLeft,
@@ -115,15 +116,17 @@ class _mainPageState extends State<mainPage> {
                               Text(stockList[index].name),
                               Text(stockList[index].amount.toString() +
                                   stockList[index].unit),
-                              // IconButton(
-                              //     onPressed: () =>
-                              //         _deleteTask(stockList[index].name),
-                              //     icon: Icon(Icons.delete))
+                              IconButton(
+                                  onPressed: () {
+                                    Navigator.push(context,
+                                        MaterialPageRoute(builder: (context) => stock_Detail_Info(name: stockList[index].name,)));
+                                  },
+                                  icon: Icon(Icons.menu))
                             ],
                           ),
                         );
                       }),
-            ))
+                ))
           ],
         ),
       ),
