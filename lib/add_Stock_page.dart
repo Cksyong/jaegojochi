@@ -66,6 +66,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
           gravity: ToastGravity.CENTER);
     }
 
+
     void addProductDialog() {
       var name = productNameController.text;
       var amount = productAmountController.text;
