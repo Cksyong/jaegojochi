@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-class Stock{
+class Stock {
   String name;
   String amount;
   String unit;
@@ -13,14 +13,12 @@ class Stock{
     required this.image
   });
 
-  Map<String, dynamic> toMap(){
-    return{
+  Map<String, dynamic> toMap() {
+    return {
       'name': name,
-      'amount' : amount,
-      'unit' : unit,
+      'amount': amount,
+      'unit': unit,
       'image' : image
     };
   }
 }
-
-
