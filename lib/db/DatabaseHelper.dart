@@ -25,6 +25,7 @@ class DatabaseHelper {
     return await openDatabase(path, version: _databaseVersion, onCreate: _onCreate);
   }
 
+
   Future _onCreate(Database db, int version) async{
     await db.execute('''
     create table $table(

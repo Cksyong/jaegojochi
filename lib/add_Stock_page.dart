@@ -34,6 +34,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
     });
   }
 
+
   void _addToDB() async {
     String name = productNameController.text;
     String amount = productAmountController.text;
