@@ -34,7 +34,6 @@ class _add_Stock_pageState extends State<add_Stock_page> {
     });
   }
 
-
   void _addToDB() async {
     String name = productNameController.text;
     String amount = productAmountController.text;
@@ -282,12 +281,15 @@ class _add_Stock_pageState extends State<add_Stock_page> {
             SizedBox(
                 // width: double.infinity,
                 child: TextButton(
-                    onPressed: productAmountController.text.isEmpty && productNameController.text.isEmpty ? null : ()
-                    => addProductDialog(),
+                    onPressed: productAmountController.text.isEmpty &&
+                            productNameController.text.isEmpty
+                        ? null
+                        : () => addProductDialog(),
                     style: TextButton.styleFrom(
                       //     primary: Colors.black,
                       //     onSurface: Colors.grey,
-                      fixedSize: Size(100, 50),),
+                      fixedSize: Size(100, 50),
+                    ),
                     //     backgroundColor: Colors.black),
                     // onPressed: () => addProductDialog(),
                     // style: TextButton.styleFrom(
