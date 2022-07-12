@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'Stock.dart';
@@ -14,7 +12,6 @@ class DatabaseHelper {
   static final columnname = 'name';
   static final columnamount = 'amount';
   static final columnunit = 'unit';
-  static final columnimage = 'image';
 
   DatabaseHelper._privateConstructor();
   static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
@@ -33,8 +30,7 @@ class DatabaseHelper {
     create table $table(
     $columnname TEXT PRIMARY KEY,
     $columnamount TEXT,
-    $columnunit TEXT,
-    $columnimage BLOB)
+    $columnunit TEXT)
     ''');
   }
 
@@ -55,25 +51,9 @@ class DatabaseHelper {
     return await db.delete(table, where: '$columnname = ?', whereArgs: [name]);
   }
 
-  Future<List<Stock>> getSelectStock(String name) async {
-    Database db = await instance.database;
-    final List<Map<String, dynamic>> maps = await db.query(
-      table, where: 'name = ?',
-      whereArgs: [name]
-    );
-
-    return List.generate(maps.length, (i) {
-      return Stock(name: maps[i]['name'], amount: maps[i]['amount'], unit: maps[i]['unit'], image: maps[i]['image']);
-    });
-  }
-
   Future<List<Map<String, Object?>>> clearTable() async {
     Database db = await instance.database;
     return await db.rawQuery("DELETE FROM $table");
   }
 
-  Future close() async{
-    Database db = await instance.database;
-    db.close();
-  }
 }

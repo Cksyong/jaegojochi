@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:jaegojochi/db/Utility.dart';
-import 'package:jaegojochi/stock_Detail_Info.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:jaegojochi/manage_Stock_page.dart';
 import 'package:sqflite/sqflite.dart';
+
 import 'add_Stock_page.dart';
 import 'db/Stock.dart';
 import 'db/DatabaseHelper.dart';
@@ -40,7 +41,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: createMaterialColor(Color(0xfff5f5dc)),
+        primarySwatch: createMaterialColor(Color(0xff000000)),
       ),
       home: const mainPage(),
     );
@@ -57,6 +58,8 @@ class mainPage extends StatefulWidget {
 
 class _mainPageState extends State<mainPage> {
   TextEditingController textController = new TextEditingController();
+  // XFile? pickedImage;
+
 
   //여기부터 디비용
   void initState() {
@@ -67,8 +70,8 @@ class _mainPageState extends State<mainPage> {
           stockList.add(Stock(
               name: element['name'],
               amount: element['amount'],
-              unit: element['unit'],
-          image: element['image']));
+              unit: element['unit']),
+          );
         });
       });
     }).catchError((error) {
@@ -89,7 +92,9 @@ class _mainPageState extends State<mainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('재고최고'),
+        title: const Text('재고최고',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
       ),
       body: Container(
         alignment: Alignment.topLeft,
@@ -97,9 +102,9 @@ class _mainPageState extends State<mainPage> {
           children: <Widget>[
             Expanded(
                 child: Container(
-                  child: stockList.isEmpty
-                      ? Container()
-                      : ListView.builder(
+              child: stockList.isEmpty
+                  ? Container()
+                  : ListView.builder(
                       itemCount: stockList.length,
                       itemBuilder: (ctx, index) {
                         return Container(
@@ -108,7 +113,8 @@ class _mainPageState extends State<mainPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Image.memory(stockList[index].image,
+                              Image.asset(
+                                'assets/image/takoyaki.jpg',
                                 width: 80,
                                 height: 80,
                                 alignment: Alignment.centerLeft,
@@ -117,16 +123,15 @@ class _mainPageState extends State<mainPage> {
                               Text(stockList[index].amount.toString() +
                                   stockList[index].unit),
                               IconButton(
-                                  onPressed: () {
-                                    Navigator.push(context,
-                                        MaterialPageRoute(builder: (context) => stock_Detail_Info(name: stockList[index].name,)));
-                                  },
-                                  icon: Icon(Icons.menu))
+                                  onPressed: () =>
+                                      Navigator.push(context,
+                                          MaterialPageRoute(builder: (context) => const manage_Stock_page())),
+                                  icon: Icon(Icons.add))
                             ],
                           ),
                         );
                       }),
-                ))
+            ))
           ],
         ),
       ),

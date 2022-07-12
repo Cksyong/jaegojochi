@@ -1,14 +1,10 @@
-import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:jaegojochi/db/Utility.dart';
 
 import 'db/DatabaseHelper.dart';
 import 'db/Stock.dart';
@@ -22,13 +18,15 @@ class add_Stock_page extends StatefulWidget {
 }
 
 class _add_Stock_pageState extends State<add_Stock_page> {
-
-  void initState(){
+  void initState() {
     super.initState();
-    DatabaseHelper.instance.queryAllRows().then((value){
+    DatabaseHelper.instance.queryAllRows().then((value) {
       setState(() {
         value.forEach((element) {
-          stockList.add(Stock(name: element['name'], amount: element['amount'], unit: element['unit'], image: element['image']));
+          stockList.add(Stock(
+              name: element['name'],
+              amount: element['amount'],
+              unit: element['unit']));
         });
       });
     }).catchError((error) {
@@ -36,32 +34,31 @@ class _add_Stock_pageState extends State<add_Stock_page> {
     });
   }
 
-
-  void _addToDB(dynamic image) async{
+  void _addToDB() async {
     String name = productNameController.text;
     String amount = productAmountController.text;
     String unit = _selectedValue.toString();
-    var imageUse = Base64Decoder().convert(image.toString());
-    setState((){
-      stockList.insert(0,Stock(name: name, amount: amount, unit: unit, image: image) );
+    setState(() {
+      stockList.insert(0, Stock(name: name, amount: amount, unit: unit));
     });
-    await DatabaseHelper.instance.insert(Stock(name: name, amount: amount, unit: unit, image: image));
+    await DatabaseHelper.instance
+        .insert(Stock(name: name, amount: amount, unit: unit));
   }
 
   List<Stock> stockList = [];
-  final ImagePicker _picker = ImagePicker();
+  late final ImagePicker _picker = ImagePicker();
   dynamic _imageFile;
+  late XFile pkImage;
   final _unitValue = ['EA', 'kg', 'g', 'L', 'ml', 'cm', 'm', 'oz'];
   var _selectedValue = 'EA';
   final productNameController = TextEditingController();
   final productAmountController = TextEditingController();
-  dynamic imageString;
 
   @override
   Widget build(BuildContext context) {
-
     void showToast(String message) {
-      Fluttertoast.showToast(msg: message + '을 입력해주세요.',
+      Fluttertoast.showToast(
+          msg: message + '을 입력해주세요.',
           backgroundColor: Colors.black,
           textColor: Colors.white,
           fontSize: 16.0,
@@ -99,8 +96,13 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      '품목명 : ' + name + '\n수량 : ' + amount + ' (' +
-                          _selectedValue + ')\n추가하시겠습니까?',
+                      '품목명 : ' +
+                          name +
+                          '\n수량 : ' +
+                          amount +
+                          ' (' +
+                          _selectedValue +
+                          ')\n추가하시겠습니까?',
                     ),
                   ],
                 ),
@@ -118,10 +120,14 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                     style: TextButton.styleFrom(
                       primary: Colors.black,
                     ),
-                    onPressed: () { _addToDB(_imageFile);
+                    onPressed: () {
+                      _addToDB();
                       Navigator.pop(context);
-                      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-                          builder: (BuildContext context) => mainPage()), (route) => false);
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (BuildContext context) => mainPage()),
+                          (route) => false);
                       // Navigator.pushReplacement(context,
                       //   MaterialPageRoute(builder: (context) => const mainPage()));
                     },
@@ -133,7 +139,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
       }
     }
 
-  bool _textVisibility = true;
+    bool _textVisibility = true;
     bool _imageVisibility = false;
 
     void _textHide() {
@@ -157,50 +163,56 @@ class _add_Stock_pageState extends State<add_Stock_page> {
         elevation: 0.0,
       ),
       body: Container(
-        margin: const EdgeInsets.only(top: 70.0, left: 50.0, right: 50.0),
+        margin: const EdgeInsets.only(top: 10.0, left: 50.0, right: 50.0),
         child: Column(
-          // crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
             Column(children: <Widget>[
               SizedBox(
                 width: double.infinity,
-                height: 300,
-                child: TextButton(
-                  onPressed: () {
-                    _textHide();
-                    showModalBottomSheet(context: context, builder: ((builder) => bottomSheet()));
-                  },
-                  style: TextButton.styleFrom(
+                // height: 300,
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(40, 40, 40, 10),
+                  child: TextButton(
+                    onPressed: () {
+                      _textHide();
+                      showModalBottomSheet(
+                          context: context,
+                          builder: ((builder) => bottomSheet()));
+                    },
+                    style: TextButton.styleFrom(
                       primary: Colors.black,
                       onSurface: Colors.grey,
-                      backgroundColor: Colors.grey,),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Visibility(
-                        visible: _textVisibility,
-                        child:
-                        Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          CircularProgressIndicator(),
-                          // const Icon(Icons.add),
-                          // const Text('이미지 추가'),
-                        ],
-                      ),
-                      ),
-                      Visibility(
-                        visible: true,
-                          child:
-                      Image(image: _imageFile == null
-                          ? const AssetImage('assets/image/add_image_button.jpg') as ImageProvider
-                      : FileImage(File(_imageFile.path)),
-                      )
-                      )
-                    ],
+                      backgroundColor: Colors.grey,
+                    ),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Visibility(
+                          visible: _textVisibility,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              CircularProgressIndicator(),
+                              // const Icon(Icons.add),
+                              // const Text('이미지 추가'),
+                            ],
+                          ),
+                        ),
+                        Visibility(
+                            visible: true,
+                            child: Image(
+                              image: _imageFile == null
+                                  ? const AssetImage(
+                                          'assets/image/add_image_button.jpg')
+                                      as ImageProvider
+                                  : FileImage(File(_imageFile.path)),
+                            ))
+                      ],
+                    ),
                   ),
                 ),
                 // TextButton.icon(
@@ -215,59 +227,74 @@ class _add_Stock_pageState extends State<add_Stock_page> {
               ),
               TextField(
                 decoration: const InputDecoration(
-                    enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                    focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                    labelText: '품목명',
-                    labelStyle: TextStyle(color: Colors.black)
-                ),
+                    enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black)),
+                    focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black)),
+                    hintText: '품목명을 입력해주세요.',
+                    // hintStyle: Theme.of(context).textTheme.bodyText2,
+                    contentPadding: EdgeInsets.symmetric(horizontal: 6)),
                 controller: productNameController,
               ),
-            ]),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                Container(
-                  margin: const EdgeInsets.only(right: 20),
-                  width: 60,
-                  height: 50,
-                  child: TextField(
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'(^\d*\.?\d*)'))], //double 타입 전용 조건
-                    decoration: const InputDecoration(
-                      enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                      focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                      labelText: '수량',
-                      labelStyle: TextStyle(color: Colors.black)
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  Container(
+                    margin: const EdgeInsets.only(top: 20, right: 20),
+                    width: 70,
+                    height: 50,
+                    child: TextField(
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                            RegExp(r'(^\d*\.?\d*)'))
+                      ], //double 타입 전용 조건
+                      decoration: const InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.black)),
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.black)),
+                          hintText: '수량',
+                          labelStyle: TextStyle(color: Colors.black)),
+                      controller: productAmountController,
                     ),
-                    controller: productAmountController,
                   ),
-                ),
-                DropdownButton(
-                    value: _selectedValue,
-                    items: _unitValue.map((value) {
-                      return DropdownMenuItem(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedValue = value.toString();
-                      });
-                    })
-              ],
-            ),
+                  DropdownButton(
+                      value: _selectedValue,
+                      items: _unitValue.map((value) {
+                        return DropdownMenuItem(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedValue = value.toString();
+                        });
+                      })
+                ],
+              ),
+            ]),
+
             // Text(stockList.toString()),
             SizedBox(
-              width: double.infinity,
+                // width: double.infinity,
                 child: TextButton(
-                    onPressed: () => addProductDialog()
-                    ,
+                    onPressed: productAmountController.text.isEmpty && productNameController.text.isEmpty ? null : ()
+                    => addProductDialog(),
                     style: TextButton.styleFrom(
-                        primary: Colors.black,
-                        onSurface: Colors.grey,
-                        backgroundColor: Colors.grey),
+                      //     primary: Colors.black,
+                      //     onSurface: Colors.grey,
+                      fixedSize: Size(100, 50),),
+                    //     backgroundColor: Colors.black),
+                    // onPressed: () => addProductDialog(),
+                    // style: TextButton.styleFrom(
+                    //   primary: Colors.black,
+                    //   onSurface: Colors.grey,
+                    //   backgroundColor: Colors.grey,
+                    //   fixedSize: Size(100, 40),
+                    // ),
                     child: const Text('추가하기')))
           ],
         ),
@@ -275,16 +302,11 @@ class _add_Stock_pageState extends State<add_Stock_page> {
     );
   }
 
-
-
   Widget bottomSheet() {
     return Container(
       height: 120,
       width: MediaQuery.of(context).size.width,
-      margin: EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 20
-      ),
+      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: Column(
         children: <Widget>[
           Text('사진 선택'),
@@ -294,18 +316,28 @@ class _add_Stock_pageState extends State<add_Stock_page> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              TextButton.icon(onPressed: () {
-                takePhoto(ImageSource.camera);
-                Navigator.pop(context);
-              },
-                icon: Icon(Icons.camera, size: 50,),
-                label: Text('Camera'),),
-              TextButton.icon(onPressed: () {
-                takePhoto(ImageSource.gallery);
-                Navigator.pop(context);
-              },
-                icon: Icon(Icons.photo_library, size: 50,),
-                label: Text('Gallery'),),
+              TextButton.icon(
+                onPressed: () {
+                  takePhoto(ImageSource.camera);
+                  Navigator.pop(context);
+                },
+                icon: Icon(
+                  Icons.camera,
+                  size: 50,
+                ),
+                label: Text('Camera'),
+              ),
+              TextButton.icon(
+                onPressed: () {
+                  takePhoto(ImageSource.gallery);
+                  Navigator.pop(context);
+                },
+                icon: Icon(
+                  Icons.photo_library,
+                  size: 50,
+                ),
+                label: Text('Gallery'),
+              ),
             ],
           )
         ],
@@ -319,5 +351,4 @@ class _add_Stock_pageState extends State<add_Stock_page> {
       _imageFile = pickedFile;
     });
   }
-
 }
