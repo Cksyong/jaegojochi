@@ -2,14 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jaegojochi/db/Utility.dart';
-
 import 'db/DatabaseHelper.dart';
 import 'db/Stock.dart';
 import 'main.dart';
@@ -55,7 +53,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
   var _selectedValue = 'EA';
   final productNameController = TextEditingController();
   final productAmountController = TextEditingController();
-  dynamic imageString;
+  Uint8List? imageString;
 
   @override
   Widget build(BuildContext context) {
