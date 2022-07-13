@@ -1,24 +1,27 @@
-import 'dart:typed_data';
-
 class Stock {
-  String name;
-  String amount;
-  String unit;
-  Uint8List image;
+  String? name;
+  String? amount;
+  String? unit;
+  String? image;
 
-  Stock({
-    required this.name,
-    required this.amount,
-    required this.unit,
-    required this.image
-  });
+  Stock({this.name, this.amount, this.unit, this.image});
 
   Map<String, dynamic> toMap() {
-    return {
+    var map = <String, dynamic> {
       'name': name,
       'amount': amount,
       'unit': unit,
       'image' : image
     };
+    return map;
   }
+
+  Stock.fromMap(Map<String, dynamic> map){
+    name = map['name'];
+    amount = map['amount'];
+    unit = map['unit'];
+    image = map['image'];
+  }
+
+
 }

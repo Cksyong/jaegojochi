@@ -54,7 +54,7 @@ class _stock_Detail_InfoState extends State<stock_Detail_Info> {
             color: Colors.yellow,
             margin: const EdgeInsets.fromLTRB(0, 10, 0, 0),
             child: Text(
-              selectStock[0].name,
+              selectStock[0].name.toString(),
               style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
             ),
           ),
@@ -66,7 +66,7 @@ class _stock_Detail_InfoState extends State<stock_Detail_Info> {
               Container(
                 color: Colors.blue,
                 alignment: Alignment.centerRight,
-                child: Text(selectStock[0].amount,
+                child: Text(selectStock[0].amount.toString(),
                     style:
                     TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
               ),
@@ -74,7 +74,7 @@ class _stock_Detail_InfoState extends State<stock_Detail_Info> {
                 margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
                 color: Colors.red,
                 alignment: Alignment.centerRight,
-                child: Text(selectStock[0].unit,
+                child: Text(selectStock[0].unit.toString(),
                     style:
                     TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
               )
