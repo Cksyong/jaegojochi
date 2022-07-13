@@ -5,6 +5,7 @@ import 'package:jaegojochi/stock_Detail_Info.dart';
 import 'add_Stock_page.dart';
 import 'db/Stock.dart';
 import 'db/DatabaseHelper.dart';
+import 'package:cross_file_image/cross_file_image.dart';
 
 void main() {
   runApp(const MyApp());
@@ -58,6 +59,12 @@ class _mainPageState extends State<mainPage> {
   late Image image;
   late List<Stock> stocks = [];
 
+  void initState() {
+    super.initState();
+    stocks = [];
+    refreshlist();
+  }
+
   refreshlist() {
     DatabaseHelper.instance.getStocks().then((imgs) {
       setState(() {
@@ -73,36 +80,54 @@ class _mainPageState extends State<mainPage> {
       appBar: AppBar(
         title: const Text('재고최고'),
       ),
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        alignment: Alignment.topLeft,
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [Container(
-            child: stocks.isEmpty
-                ? Container(
-              width: double.infinity,
-              height: double.infinity,
-            )
-                : ListView.builder(
+      body:
+
+      // Container(
+      //   width: double.infinity,
+      //   //height: double.infinity,
+      //   alignment: Alignment.topLeft,
+      //   child:
+      //   Column(
+      //     mainAxisSize: MainAxisSize.max,
+      //     children: [Container(
+      //       child:
+            // stocks.isEmpty
+            //     ? Container(
+            //   // width: double.infinity,
+            //   //height: double.infinity,
+            // )
+            //     :
+            ListView.builder(
                     itemCount: stocks.length,
                     itemBuilder: (ctx, index) {
                       return Container(
-                        width: double.infinity,
-                        height: double.infinity,
+                        // width: double.infinity,
+                        // height: double.infinity,
                         padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
                         color: Colors.white,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            GridView.count(crossAxisCount: 1,
-                            mainAxisSpacing: 3,
-                            crossAxisSpacing: 3,
-                            childAspectRatio: 1.0,
-                            children: stocks.map((asd){
-                              return Utility.imageFromBase64String(stocks[index].name.toString());
-                            }).toList(),),
+                            // GridView.count(crossAxisCount: 1,
+                            // mainAxisSpacing: 3,
+                            // crossAxisSpacing: 3,
+                            // childAspectRatio: 1.0,
+                            // children: stocks.map((asd){
+                            //   return Utility.imageFromBase64String(stocks[index].name.toString());
+                            // }).toList(),),
+
+                            //Image(image: FileImage(File(stocks[index].image!))),
+
+                            Container(
+                              width: 30,
+                                height: 30,
+                                // decoration: BoxDecoration(
+                                //     image: DecorationImage(
+                                //         image: FileImage(File('/data/user/0/com.jhkorea.jaegojochi/cache/image_picker3638832145286108478.jpg'))
+                                //     )
+                                // )
+                              child: Image(image: FileImage(File(stocks[index].image!))),
+                            ),
                             Text(stocks[index].name.toString()),
                             Text(stocks[index].amount.toString() +
                                 stocks[index].unit.toString()),
@@ -123,9 +148,10 @@ class _mainPageState extends State<mainPage> {
                         ),
                       );
                     }),
-          ),
-        ]),
-      ),
+      //     ),
+      //  ]),
+      //
+      // ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context,

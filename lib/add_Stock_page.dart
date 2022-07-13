@@ -49,28 +49,36 @@ class _add_Stock_pageState extends State<add_Stock_page> {
   //   });
   // }
 
-  void addToDB() {
+  void addToDB(dynamic image) {
     String name = productNameController.text;
     String amount = productAmountController.text;
     String unit = _selectedValue.toString();
+    log('addToDB');
+    File? file = File(image!.path);
+
+    var fileEdit = file.toString();
+    var fileEdit2 = fileEdit.substring(0, fileEdit.length -1);
+    var fileEdit3 = fileEdit2.replaceAll('File: \'', '');
+    log(fileEdit3);
     setState(() {
+
       stockList.insert(
-          0, Stock(name: name, amount: amount, unit: unit, image: asdf));
+          0, Stock(name: name, amount: amount, unit: unit, image: fileEdit3));
     });
-    ImagePicker().pickImage(source: ImageSource.gallery).then((imgFile) {
-      final file = File(imgFile!.path);
-      String imgString = Utility.base64String(file.readAsBytesSync());
-      log('이건 $imgString');
-      log('이것도 $asdf');
-      DatabaseHelper.instance.insert(Stock(
-          name: productNameController.text,
-          amount: productAmountController.text,
-          image: imgString,
-          unit: _selectedValue.toString()));
-    });
+    // ImagePicker().pickImage(source: ImageSource.gallery).then((imgFile) {
+    //   final file = File(imgFile!.path);
+    //   String imgString = Utility.base64String(file.readAsBytesSync());
+    //   log('이건 $imgString');
+    //   //log('이것도 $asdf');
+    //   DatabaseHelper.instance.insert(Stock(
+    //       name: productNameController.text,
+    //       amount: productAmountController.text,
+    //       image: imgString,
+    //       unit: _selectedValue.toString()));
+    // });
 
     DatabaseHelper.instance
-        .insert(Stock(name: name, amount: amount, unit: unit, image: ""));
+        .insert(Stock(name: name, amount: amount, unit: unit, image: fileEdit3));
   }
 
   void giveanywhere() {
@@ -157,7 +165,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                       primary: Colors.black,
                     ),
                     onPressed: () {
-                      addToDB();
+                      addToDB(_imageFile);
                       Navigator.pop(context);
                       Navigator.pushAndRemoveUntil(
                           context,

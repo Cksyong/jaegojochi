@@ -29,7 +29,7 @@ class DatabaseHelper {
   }
 
   _onCreate(Database db, int version) async{
-    await db.execute("create table stock($columnname TEXT PRIMARY KEY,$columnamount TEXT, $columnunit TEXT, $columnimage TEXT)");
+    await db.execute("create table stock($columnname TEXT PRIMARY KEY,$columnamount TEXT, $columnunit TEXT, $columnimage BLOB)");
   }
 
   Future<int> insert(Stock stock) async {
