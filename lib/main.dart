@@ -1,8 +1,7 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:jaegojochi/db/Utility.dart';
 import 'package:jaegojochi/stock_Detail_Info.dart';
-import 'package:sqflite/sqflite.dart';
 import 'add_Stock_page.dart';
 import 'db/Stock.dart';
 import 'db/DatabaseHelper.dart';
@@ -50,40 +49,23 @@ class MyApp extends StatelessWidget {
 class mainPage extends StatefulWidget {
   const mainPage({Key? key}) : super(key: key);
 
-
   @override
   State<mainPage> createState() => _mainPageState();
 }
 
 class _mainPageState extends State<mainPage> {
-  TextEditingController textController = new TextEditingController();
+  late Future<File> imageFile;
+  late Image image;
+  late List<Stock> stocks = [];
 
-  //여기부터 디비용
-  void initState() {
-    super.initState();
-    DatabaseHelper.instance.queryAllRows().then((value) {
+  refreshlist() {
+    DatabaseHelper.instance.getStocks().then((imgs) {
       setState(() {
-        value.forEach((element) {
-          stockList.add(Stock(
-              name: element['name'],
-              amount: element['amount'],
-              unit: element['unit'],
-          image: element['image']));
-        });
+        stocks.clear();
+        stocks.addAll(imgs);
       });
-    }).catchError((error) {
-      print(error);
     });
   }
-
-  void _deleteTask(String name) async {
-    await DatabaseHelper.instance.delete(name);
-    setState(() {
-      stockList.removeWhere((element) => element.name == name);
-    });
-  }
-
-  List<Stock> stockList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -92,43 +74,57 @@ class _mainPageState extends State<mainPage> {
         title: const Text('재고최고'),
       ),
       body: Container(
+        width: double.infinity,
+        height: double.infinity,
         alignment: Alignment.topLeft,
         child: Column(
-          children: <Widget>[
-            Expanded(
-                child: Container(
-                  child: stockList.isEmpty
-                      ? Container()
-                      : ListView.builder(
-                      itemCount: stockList.length,
-                      itemBuilder: (ctx, index) {
-                        return Container(
-                          padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-                          color: Colors.white,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Image.memory(stockList[index].image,
-                                width: 80,
-                                height: 80,
-                                alignment: Alignment.centerLeft,
-                              ),
-                              Text(stockList[index].name),
-                              Text(stockList[index].amount.toString() +
-                                  stockList[index].unit),
-                              IconButton(
-                                  onPressed: () {
-                                    Navigator.push(context,
-                                        MaterialPageRoute(builder: (context) => stock_Detail_Info(name: stockList[index].name,)));
-                                  },
-                                  icon: Icon(Icons.menu))
-                            ],
-                          ),
-                        );
-                      }),
-                ))
-          ],
-        ),
+          mainAxisSize: MainAxisSize.max,
+          children: [Container(
+            child: stocks.isEmpty
+                ? Container(
+              width: double.infinity,
+              height: double.infinity,
+            )
+                : ListView.builder(
+                    itemCount: stocks.length,
+                    itemBuilder: (ctx, index) {
+                      return Container(
+                        width: double.infinity,
+                        height: double.infinity,
+                        padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                        color: Colors.white,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            GridView.count(crossAxisCount: 1,
+                            mainAxisSpacing: 3,
+                            crossAxisSpacing: 3,
+                            childAspectRatio: 1.0,
+                            children: stocks.map((asd){
+                              return Utility.imageFromBase64String(stocks[index].name.toString());
+                            }).toList(),),
+                            Text(stocks[index].name.toString()),
+                            Text(stocks[index].amount.toString() +
+                                stocks[index].unit.toString()),
+                            IconButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              stock_Detail_Info(
+                                                name: stocks[index]
+                                                    .name
+                                                    .toString(),
+                                              )));
+                                },
+                                icon: Icon(Icons.menu))
+                          ],
+                        ),
+                      );
+                    }),
+          ),
+        ]),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
