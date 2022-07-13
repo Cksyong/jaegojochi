@@ -1,23 +1,32 @@
-class Stock{
-  String name;
-  String amount;
-  String unit;
+import 'dart:io';
 
-  Stock({
-    required this.name,
-    required this.amount,
-    required this.unit,
-  });
+import 'package:flutter/foundation.dart';
+import 'package:image_picker/image_picker.dart';
 
+class Stock {
+  String? name;
+  String? amount;
+  String? unit;
+  String? image;
 
-  Map<String, dynamic> toMap(){
-    return{
+  Stock({this.name, this.amount, this.unit, this.image});
+
+  Map<String, dynamic> toMap() {
+    var map = <String, dynamic> {
       'name': name,
-      'amount' : amount,
-      'unit' : unit,
+      'amount': amount,
+      'unit': unit,
+      'image' : image
     };
+    return map;
   }
+
+  Stock.fromMap(Map<String, dynamic> map){
+    name = map['name'];
+    amount = map['amount'];
+    unit = map['unit'];
+    image = map['image'];
+  }
+
+
 }
-
-
-

@@ -1,11 +1,11 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:jaegojochi/manage_Stock_page.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:jaegojochi/db/Utility.dart';
+import 'package:jaegojochi/stock_Detail_Info.dart';
 import 'add_Stock_page.dart';
 import 'db/Stock.dart';
 import 'db/DatabaseHelper.dart';
+import 'package:cross_file_image/cross_file_image.dart';
 
 void main() {
   runApp(const MyApp());
@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: createMaterialColor(Color(0xff000000)),
+        primarySwatch: createMaterialColor(Color(0xfff5f5dc)),
       ),
       home: const mainPage(),
     );
@@ -56,21 +56,22 @@ class mainPage extends StatefulWidget {
 }
 
 class _mainPageState extends State<mainPage> {
-  TextEditingController textController = new TextEditingController();
-  // XFile? pickedImage;
-
+  late Future<File> imageFile;
+  late Image image;
+  late List<Stock> stocks = [];
 
   //여기부터 디비용
   void initState() {
     super.initState();
-    DatabaseHelper.instance.queryAllRows().then((value) {
+    stocks = [];
+    refreshlist();
+  }
+
+  refreshlist() {
+    DatabaseHelper.instance.getStocks().then((imgs) {
       setState(() {
-        value.forEach((element) {
-          stockList.add(Stock(
-              name: element['name'],
-              amount: element['amount'],
-              unit: element['unit']));
-        });
+        stocks.clear();
+        stocks.addAll(imgs);
       });
     }).catchError((error) {
       print(error);
@@ -94,45 +95,78 @@ class _mainPageState extends State<mainPage> {
           style: TextStyle(fontWeight: FontWeight.w600),
         ),
       ),
-      body: Container(
-        alignment: Alignment.topLeft,
-        child: Column(
-          children: <Widget>[
-            Expanded(
-                child: Container(
-              child: stockList.isEmpty
-                  ? Container()
-                  : ListView.builder(
-                      itemCount: stockList.length,
-                      itemBuilder: (ctx, index) {
-                        return Container(
-                          padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-                          color: Colors.white,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Image.asset(
-                                'assets/image/takoyaki.jpg',
-                                width: 80,
-                                height: 80,
-                                alignment: Alignment.centerLeft,
-                              ),
-                              Text(stockList[index].name),
-                              Text(stockList[index].amount.toString() +
-                                  stockList[index].unit),
-                              IconButton(
-                                  onPressed: () =>
-                                      Navigator.push(context,
-                                          MaterialPageRoute(builder: (context) => const manage_Stock_page())),
-                                  icon: Icon(Icons.add))
-                            ],
-                          ),
-                        );
-                      }),
-            ))
-          ],
-        ),
-      ),
+      body:
+
+      // Container(
+      //   width: double.infinity,
+      //   //height: double.infinity,
+      //   alignment: Alignment.topLeft,
+      //   child:
+      //   Column(
+      //     mainAxisSize: MainAxisSize.max,
+      //     children: [Container(
+      //       child:
+            // stocks.isEmpty
+            //     ? Container(
+            //   // width: double.infinity,
+            //   //height: double.infinity,
+            // )
+            //     :
+            ListView.builder(
+                    itemCount: stocks.length,
+                    itemBuilder: (ctx, index) {
+                      return Container(
+                        // width: double.infinity,
+                        // height: double.infinity,
+                        padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                        color: Colors.white,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            // GridView.count(crossAxisCount: 1,
+                            // mainAxisSpacing: 3,
+                            // crossAxisSpacing: 3,
+                            // childAspectRatio: 1.0,
+                            // children: stocks.map((asd){
+                            //   return Utility.imageFromBase64String(stocks[index].name.toString());
+                            // }).toList(),),
+
+                            //Image(image: FileImage(File(stocks[index].image!))),
+
+                            Container(
+                              width: 30,
+                                height: 30,
+                                // decoration: BoxDecoration(
+                                //     image: DecorationImage(
+                                //         image: FileImage(File('/data/user/0/com.jhkorea.jaegojochi/cache/image_picker3638832145286108478.jpg'))
+                                //     )
+                                // )
+                              child: Image(image: FileImage(File(stocks[index].image!))),
+                            ),
+                            Text(stocks[index].name.toString()),
+                            Text(stocks[index].amount.toString() +
+                                stocks[index].unit.toString()),
+                            IconButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              stock_Detail_Info(
+                                                name: stocks[index]
+                                                    .name
+                                                    .toString(),
+                                              )));
+                                },
+                                icon: Icon(Icons.menu))
+                          ],
+                        ),
+                      );
+                    }),
+      //     ),
+      //  ]),
+      //
+      // ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context,

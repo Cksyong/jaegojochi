@@ -1,10 +1,15 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:jaegojochi/db/Utility.dart';
+import 'dart:developer';
 
 import 'db/DatabaseHelper.dart';
 import 'db/Stock.dart';
@@ -18,44 +23,89 @@ class add_Stock_page extends StatefulWidget {
 }
 
 class _add_Stock_pageState extends State<add_Stock_page> {
+  late Future<File> imageFile;
+  late Image image;
+  late DatabaseHelper dbHelper;
+  late List<Stock> stocks;
+
+  //여기부터 디비용
   void initState() {
     super.initState();
-    DatabaseHelper.instance.queryAllRows().then((value) {
+    stocks = [];
+    refreshlist();
+  }
+
+  refreshlist() {
+    DatabaseHelper.instance.getStocks().then((imgs) {
       setState(() {
-        value.forEach((element) {
-          stockList.add(Stock(
-              name: element['name'],
-              amount: element['amount'],
-              unit: element['unit']));
-        });
+        stocks.clear();
+        stocks.addAll(imgs);
       });
     }).catchError((error) {
       print(error);
     });
   }
 
-  void _addToDB() async {
+  // pickImagefromGallery(){
+  //   ImagePicker().pickImage(source: ImageSource.gallery).then((imgFile) {
+  //     final file = File(imgFile!.path);
+  //     String imgString = Utility.base64String(file.readAsBytesSync());
+  //     Stock stock = Stock(name: productNameController.text, amount: productAmountController.text, image: imgString, unit: _selectedValue.toString());
+  //   });
+  // }
+
+  void addToDB(dynamic image) {
     String name = productNameController.text;
     String amount = productAmountController.text;
     String unit = _selectedValue.toString();
+    log('addToDB');
+    File? file = File(image!.path);
+
+    var fileEdit = file.toString();
+    var fileEdit2 = fileEdit.substring(0, fileEdit.length -1);
+    var fileEdit3 = fileEdit2.replaceAll('File: \'', '');
+    log(fileEdit3);
     setState(() {
-      stockList.insert(0, Stock(name: name, amount: amount, unit: unit));
+
+      stockList.insert(
+          0, Stock(name: name, amount: amount, unit: unit, image: fileEdit3));
     });
-    await DatabaseHelper.instance
-        .insert(Stock(name: name, amount: amount, unit: unit));
+    // ImagePicker().pickImage(source: ImageSource.gallery).then((imgFile) {
+    //   final file = File(imgFile!.path);
+    //   String imgString = Utility.base64String(file.readAsBytesSync());
+    //   log('이건 $imgString');
+    //   //log('이것도 $asdf');
+    //   DatabaseHelper.instance.insert(Stock(
+    //       name: productNameController.text,
+    //       amount: productAmountController.text,
+    //       image: imgString,
+    //       unit: _selectedValue.toString()));
+    // });
+
+    DatabaseHelper.instance
+        .insert(Stock(name: name, amount: amount, unit: unit, image: fileEdit3));
+  }
+
+  void giveanywhere() {
+    ImagePicker().pickImage(source: ImageSource.gallery).then((imgFile) {
+      final file = File(imgFile!.path);
+      String imgString = Utility.base64String(file.readAsBytesSync());
+      return imgString;
+    });
   }
 
   List<Stock> stockList = [];
-  late final ImagePicker _picker = ImagePicker();
+  final ImagePicker _picker = ImagePicker();
   dynamic _imageFile;
-  late XFile pkImage;
   final _unitValue = ['EA', 'kg', 'g', 'L', 'ml', 'cm', 'm', 'oz'];
   var _selectedValue = 'EA';
   final productNameController = TextEditingController();
   final productAmountController = TextEditingController();
+  dynamic imageString;
 
   @override
   Widget build(BuildContext context) {
+
     void showToast(String message) {
       Fluttertoast.showToast(
           msg: message + '을 입력해주세요.',
@@ -78,8 +128,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
       } else {
         showDialog(
             context: context,
-            //barrierDismissible - Dialog 제외한 다른 화면 터치 x
-            barrierDismissible: false,
+            barrierDismissible: false, //Dialog 제외한 다른 화면 터치 x
             builder: (BuildContext context) {
               return AlertDialog(
                 // RoundedRectangleBorder - Dialog 화면 모서리 둥글게 조절
@@ -122,7 +171,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                       primary: Colors.black,
                     ),
                     onPressed: () {
-                      _addToDB();
+                      addToDB(_imageFile);
                       Navigator.pop(context);
                       Navigator.pushAndRemoveUntil(
                           context,
@@ -164,56 +213,53 @@ class _add_Stock_pageState extends State<add_Stock_page> {
         elevation: 0.0,
       ),
       body: Container(
-        margin: const EdgeInsets.only(top: 10.0, left: 50.0, right: 50.0),
+        margin: const EdgeInsets.only(top: 70.0, left: 50.0, right: 50.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          // crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
             Column(children: <Widget>[
               SizedBox(
                 width: double.infinity,
-                // height: 300,
-                child: Container(
-                  padding: const EdgeInsets.fromLTRB(40, 40, 40, 10),
-                  child: TextButton(
-                    onPressed: () {
-                      _textHide();
-                      showModalBottomSheet(
-                          context: context,
-                          builder: ((builder) => bottomSheet()));
-                    },
-                    style: TextButton.styleFrom(
-                      primary: Colors.black,
-                      onSurface: Colors.grey,
-                      backgroundColor: Colors.grey,
-                    ),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Visibility(
-                          visible: _textVisibility,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              CircularProgressIndicator(),
-                              // const Icon(Icons.add),
-                              // const Text('이미지 추가'),
-                            ],
-                          ),
+                height: 300,
+                child: TextButton(
+                  onPressed: () {
+                    _textHide();
+                    showModalBottomSheet(
+                        context: context,
+                        builder: ((builder) => bottomSheet()));
+                  },
+                  style: TextButton.styleFrom(
+                    primary: Colors.black,
+                    onSurface: Colors.grey,
+                    backgroundColor: Colors.grey,
+                  ),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Visibility(
+                        visible: _textVisibility,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            CircularProgressIndicator(),
+                            // const Icon(Icons.add),
+                            // const Text('이미지 추가'),
+                          ],
                         ),
-                        Visibility(
-                            visible: true,
-                            child: Image(
-                              image: _imageFile == null
-                                  ? const AssetImage(
-                                          'assets/image/add_image_button.jpg')
-                                      as ImageProvider
-                                  : FileImage(File(_imageFile.path)),
-                            ))
-                      ],
-                    ),
+                      ),
+                      Visibility(
+                          visible: true,
+                          child: Image(
+                            image: _imageFile == null
+                                ? const AssetImage(
+                                        'assets/image/add_image_button.jpg')
+                                    as ImageProvider
+                                : FileImage(File(_imageFile.path)),
+                          ))
+                    ],
                   ),
                 ),
                 // TextButton.icon(
@@ -232,79 +278,70 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                         borderSide: BorderSide(color: Colors.black)),
                     focusedBorder: UnderlineInputBorder(
                         borderSide: BorderSide(color: Colors.black)),
-                    hintText: '품목명을 입력해주세요.',
-                    // hintStyle: Theme.of(context).textTheme.bodyText2,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 6)),
+                    labelText: '품목명',
+                    labelStyle: TextStyle(color: Colors.black)),
                 controller: productNameController,
               ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  Container(
-                    margin: const EdgeInsets.only(top: 20, right: 20),
-                    width: 70,
-                    height: 50,
-                    child: TextField(
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(
-                            RegExp(r'(^\d*\.?\d*)'))
-                      ], //double 타입 전용 조건
-                      decoration: const InputDecoration(
-                          enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.black)),
-                          focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.black)),
-                          hintText: '수량',
-                          labelStyle: TextStyle(color: Colors.black)),
-                      controller: productAmountController,
-                    ),
-                  ),
-                  DropdownButton(
-                      value: _selectedValue,
-                      items: _unitValue.map((value) {
-                        return DropdownMenuItem(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedValue = value.toString();
-                        });
-                      })
-                ],
-              ),
             ]),
-
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                Container(
+                  margin: const EdgeInsets.only(right: 20),
+                  width: 60,
+                  height: 50,
+                  child: TextField(
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'(^\d*\.?\d*)'))
+                    ], //double 타입 전용 조건
+                    decoration: const InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black)),
+                        focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black)),
+                        labelText: '수량',
+                        labelStyle: TextStyle(color: Colors.black)),
+                    controller: productAmountController,
+                  ),
+                ),
+                DropdownButton(
+                    value: _selectedValue,
+                    items: _unitValue.map((value) {
+                      return DropdownMenuItem(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedValue = value.toString();
+                      });
+                    })
+              ],
+            ),
             // Text(stockList.toString()),
             SizedBox(
-                // width: double.infinity,
+                width: double.infinity,
                 child: TextButton(
+                    onPressed: () => addProductDialog(),
                     onPressed: productAmountController.text.isEmpty &&
                             productNameController.text.isEmpty
                         ? null
                         : () => addProductDialog(),
                     style: TextButton.styleFrom(
-                      //     primary: Colors.black,
-                      //     onSurface: Colors.grey,
-                      fixedSize: Size(100, 50),
-                    ),
-                    //     backgroundColor: Colors.black),
-                    // onPressed: () => addProductDialog(),
-                    // style: TextButton.styleFrom(
-                    //   primary: Colors.black,
-                    //   onSurface: Colors.grey,
-                    //   backgroundColor: Colors.grey,
-                    //   fixedSize: Size(100, 40),
-                    // ),
+                        primary: Colors.black,
+                        onSurface: Colors.grey,
+                        backgroundColor: Colors.grey),
                     child: const Text('추가하기')))
           ],
         ),
       ),
     );
   }
+
+
 
   Widget bottomSheet() {
     return Container(
@@ -355,4 +392,12 @@ class _add_Stock_pageState extends State<add_Stock_page> {
       _imageFile = pickedFile;
     });
   }
+
+// pickImageFromGallery() {
+//   ImagePicker.pickImage(source: ImageSource.gallery).then((imgFile) {
+//     String imgString = Utility.base64String(imgFile.readAsBytesSync());
+//
+//     refreshImages();
+//   });
+// }
 }
