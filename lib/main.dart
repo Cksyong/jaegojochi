@@ -50,7 +50,6 @@ class MyApp extends StatelessWidget {
 class mainPage extends StatefulWidget {
   const mainPage({Key? key}) : super(key: key);
 
-
   @override
   State<mainPage> createState() => _mainPageState();
 }
@@ -60,7 +59,6 @@ class _mainPageState extends State<mainPage> {
   late Image image;
   late List<Stock> stocks = [];
 
-  //여기부터 디비용
   void initState() {
     super.initState();
     stocks = [];
@@ -73,27 +71,14 @@ class _mainPageState extends State<mainPage> {
         stocks.clear();
         stocks.addAll(imgs);
       });
-    }).catchError((error) {
-      print(error);
     });
   }
-
-  void _deleteTask(String name) async {
-    await DatabaseHelper.instance.delete(name);
-    setState(() {
-      stockList.removeWhere((element) => element.name == name);
-    });
-  }
-
-  List<Stock> stockList = [];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('재고최고',
-          style: TextStyle(fontWeight: FontWeight.w600),
-        ),
+        title: const Text('재고최고'),
       ),
       body:
 
@@ -106,63 +91,63 @@ class _mainPageState extends State<mainPage> {
       //     mainAxisSize: MainAxisSize.max,
       //     children: [Container(
       //       child:
-            // stocks.isEmpty
-            //     ? Container(
-            //   // width: double.infinity,
-            //   //height: double.infinity,
-            // )
-            //     :
-            ListView.builder(
-                    itemCount: stocks.length,
-                    itemBuilder: (ctx, index) {
-                      return Container(
-                        // width: double.infinity,
-                        // height: double.infinity,
-                        padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-                        color: Colors.white,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            // GridView.count(crossAxisCount: 1,
-                            // mainAxisSpacing: 3,
-                            // crossAxisSpacing: 3,
-                            // childAspectRatio: 1.0,
-                            // children: stocks.map((asd){
-                            //   return Utility.imageFromBase64String(stocks[index].name.toString());
-                            // }).toList(),),
+      // stocks.isEmpty
+      //     ? Container(
+      //   // width: double.infinity,
+      //   //height: double.infinity,
+      // )
+      //     :
+      ListView.builder(
+          itemCount: stocks.length,
+          itemBuilder: (ctx, index) {
+            return Container(
+              // width: double.infinity,
+              // height: double.infinity,
+              padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+              color: Colors.white,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // GridView.count(crossAxisCount: 1,
+                  // mainAxisSpacing: 3,
+                  // crossAxisSpacing: 3,
+                  // childAspectRatio: 1.0,
+                  // children: stocks.map((asd){
+                  //   return Utility.imageFromBase64String(stocks[index].name.toString());
+                  // }).toList(),),
 
-                            //Image(image: FileImage(File(stocks[index].image!))),
+                  //Image(image: FileImage(File(stocks[index].image!))),
 
-                            Container(
-                              width: 30,
-                                height: 30,
-                                // decoration: BoxDecoration(
-                                //     image: DecorationImage(
-                                //         image: FileImage(File('/data/user/0/com.jhkorea.jaegojochi/cache/image_picker3638832145286108478.jpg'))
-                                //     )
-                                // )
-                              child: Image(image: FileImage(File(stocks[index].image!))),
-                            ),
-                            Text(stocks[index].name.toString()),
-                            Text(stocks[index].amount.toString() +
-                                stocks[index].unit.toString()),
-                            IconButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              stock_Detail_Info(
-                                                name: stocks[index]
-                                                    .name
-                                                    .toString(),
-                                              )));
-                                },
-                                icon: Icon(Icons.menu))
-                          ],
-                        ),
-                      );
-                    }),
+                  Container(
+                    width: 30,
+                    height: 30,
+                    // decoration: BoxDecoration(
+                    //     image: DecorationImage(
+                    //         image: FileImage(File('/data/user/0/com.jhkorea.jaegojochi/cache/image_picker3638832145286108478.jpg'))
+                    //     )
+                    // )
+                    child: Image(image: FileImage(File(stocks[index].image!))),
+                  ),
+                  Text(stocks[index].name.toString()),
+                  Text(stocks[index].amount.toString() +
+                      stocks[index].unit.toString()),
+                  IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    stock_Detail_Info(
+                                      name: stocks[index]
+                                          .name
+                                          .toString(),
+                                    )));
+                      },
+                      icon: Icon(Icons.menu))
+                ],
+              ),
+            );
+          }),
       //     ),
       //  ]),
       //

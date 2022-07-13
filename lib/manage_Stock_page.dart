@@ -3,13 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:jaegojochi/main.dart';
 
 class manage_Stock_page extends StatefulWidget {
-  // final String name;
-  // final String unit;
-  // final double amount;
-  const manage_Stock_page({
-    Key? key,
-    // required this.name, required this.unit, required this.amount
-  }) : super(key: key);
+  final String name;
+  final String unit;
+  final double amount;
+  const manage_Stock_page({Key? key, required this.name, required this.unit, required this.amount}) : super(key: key);
+
+
 
   @override
   State<manage_Stock_page> createState() => _manage_Stock_pageState();
@@ -36,7 +35,7 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                   Text("수량을 확인하세요."),
                 ],
               ),
-              //
+
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -200,7 +199,9 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                                     borderSide:
                                         BorderSide(color: Colors.black)),
                                 hintText: '수량',
-                                labelStyle: TextStyle(color: Colors.black)),
+                                hintStyle: TextStyle(fontSize: 17),
+
+                             ),
                             controller: productAmountController,
                           ),
                         ),

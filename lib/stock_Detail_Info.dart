@@ -1,8 +1,17 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:jaegojochi/main.dart';
-import 'package:jaegojochi/manage_Stock_page.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:jaegojochi/db/Utility.dart';
+import 'dart:developer';
+
 import 'db/DatabaseHelper.dart';
 import 'db/Stock.dart';
+import 'main.dart';
+import 'manage_Stock_page.dart';
 
 class stock_Detail_Info extends StatefulWidget {
   final String name;
@@ -87,7 +96,11 @@ class _stock_Detail_InfoState extends State<stock_Detail_Info> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => manage_Stock_page(name: 'widget.stockIn.name', unit: /*widget.stockIn.unit*/'EA', amount: /*widget.stockIn.amount*/35.0,)));
+                  builder: (context) => manage_Stock_page
+                    (name: 'widget.stockIn.name',
+                    unit: /*widget.stockIn.unit*/'EA',
+                amount: /*widget.stockIn.amount*/35.0,)
+              ));
         },
         child: const Icon(Icons.edit_calendar_rounded),
       ),

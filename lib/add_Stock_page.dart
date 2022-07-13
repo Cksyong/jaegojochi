@@ -1,7 +1,4 @@
-import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -41,8 +38,6 @@ class _add_Stock_pageState extends State<add_Stock_page> {
         stocks.clear();
         stocks.addAll(imgs);
       });
-    }).catchError((error) {
-      print(error);
     });
   }
 
@@ -105,7 +100,6 @@ class _add_Stock_pageState extends State<add_Stock_page> {
 
   @override
   Widget build(BuildContext context) {
-
     void showToast(String message) {
       Fluttertoast.showToast(
           msg: message + '을 입력해주세요.',
@@ -177,7 +171,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                           context,
                           MaterialPageRoute(
                               builder: (BuildContext context) => mainPage()),
-                          (route) => false);
+                              (route) => false);
                       // Navigator.pushReplacement(context,
                       //   MaterialPageRoute(builder: (context) => const mainPage()));
                     },
@@ -255,8 +249,8 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                           child: Image(
                             image: _imageFile == null
                                 ? const AssetImage(
-                                        'assets/image/add_image_button.jpg')
-                                    as ImageProvider
+                                'assets/image/add_image_button.jpg')
+                            as ImageProvider
                                 : FileImage(File(_imageFile.path)),
                           ))
                     ],
@@ -326,10 +320,6 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                 width: double.infinity,
                 child: TextButton(
                     onPressed: () => addProductDialog(),
-                    onPressed: productAmountController.text.isEmpty &&
-                            productNameController.text.isEmpty
-                        ? null
-                        : () => addProductDialog(),
                     style: TextButton.styleFrom(
                         primary: Colors.black,
                         onSurface: Colors.grey,
@@ -340,8 +330,6 @@ class _add_Stock_pageState extends State<add_Stock_page> {
       ),
     );
   }
-
-
 
   Widget bottomSheet() {
     return Container(
