@@ -1,12 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:jaegojochi/db/Utility.dart';
 import 'package:jaegojochi/stock_Detail_Info.dart';
 import 'add_Stock_page.dart';
 import 'db/Search_Page.dart';
 import 'db/Stock.dart';
 import 'db/DatabaseHelper.dart';
-import 'package:cross_file_image/cross_file_image.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,6 +13,7 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
+  // FROM HERE
   MaterialColor createMaterialColor(Color color) {
     List strengths = <double>[.05];
     Map<int, Color> swatch = {};
@@ -33,7 +32,7 @@ class MyApp extends StatelessWidget {
       );
     });
     return MaterialColor(color.value, swatch);
-  }
+  } //TO HERE APP BAR COLOR CHANGING
 
   // This widget is the root of your application.
   @override
@@ -60,13 +59,15 @@ class _mainPageState extends State<mainPage> {
   late Image image;
   late List<Stock> stocks = [];
 
+  // FROM HERE
+  @override
   void initState() {
     super.initState();
     stocks = [];
-    refreshlist();
+    refreshList();
   }
 
-  refreshlist() {
+  refreshList() {
     DatabaseHelper.instance.getStocks().then((imgs) {
       setState(() {
         stocks.clear();
@@ -74,6 +75,8 @@ class _mainPageState extends State<mainPage> {
       });
     });
   }
+ // TO HERE DB INITIALIZE AND ADD TO LIST
+
 
   @override
   Widget build(BuildContext context) {
@@ -89,47 +92,46 @@ class _mainPageState extends State<mainPage> {
         ],
       ),
       body:
-      ListView.builder(
-          itemCount: stocks.length,
-          itemBuilder: (ctx, index) {
-            return Container(
-              width: 80,
-              height: 80,
-              padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-              color: Colors.white,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    width: 60,
-                    height: 60,
-                    child: Image(image: FileImage(File(stocks[index].image!))),
+          ListView.builder(
+              itemCount: stocks.length,
+              itemBuilder: (ctx, index) {
+                return Container(
+                  margin: const EdgeInsets.fromLTRB(0, 0, 0, 5),
+                  height: 70,
+                  padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                  color: Colors.white,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [ stocks[index].image!.isEmpty //IF DB DOESN'T HAVE IMAGE
+                          ? Image.asset(  // SHOW TAKOYAKI
+                              'assets/image/takoyaki.jpg',
+                              width: 80,
+                              height: 80,
+                            )
+                          : Container( // IF HAVE IMAGE
+                              width: 80,
+                              height: 80,
+                              child: Image( // SHOW ITS IMAGE
+                                  image: FileImage(File(stocks[index].image!))),
+                            ),
+                      Text(stocks[index].name.toString()), // DB NAME
+                      Text(stocks[index].amount.toString() + // DB AMOUNT
+                          stocks[index].unit.toString()), // UNIT
+                      IconButton( // MOVE TO ITS stock_Detail_Info
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => stock_Detail_Info(
+                                          name: stocks[index].name.toString(),
+                                        )));
+                          },
+                          icon: const Icon(Icons.more_vert)
+                      )],
                   ),
-                  Text(stocks[index].name.toString()),
-                  Text(stocks[index].amount.toString() +
-                      stocks[index].unit.toString()),
-                  IconButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    stock_Detail_Info(
-                                      name: stocks[index]
-                                          .name
-                                          .toString(),
-                                    )));
-                      },
-                      icon: Icon(Icons.add))
-                ],
-              ),
-            );
-          }),
-      //     ),
-      //  ]),
-      //
-      // ),
-      floatingActionButton: FloatingActionButton(
+                );
+              }),
+      floatingActionButton: FloatingActionButton( // MOVE TO add_Stock_Page
         onPressed: () {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => const add_Stock_page()));
