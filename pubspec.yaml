@@ -69,6 +69,7 @@ flutter:
   assets:
     - assets/image/takoyaki.jpg
     - assets/image/add_image_button.jpg
+    - assets/image/no_stock_image.jpg
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

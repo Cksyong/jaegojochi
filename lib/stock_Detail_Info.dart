@@ -1,12 +1,10 @@
 import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:developer';
-
 import 'db/DatabaseHelper.dart';
 import 'db/Stock.dart';
 import 'main.dart';
@@ -14,17 +12,14 @@ import 'manage_Stock_page.dart';
 
 class stock_Detail_Info extends StatefulWidget {
   final String name;
-  const stock_Detail_Info({Key? key, required this.name}) : super(key: key);
 
+  const stock_Detail_Info({Key? key, required this.name}) : super(key: key);
 
   @override
   State<stock_Detail_Info> createState() => _stock_Detail_InfoState();
 }
 
 class _stock_Detail_InfoState extends State<stock_Detail_Info> {
-
-
-
   double amount = 0;
   String unit = '';
 
@@ -39,7 +34,7 @@ class _stock_Detail_InfoState extends State<stock_Detail_Info> {
               name: element.name,
               amount: element.amount,
               unit: element.unit,
-          image: element.image));
+              image: element.image));
         });
       });
     }).catchError((error) {
@@ -57,7 +52,17 @@ class _stock_Detail_InfoState extends State<stock_Detail_Info> {
         children: [
           Container(
               padding: const EdgeInsets.fromLTRB(20, 50, 20, 20),
-              child: Image.asset('assets/image/takoyaki.jpg')),
+              child: selectStock[0].image!.isEmpty //IF DB DOESN'T HAVE IMAGE
+                  ? Image.asset(  // SHOW TAKOYAKI
+                'assets/image/no_stock_image.jpg',
+              )
+                  : Container(
+                width: 300,
+                height: 300,// IF HAVE IMAGE
+                child: Image( // SHOW ITS IMAGE
+                    image: FileImage(File(selectStock[0].image!))),
+              ),
+          ),
           Container(
             color: Colors.yellow,
             margin: const EdgeInsets.fromLTRB(0, 10, 0, 0),
@@ -76,7 +81,7 @@ class _stock_Detail_InfoState extends State<stock_Detail_Info> {
                 alignment: Alignment.centerRight,
                 child: Text(selectStock[0].amount.toString(),
                     style:
-                    TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
+                        TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
               ),
               Container(
                 margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
@@ -84,7 +89,7 @@ class _stock_Detail_InfoState extends State<stock_Detail_Info> {
                 alignment: Alignment.centerRight,
                 child: Text(selectStock[0].unit.toString(),
                     style:
-                    TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
+                        TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
               )
             ],
           ),
@@ -95,11 +100,9 @@ class _stock_Detail_InfoState extends State<stock_Detail_Info> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => manage_Stock_page
-                    (name: 'widget.stockIn.name',
-                    unit: /*widget.stockIn.unit*/'EA',
-                amount: /*widget.stockIn.amount*/35.0,)
-              ));
+                  builder: (context) => manage_Stock_page(
+                        name: selectStock[0].name!,
+                      )));
         },
         child: const Icon(Icons.edit_calendar_rounded),
       ),

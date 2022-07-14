@@ -1,22 +1,49 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:jaegojochi/db/DatabaseHelper.dart';
+import 'package:jaegojochi/db/Stock.dart';
 import 'package:jaegojochi/main.dart';
 
 class manage_Stock_page extends StatefulWidget {
   final String name;
-  final String unit;
-  final double amount;
-  const manage_Stock_page({Key? key, required this.name, required this.unit, required this.amount}) : super(key: key);
 
-
+  const manage_Stock_page({Key? key, required this.name}) : super(key: key);
 
   @override
   State<manage_Stock_page> createState() => _manage_Stock_pageState();
 }
 
 class _manage_Stock_pageState extends State<manage_Stock_page> {
+  List<Stock> selectStock = [];
+
+  void initState() {
+    super.initState();
+    DatabaseHelper.instance.getSelectStock(widget.name).then((value) {
+      setState(() {
+        value.forEach((element) {
+          selectStock.add(Stock(
+              name: element.name,
+              amount: element.amount,
+              unit: element.unit,
+              image: element.image));
+        });
+      });
+    }).catchError((error) {
+      print(error);
+    });
+  }
+
+  final ImagePicker _picker = ImagePicker();
+  dynamic _imageFile;
+  var _isBeforeImage = true;
+  var _isAfterImage = false;
+
   @override
   Widget build(BuildContext context) {
+
     final productAmountController = TextEditingController();
 
     void _showAlertDialog(String way, String message) {
@@ -68,14 +95,15 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
       }
       if (amount == 0) {
         _showAlertDialog('', '추가/소진할 수량을 입력해주세요.');
-        // } else if (method == '소진' && widget.amount < amount) {
+      } else if (method == '소진' &&
+          double.parse(selectStock[0].amount!) < amount) {
         _showAlertDialog('', '소진할 수량은 현재 수량을 초과할 수 없습니다.');
       } else {
         double finalAmount = 0;
         if (method == '추가') {
-          // finalAmount = widget.amount + amount;
+          finalAmount = double.parse(selectStock[0].amount!) + amount;
         } else if (method == '소진') {
-          // finalAmount = widget.amount - amount;
+          finalAmount = double.parse(selectStock[0].amount!) - amount;
         }
         showDialog(
             context: context,
@@ -97,12 +125,9 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text('hi'
-                        // '현재 수량 : ${widget.amount} ${widget.unit}'
-                        //     '\n변경 수량 : ' + amount.toString() + ' (' +
-                        //     widget.unit + ')\n'
-                        //     '최종 수량 : ${finalAmount}\n' + method + '하시겠습니까?',
-                        ),
+                    Text(
+                      '현재 수량 : ${selectStock[0].amount} ${selectStock[0].unit}\n변경 수량 : $amount (${selectStock[0].unit!})\n최종 수량 : ${finalAmount}\n$method하시겠습니까?',
+                    ),
                   ],
                 ),
                 actions: <Widget>[
@@ -133,7 +158,8 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('재고 추가/소진',
+        title: const Text(
+          '재고 추가/소진',
           style: TextStyle(fontWeight: FontWeight.w600),
         ),
         centerTitle: true, //툴바 타이틀 가운데정렬
@@ -149,17 +175,65 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
               Container(
                 padding: const EdgeInsets.fromLTRB(0, 15, 0, 20),
                 child: Text(
-                  '재고명',
+                  selectStock[0].name!,
                   style: TextStyle(fontSize: 20),
                 ),
               ),
               const Text('재고 사진을 수정하려면 아래 사진을 클릭해주세요.'),
               Container(
+                width: double.infinity,
+                height: MediaQuery.of(context).size.height * 0.33,
                 margin: EdgeInsets.only(top: 20),
                 padding: const EdgeInsets.fromLTRB(80, 5, 80, 10),
                 child: OutlinedButton(
-                    onPressed: () {},
-                    child: Image.asset('assets/image/takoyaki.jpg')),
+                  onPressed: () {
+                    showModalBottomSheet(
+                        context: context,
+                        builder: ((builder) => bottomSheet()));
+                  },
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Visibility(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: const [
+                            CircularProgressIndicator(),
+                          ],
+                        ),
+                      ),
+                      Visibility(
+                          visible: _isBeforeImage,
+                          child: selectStock[0].image!.isEmpty //IF DB DOESN'T HAVE IMAGE
+                                ? Image.asset(  // SHOW TAKOYAKI
+                              'assets/image/no_stock_image.jpg',
+                            )
+                                : Container( // IF HAVE IMAGE
+                              width: 300,
+                              height: 300,
+                              child: Image( // SHOW ITS IMAGE
+                                  image: FileImage(File(selectStock[0].image!))),
+                            ),
+
+                          ),
+                      Visibility(visible: _isAfterImage,
+                          child: Image(
+                            image: _imageFile == null
+                                ? FileImage(File(selectStock[0].image!))
+                            as ImageProvider
+                                : FileImage(File(_imageFile.path)),
+                          ))
+                    ],
+                  ),
+
+
+
+
+
+
+
+                ),
               ),
               Container(
                   padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
@@ -169,14 +243,17 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text('현재 수량 ',style: TextStyle(fontSize: 20),
-                        // '${widget.amount.toString()} '
-                        ),
+                    Text(
+                      '현재 수량 ', style: TextStyle(fontSize: 20),
+                      // '${widget.amount.toString()} '
+                    ),
                     Container(
                       padding: const EdgeInsets.fromLTRB(0, 0, 7, 0),
-                      child: Text('30', style: TextStyle(fontSize: 20),
-                          // widget.unit
-                          ),
+                      child: Text(
+                        selectStock[0].amount.toString(),
+                        style: TextStyle(fontSize: 20),
+                        // widget.unit
+                      ),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -191,71 +268,123 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                               FilteringTextInputFormatter.allow(
                                   RegExp(r'(^\d*\.?\d*)'))
                             ],
-                            decoration: const InputDecoration(
-                                enabledBorder: OutlineInputBorder(
-                                    borderSide:
-                                        BorderSide(color: Colors.black)),
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide:
-                                        BorderSide(color: Colors.black)),
-                                hintText: '수량',
-                                hintStyle: TextStyle(fontSize: 17),
-
-                             ),
+                            decoration: InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.black)),
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.black)),
+                              hintText: '수량',
+                              hintStyle: TextStyle(fontSize: 17),
+                            ),
                             controller: productAmountController,
                           ),
                         ),
-                        Text('EA'
-                            // widget.unit
+                        Text(selectStock[0].unit!
                             )
                       ],
                     ),
                   ],
                 ),
               ),
-               Container(
-                 padding: EdgeInsets.only(top: 250),
-               child: Row(
-                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                 children: [
-                   ElevatedButton(
-                     onPressed: productAmountController.text.isEmpty ? null : (){},
-                     style: TextButton.styleFrom(
-                         // primary: Colors.black,
-                         // onSurface: Colors.grey,
-                         fixedSize: Size(100, 50),),
-                         // backgroundColor: Colors.black),
-                     child: const Text(
-                       '추 가',
-                       style: TextStyle(fontSize: 20,fontWeight: FontWeight.w700, color: Colors.white),
-                     ),
-                   ),
-                   ElevatedButton(
-                     onPressed: productAmountController.text.isEmpty ? null : (){},
-                     // => editProductState('소진'),
-                     style: TextButton.styleFrom(
-                     //     primary: Colors.black,
-                     //     onSurface: Colors.grey,
-                         fixedSize: Size(100, 50),),
-                     //     backgroundColor: Colors.black),
-                     child: const Text(
-                       '소 진',
-                       style: TextStyle(fontSize: 20,fontWeight: FontWeight.w700, color: Colors.white),
-                     ),
-                   ),
-                 ],
-               ),
-               ),
-
-
-
-
-             ],
-          )
-
-
-      ),
-
+              Container(
+                padding: EdgeInsets.only(top: 200),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        editProductState('추가');
+                      },
+                      style: ElevatedButton.styleFrom(
+                        // primary: Colors.black,
+                        // onSurface: Colors.grey,
+                        fixedSize: Size(100, 50),
+                      ),
+                      // backgroundColor: Colors.black),
+                      child: const Text(
+                        '추 가',
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        editProductState('소진'); }                      ,
+                      // => editProductState('소진'),
+                      style: TextButton.styleFrom(
+                        //     primary: Colors.black,
+                        //     onSurface: Colors.grey,
+                        fixedSize: Size(100, 50),
+                      ),
+                      //     backgroundColor: Colors.black),
+                      child: const Text(
+                        '소 진',
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          )),
     );
   }
+
+  Widget bottomSheet() {
+    return Container(
+      height: 120,
+      width: MediaQuery.of(context).size.width,
+      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      child: Column(
+        children: <Widget>[
+          Text('사진 선택'),
+          SizedBox(
+            height: 25,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              TextButton.icon(
+                onPressed: () {
+                  takePhoto(ImageSource.camera);
+                  Navigator.pop(context);
+                },
+                icon: Icon(
+                  Icons.camera,
+                  size: 50,
+                ),
+                label: Text('Camera'),
+              ),
+              TextButton.icon(
+                onPressed: () {
+                  takePhoto(ImageSource.gallery);
+                  Navigator.pop(context);
+                },
+                icon: Icon(
+                  Icons.photo_library,
+                  size: 50,
+                ),
+                label: Text('Gallery'),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  takePhoto(ImageSource source) async {
+    final pickedFile = await _picker.pickImage(source: source);
+    setState(() {
+      _isBeforeImage = false;
+      _isAfterImage = true;
+      _imageFile = pickedFile;
+    });
+  }
+
 }

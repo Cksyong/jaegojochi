@@ -104,7 +104,7 @@ class _mainPageState extends State<mainPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [ stocks[index].image!.isEmpty //IF DB DOESN'T HAVE IMAGE
                           ? Image.asset(  // SHOW TAKOYAKI
-                              'assets/image/takoyaki.jpg',
+                              'assets/image/no_stock_image.jpg',
                               width: 80,
                               height: 80,
                             )
