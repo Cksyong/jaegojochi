@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:jaegojochi/db/Utility.dart';
 import 'package:jaegojochi/stock_Detail_Info.dart';
 import 'add_Stock_page.dart';
+import 'db/Search_Page.dart';
 import 'db/Stock.dart';
 import 'db/DatabaseHelper.dart';
 import 'package:cross_file_image/cross_file_image.dart';
@@ -40,7 +41,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: createMaterialColor(Color(0xfff5f5dc)),
+        primarySwatch: createMaterialColor(Color(0xff000000)),
       ),
       home: const mainPage(),
     );
@@ -79,53 +80,29 @@ class _mainPageState extends State<mainPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('재고최고'),
+        actions: [
+          IconButton(
+            // onPressed: (){},
+            onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (__) => SearchPage())),
+            icon: Icon(Icons.search),
+          ),
+        ],
       ),
       body:
-
-      // Container(
-      //   width: double.infinity,
-      //   //height: double.infinity,
-      //   alignment: Alignment.topLeft,
-      //   child:
-      //   Column(
-      //     mainAxisSize: MainAxisSize.max,
-      //     children: [Container(
-      //       child:
-      // stocks.isEmpty
-      //     ? Container(
-      //   // width: double.infinity,
-      //   //height: double.infinity,
-      // )
-      //     :
       ListView.builder(
           itemCount: stocks.length,
           itemBuilder: (ctx, index) {
             return Container(
-              // width: double.infinity,
-              // height: double.infinity,
+              width: 80,
+              height: 80,
               padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
               color: Colors.white,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // GridView.count(crossAxisCount: 1,
-                  // mainAxisSpacing: 3,
-                  // crossAxisSpacing: 3,
-                  // childAspectRatio: 1.0,
-                  // children: stocks.map((asd){
-                  //   return Utility.imageFromBase64String(stocks[index].name.toString());
-                  // }).toList(),),
-
-                  //Image(image: FileImage(File(stocks[index].image!))),
-
                   Container(
-                    width: 30,
-                    height: 30,
-                    // decoration: BoxDecoration(
-                    //     image: DecorationImage(
-                    //         image: FileImage(File('/data/user/0/com.jhkorea.jaegojochi/cache/image_picker3638832145286108478.jpg'))
-                    //     )
-                    // )
+                    width: 60,
+                    height: 60,
                     child: Image(image: FileImage(File(stocks[index].image!))),
                   ),
                   Text(stocks[index].name.toString()),
@@ -143,7 +120,7 @@ class _mainPageState extends State<mainPage> {
                                           .toString(),
                                     )));
                       },
-                      icon: Icon(Icons.menu))
+                      icon: Icon(Icons.add))
                 ],
               ),
             );

@@ -214,17 +214,17 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                 ),
               ),
                Container(
-                 padding: EdgeInsets.only(top: 330),
+                 padding: EdgeInsets.only(top: 250),
                child: Row(
                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                  children: [
                    ElevatedButton(
-                     onPressed: () => editProductState('추가'),
+                     onPressed: productAmountController.text.isEmpty ? null : (){},
                      style: TextButton.styleFrom(
-                         primary: Colors.black,
-                         onSurface: Colors.grey,
-                         fixedSize: Size(100, 50),
-                         backgroundColor: Colors.black),
+                         // primary: Colors.black,
+                         // onSurface: Colors.grey,
+                         fixedSize: Size(100, 50),),
+                         // backgroundColor: Colors.black),
                      child: const Text(
                        '추 가',
                        style: TextStyle(fontSize: 20,fontWeight: FontWeight.w700, color: Colors.white),
