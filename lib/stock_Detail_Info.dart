@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:jaegojochi/db/Utility.dart';
 import 'dart:developer';
 
 import 'db/DatabaseHelper.dart';
