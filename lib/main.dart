@@ -1,11 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:jaegojochi/db/Utility.dart';
 import 'package:jaegojochi/stock_Detail_Info.dart';
 import 'add_Stock_page.dart';
 import 'db/Stock.dart';
 import 'db/DatabaseHelper.dart';
-import 'package:cross_file_image/cross_file_image.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,6 +12,7 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
+  // FROM HERE
   MaterialColor createMaterialColor(Color color) {
     List strengths = <double>[.05];
     Map<int, Color> swatch = {};
@@ -32,7 +31,7 @@ class MyApp extends StatelessWidget {
       );
     });
     return MaterialColor(color.value, swatch);
-  }
+  } //TO HERE APP BAR COLOR CHANGING
 
   // This widget is the root of your application.
   @override
@@ -40,7 +39,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: createMaterialColor(Color(0xfff5f5dc)),
+        primarySwatch: createMaterialColor(const Color(0xfff5f5dc)),
       ),
       home: const mainPage(),
     );
@@ -59,13 +58,15 @@ class _mainPageState extends State<mainPage> {
   late Image image;
   late List<Stock> stocks = [];
 
+  // FROM HERE
+  @override
   void initState() {
     super.initState();
     stocks = [];
-    refreshlist();
+    refreshList();
   }
 
-  refreshlist() {
+  refreshList() {
     DatabaseHelper.instance.getStocks().then((imgs) {
       setState(() {
         stocks.clear();
@@ -73,6 +74,8 @@ class _mainPageState extends State<mainPage> {
       });
     });
   }
+ // TO HERE DB INITIALIZE AND ADD TO LIST
+
 
   @override
   Widget build(BuildContext context) {
@@ -81,78 +84,46 @@ class _mainPageState extends State<mainPage> {
         title: const Text('재고최고'),
       ),
       body:
-
-      // Container(
-      //   width: double.infinity,
-      //   //height: double.infinity,
-      //   alignment: Alignment.topLeft,
-      //   child:
-      //   Column(
-      //     mainAxisSize: MainAxisSize.max,
-      //     children: [Container(
-      //       child:
-            // stocks.isEmpty
-            //     ? Container(
-            //   // width: double.infinity,
-            //   //height: double.infinity,
-            // )
-            //     :
-            ListView.builder(
-                    itemCount: stocks.length,
-                    itemBuilder: (ctx, index) {
-                      return Container(
-                        // width: double.infinity,
-                        // height: double.infinity,
-                        padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-                        color: Colors.white,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            // GridView.count(crossAxisCount: 1,
-                            // mainAxisSpacing: 3,
-                            // crossAxisSpacing: 3,
-                            // childAspectRatio: 1.0,
-                            // children: stocks.map((asd){
-                            //   return Utility.imageFromBase64String(stocks[index].name.toString());
-                            // }).toList(),),
-
-                            //Image(image: FileImage(File(stocks[index].image!))),
-
-                            Container(
-                              width: 30,
-                                height: 30,
-                                // decoration: BoxDecoration(
-                                //     image: DecorationImage(
-                                //         image: FileImage(File('/data/user/0/com.jhkorea.jaegojochi/cache/image_picker3638832145286108478.jpg'))
-                                //     )
-                                // )
-                              child: Image(image: FileImage(File(stocks[index].image!))),
+          ListView.builder(
+              itemCount: stocks.length,
+              itemBuilder: (ctx, index) {
+                return Container(
+                  margin: const EdgeInsets.fromLTRB(0, 0, 0, 5),
+                  height: 70,
+                  padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                  color: Colors.white,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [ stocks[index].image!.isEmpty //IF DB DOESN'T HAVE IMAGE
+                          ? Image.asset(  // SHOW TAKOYAKI
+                              'assets/image/takoyaki.jpg',
+                              width: 80,
+                              height: 80,
+                            )
+                          : Container( // IF HAVE IMAGE
+                              width: 80,
+                              height: 80,
+                              child: Image( // SHOW ITS IMAGE
+                                  image: FileImage(File(stocks[index].image!))),
                             ),
-                            Text(stocks[index].name.toString()),
-                            Text(stocks[index].amount.toString() +
-                                stocks[index].unit.toString()),
-                            IconButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              stock_Detail_Info(
-                                                name: stocks[index]
-                                                    .name
-                                                    .toString(),
-                                              )));
-                                },
-                                icon: Icon(Icons.menu))
-                          ],
-                        ),
-                      );
-                    }),
-      //     ),
-      //  ]),
-      //
-      // ),
-      floatingActionButton: FloatingActionButton(
+                      Text(stocks[index].name.toString()), // DB NAME
+                      Text(stocks[index].amount.toString() + // DB AMOUNT
+                          stocks[index].unit.toString()), // UNIT
+                      IconButton( // MOVE TO ITS stock_Detail_Info
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => stock_Detail_Info(
+                                          name: stocks[index].name.toString(),
+                                        )));
+                          },
+                          icon: const Icon(Icons.more_vert)
+                      )],
+                  ),
+                );
+              }),
+      floatingActionButton: FloatingActionButton( // MOVE TO add_Stock_Page
         onPressed: () {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => const add_Stock_page()));
