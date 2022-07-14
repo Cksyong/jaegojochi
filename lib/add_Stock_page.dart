@@ -28,11 +28,17 @@ class _add_Stock_pageState extends State<add_Stock_page> {
     String amount = productAmountController.text;
     String unit = _selectedValue.toString();
     log('addToDB');
-    File? file = File(image!.path);
+    String fileEdit = "";
+    String fileEdit2 = "";
+    String fileEdit3 = "";
 
-    var fileEdit = file.toString();
-    var fileEdit2 = fileEdit.substring(0, fileEdit.length -1);
-    var fileEdit3 = fileEdit2.replaceAll('File: \'', '');
+    // IF USER DOESN'T UPLOAD AN IMAGE
+    if(image != null){
+      File? file = File(image!.path);
+      fileEdit = file.toString();
+      fileEdit2 = fileEdit.substring(0, fileEdit.length -1);
+      fileEdit3 = fileEdit2.replaceAll('File: \'', '');
+    }
     log(fileEdit3);
     setState(() {
 
