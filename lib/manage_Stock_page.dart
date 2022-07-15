@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -18,6 +17,7 @@ class manage_Stock_page extends StatefulWidget {
 
 class _manage_Stock_pageState extends State<manage_Stock_page> {
   List<Stock> selectStock = [];
+  List<Stock> updateStock = [];
 
   void initState() {
     super.initState();
@@ -40,11 +40,12 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
   dynamic _imageFile;
   var _isBeforeImage = true;
   var _isAfterImage = false;
+  final productAmountController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
 
-    final productAmountController = TextEditingController();
+
 
     void _showAlertDialog(String way, String message) {
       showDialog(
@@ -79,6 +80,7 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                   ),
                   onPressed: () {
                     //TODO DB(내부저장소든 뭐든)에 추가하는 코드
+
                     Navigator.pop(context);
                   },
                   child: const Text("확인"),
@@ -89,9 +91,11 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
     }
 
     void editProductState(String method) {
+      var amountText = productAmountController.text;
       double amount = 0;
-      if (productAmountController.text != '') {
-        amount = double.parse(productAmountController.text);
+      double finalAmount = 0;
+      if (amountText != '') {
+        amount = double.parse(amountText);
       }
       if (amount == 0) {
         _showAlertDialog('', '추가/소진할 수량을 입력해주세요.');
@@ -99,7 +103,7 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
           double.parse(selectStock[0].amount!) < amount) {
         _showAlertDialog('', '소진할 수량은 현재 수량을 초과할 수 없습니다.');
       } else {
-        double finalAmount = 0;
+
         if (method == '추가') {
           finalAmount = double.parse(selectStock[0].amount!) + amount;
         } else if (method == '소진') {
@@ -146,7 +150,23 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                     ),
                     onPressed: () {
                       //TODO DB(내부저장소든 뭐든)에 추가하는 코드
+                      updateStock = selectStock;
+                      if(_imageFile != null){
+                        File? file = File(_imageFile!.path);
+                        var fileEdit = file.toString();
+                        var fileEdit2 = fileEdit.substring(0, fileEdit.length -1);
+                        var fileEdit3 = fileEdit2.replaceAll('File: \'', '');
+                       updateStock[0].image = fileEdit3;
+                      }
+                      updateStock[0].amount = finalAmount.toString();
+                      //TODO 아직 몇발 남았다 20220714
+                      DatabaseHelper.instance.update(updateStock[0]);
                       Navigator.pop(context);
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (BuildContext context) => mainPage()),
+                              (route) => false);
                     },
                     child: const Text("확인"),
                   ),
