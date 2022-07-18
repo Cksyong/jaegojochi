@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -80,7 +81,6 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                   ),
                   onPressed: () {
                     //TODO DB(내부저장소든 뭐든)에 추가하는 코드
-
                     Navigator.pop(context);
                   },
                   child: const Text("확인"),
@@ -176,7 +176,16 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
       }
     }
 
-    return Scaffold(
+    return GestureDetector(
+      onTap: (){
+        FocusScopeNode currentFocus = FocusScope.of(context);
+
+        if(!currentFocus.hasPrimaryFocus) {
+          currentFocus.unfocus();
+        }
+      },
+      child : Scaffold(
+        resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: const Text(
           '재고 추가/소진',
@@ -196,7 +205,7 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                 padding: const EdgeInsets.fromLTRB(0, 15, 0, 20),
                 child: Text(
                   selectStock[0].name!,
-                  style: TextStyle(fontSize: 20),
+                  style: const TextStyle(fontSize: 20),
                 ),
               ),
               const Text('재고 사진을 수정하려면 아래 사진을 클릭해주세요.'),
@@ -263,7 +272,7 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text(
+                    const Text(
                       '현재 수량 ', style: TextStyle(fontSize: 20),
                       // '${widget.amount.toString()} '
                     ),
@@ -283,12 +292,11 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                           width: 70,
                           height: 45,
                           child: TextField(
-                            keyboardType: TextInputType.number,
+                            keyboardType: TextInputType.numberWithOptions(decimal: true),
                             inputFormatters: [
-                              FilteringTextInputFormatter.allow(
-                                  RegExp(r'(^\d*\.?\d*)'))
+                              FilteringTextInputFormatter.allow(RegExp(r'(^\d*\.?\d*)')),
                             ],
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(color: Colors.black)),
                               focusedBorder: OutlineInputBorder(
@@ -299,6 +307,7 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                             controller: productAmountController,
                           ),
                         ),
+
                         Text(selectStock[0].unit!
                             )
                       ],
@@ -352,6 +361,7 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
               ),
             ],
           )),
+    )
     );
   }
 

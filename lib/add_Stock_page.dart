@@ -29,25 +29,24 @@ class _add_Stock_pageState extends State<add_Stock_page> {
     String unit = _selectedValue.toString();
     log('addToDB');
     String fileEdit = "";
-    String fileEdit2 = "";
-    String fileEdit3 = "";
 
     // IF USER DOESN'T UPLOAD AN IMAGE
     if(image != null){
       File? file = File(image!.path);
       fileEdit = file.toString();
-      fileEdit2 = fileEdit.substring(0, fileEdit.length -1);
-      fileEdit3 = fileEdit2.replaceAll('File: \'', '');
+      fileEdit = fileEdit.substring(0, fileEdit.length -1);
+      fileEdit = fileEdit.replaceAll('File: \'', '');
     }
-    log(fileEdit3);
+    if(amount.startsWith('.') == true){
+      amount = '0$amount';
+    }
+    log(fileEdit);
     setState(() {
-
       stockList.insert(
-          0, Stock(name: name, amount: amount, unit: unit, image: fileEdit3));
+          0, Stock(name: name, amount: amount, unit: unit, image: fileEdit));
     });
-
     DatabaseHelper.instance
-        .insert(Stock(name: name, amount: amount, unit: unit, image: fileEdit3));
+        .insert(Stock(name: name, amount: amount, unit: unit, image: fileEdit));
   }
 
 
@@ -64,7 +63,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
   Widget build(BuildContext context) {
     void showToast(String message) {
       Fluttertoast.showToast(
-          msg: message + '을 입력해주세요.',
+          msg: '$message을 입력해주세요.',
           backgroundColor: Colors.black,
           textColor: Colors.white,
           fontSize: 16.0,
@@ -75,6 +74,9 @@ class _add_Stock_pageState extends State<add_Stock_page> {
     void addProductDialog() {
       var name = productNameController.text;
       var amount = productAmountController.text;
+      if(amount.startsWith('.') == true){
+        amount = '0$amount';
+      }
       if (name == "") {
         showToast('품목명');
         //TODO Toast외않됌?
@@ -152,7 +154,16 @@ class _add_Stock_pageState extends State<add_Stock_page> {
       });
     }
 
-    return Scaffold(
+    return GestureDetector(
+        onTap: (){
+      FocusScopeNode currentFocus = FocusScope.of(context);
+
+      if(!currentFocus.hasPrimaryFocus) {
+        currentFocus.unfocus();
+      }
+    },
+    child : Scaffold(
+      resizeToAvoidBottomInset : false,
       appBar: AppBar(
         title: const Text('품목 추가'),
         centerTitle: true, //툴바 타이틀 가운데정렬
@@ -227,7 +238,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                   width: 60,
                   height: 50,
                   child: TextField(
-                    keyboardType: TextInputType.number,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
                     inputFormatters: [
                       FilteringTextInputFormatter.allow(RegExp(r'(^\d*\.?\d*)'))
                     ], //double 타입 전용 조건
@@ -268,18 +279,18 @@ class _add_Stock_pageState extends State<add_Stock_page> {
           ],
         ),
       ),
-    );
+    ));
   }
 
   Widget bottomSheet() {
     return Container(
       height: 120,
       width: MediaQuery.of(context).size.width,
-      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: Column(
         children: <Widget>[
-          Text('사진 선택'),
-          SizedBox(
+          const Text('사진 선택'),
+          const SizedBox(
             height: 25,
           ),
           Row(
@@ -290,22 +301,22 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                   takePhoto(ImageSource.camera);
                   Navigator.pop(context);
                 },
-                icon: Icon(
+                icon: const Icon(
                   Icons.camera,
                   size: 50,
                 ),
-                label: Text('Camera'),
+                label: const Text('Camera'),
               ),
               TextButton.icon(
                 onPressed: () {
                   takePhoto(ImageSource.gallery);
                   Navigator.pop(context);
                 },
-                icon: Icon(
+                icon: const Icon(
                   Icons.photo_library,
                   size: 50,
                 ),
-                label: Text('Gallery'),
+                label: const Text('Gallery'),
               ),
             ],
           )

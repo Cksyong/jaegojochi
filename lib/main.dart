@@ -91,8 +91,7 @@ class _mainPageState extends State<mainPage> {
           ),
         ],
       ),
-      body:
-          ListView.builder(
+      body: ListView.builder(
               itemCount: stocks.length,
               itemBuilder: (ctx, index) {
                 return Container(
@@ -108,7 +107,7 @@ class _mainPageState extends State<mainPage> {
                               width: 80,
                               height: 80,
                             )
-                          : Container( // IF HAVE IMAGE
+                          : SizedBox( // IF HAVE IMAGE
                               width: 80,
                               height: 80,
                               child: Image( // SHOW ITS IMAGE
@@ -122,7 +121,7 @@ class _mainPageState extends State<mainPage> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => stock_Detail_Info(
+                                    builder: (context) =>  stock_Detail_Info(
                                           name: stocks[index].name.toString(),
                                         )));
                           },
