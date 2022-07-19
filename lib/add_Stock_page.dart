@@ -137,23 +137,6 @@ class _add_Stock_pageState extends State<add_Stock_page> {
       }
     }
 
-    bool _textVisibility = true;
-    bool _imageVisibility = false;
-
-    void _textHide() {
-      setState(() {
-        _textVisibility = false;
-        _imageVisibility = true;
-      });
-    }
-
-    void _textShow() {
-      setState(() {
-        _textVisibility = true;
-        _imageVisibility = false;
-      });
-    }
-
     return GestureDetector(
         onTap: (){
       FocusScopeNode currentFocus = FocusScope.of(context);
@@ -182,7 +165,6 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                 height: 300,
                 child: TextButton(
                   onPressed: () {
-                    _textHide();
                     showModalBottomSheet(
                         context: context,
                         builder: ((builder) => bottomSheet()));
@@ -196,7 +178,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                     alignment: Alignment.center,
                     children: [
                       Visibility(
-                        visible: _textVisibility,
+                        visible: true,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
