@@ -57,11 +57,10 @@ class _add_Stock_pageState extends State<add_Stock_page> {
     File? file = File(image!.path);
 
     var fileEdit = file.toString();
-    var fileEdit2 = fileEdit.substring(0, fileEdit.length -1);
+    var fileEdit2 = fileEdit.substring(0, fileEdit.length - 1);
     var fileEdit3 = fileEdit2.replaceAll('File: \'', '');
     log(fileEdit3);
     setState(() {
-
       stockList.insert(
           0, Stock(name: name, amount: amount, unit: unit, image: fileEdit3));
     });
@@ -77,8 +76,8 @@ class _add_Stock_pageState extends State<add_Stock_page> {
     //       unit: _selectedValue.toString()));
     // });
 
-    DatabaseHelper.instance
-        .insert(Stock(name: name, amount: amount, unit: unit, image: fileEdit3));
+    DatabaseHelper.instance.insert(
+        Stock(name: name, amount: amount, unit: unit, image: fileEdit3));
   }
 
   void giveanywhere() {
@@ -110,12 +109,11 @@ class _add_Stock_pageState extends State<add_Stock_page> {
           gravity: ToastGravity.CENTER);
     }
 
-
     void addProductDialog() {
       var name = productNameController.text;
       var amount = productAmountController.text;
       if (name == "") {
-        showToast('품목명');
+        showToast('품목명ㅁ명');
         //TODO Toast외않됌?
       } else if (amount.toString() == "") {
         showToast('수량');
@@ -171,7 +169,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                           context,
                           MaterialPageRoute(
                               builder: (BuildContext context) => mainPage()),
-                              (route) => false);
+                          (route) => false);
                       // Navigator.pushReplacement(context,
                       //   MaterialPageRoute(builder: (context) => const mainPage()));
                     },
@@ -249,8 +247,8 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                           child: Image(
                             image: _imageFile == null
                                 ? const AssetImage(
-                                'assets/image/add_image_button.jpg')
-                            as ImageProvider
+                                        'assets/image/add_image_button.jpg')
+                                    as ImageProvider
                                 : FileImage(File(_imageFile.path)),
                           ))
                     ],

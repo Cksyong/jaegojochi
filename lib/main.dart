@@ -3,14 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:jaegojochi/db/Utility.dart';
 import 'package:jaegojochi/stock_Detail_Info.dart';
 import 'add_Stock_page.dart';
-import 'db/Search_Page.dart';
+import 'Search_Page.dart';
 import 'db/Stock.dart';
 import 'db/DatabaseHelper.dart';
 import 'package:cross_file_image/cross_file_image.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -83,48 +81,45 @@ class _mainPageState extends State<mainPage> {
         actions: [
           IconButton(
             // onPressed: (){},
-            onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (__) => SearchPage())),
+            onPressed: () => Navigator.of(context)
+                .push(MaterialPageRoute(builder: (__) => SearchPage(name: ''))),
             icon: Icon(Icons.search),
           ),
         ],
       ),
-      body:
-      ListView.builder(
-          itemCount: stocks.length,
-          itemBuilder: (ctx, index) {
-            return Container(
-              width: 80,
-              height: 80,
-              padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-              color: Colors.white,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    width: 60,
-                    height: 60,
-                    child: Image(image: FileImage(File(stocks[index].image!))),
-                  ),
-                  Text(stocks[index].name.toString()),
-                  Text(stocks[index].amount.toString() +
-                      stocks[index].unit.toString()),
-                  IconButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    stock_Detail_Info(
-                                      name: stocks[index]
-                                          .name
-                                          .toString(),
-                                    )));
-                      },
-                      icon: Icon(Icons.add))
-                ],
+      body: ListView.builder(
+        itemCount: stocks.length,
+        itemBuilder: (ctx, index) => Card(
+            child: Container(
+          width: 80,
+          height: 80,
+          padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+          color: Colors.white,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                width: 60,
+                height: 60,
+                child: Image(image: FileImage(File(stocks[index].image!))),
               ),
-            );
-          }),
+              Text(stocks[index].name.toString()),
+              Text(stocks[index].amount.toString() +
+                  stocks[index].unit.toString()),
+              IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => stock_Detail_Info(
+                                  name: stocks[index].name.toString(),
+                                )));
+                  },
+                  icon: Icon(Icons.add))
+            ],
+          ),
+        )),
+      ),
       //     ),
       //  ]),
       //
