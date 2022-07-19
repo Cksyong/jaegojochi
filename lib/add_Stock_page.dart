@@ -238,6 +238,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                   width: 60,
                   height: 50,
                   child: TextField(
+                    maxLines: 1,
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
                     inputFormatters: [
                       FilteringTextInputFormatter.allow(RegExp(r'(^\d*\.?\d*)'))
@@ -267,7 +268,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                     })
               ],
             ),
-            SizedBox(
+            Container(
                 width: double.infinity,
                 child: TextButton(
                     onPressed: () => addProductDialog(),

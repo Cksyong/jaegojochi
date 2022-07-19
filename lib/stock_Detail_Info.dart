@@ -44,53 +44,44 @@ class _stock_Detail_InfoState extends State<stock_Detail_Info> {
       appBar: AppBar(
         title: const Text('상세페이지'),
       ),
-      body: Column(
-        children: [
-          Container(
-              padding: const EdgeInsets.fromLTRB(20, 50, 20, 20),
-              child: selectStock[1].image!.isEmpty //IF DB DOESN'T HAVE IMAGE
-                  ? Image.asset(  // SHOW TAKOYAKI
-                'assets/image/no_stock_image.jpg',
-              )
-                  : SizedBox(
-                width: 300,
-                height: 300,// IF HAVE IMAGE
-                child: Image( // SHOW ITS IMAGE
-                    image: FileImage(File(selectStock[1].image!))),
+      body: SizedBox(
+        height: MediaQuery.of(context).size.height,
+        child: Column(
+          children: [
+            Container(
+              color: Colors.yellow,
+              margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+              child: Text(
+                selectStock[1].name.toString(),
+                style: const TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
               ),
-          ),
-          Container(
-            color: Colors.yellow,
-            margin: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-            child: Text(
-              selectStock[1].name.toString(),
-              style: const TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
             ),
-          ),
-          const SizedBox(width: 0, height: 100),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Container(
-                color: Colors.blue,
-                alignment: Alignment.centerRight,
-                child: Text(selectStock[1].amount.toString(),
-                    style:
-                        const TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
-              ),
-              Container(
-                margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-                color: Colors.red,
-                alignment: Alignment.centerRight,
-                child: Text(selectStock[1].unit.toString(),
-                    style:
-                        const TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
-              )
-            ],
-          ),
-        ],
-      ),
+            Container(
+              width: double.infinity,
+              height: MediaQuery.of(context).size.height * 0.5,
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+                child: selectStock[1].image!.isEmpty //IF DB DOESN'T HAVE IMAGE
+                    ? Image.asset(  // SHOW TAKOYAKI
+                  'assets/image/no_stock_image.jpg',
+                )
+                    : Container(
+                  width: 300,
+                  height: 300,// IF HAVE IMAGE
+                  child: Image( // SHOW ITS IMAGE
+                      image: FileImage(File(selectStock[1].image!))),
+                ),
+            ),
+                //const SizedBox(width: 0, height: 100),
+                    Container(
+                      color: Colors.blue,
+
+                      child: Text(selectStock[1].amount.toString() + selectStock[1].unit.toString(),
+                          style:
+                              const TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
+                    ),
+              ]
+            ),
+        ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
