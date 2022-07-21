@@ -43,7 +43,7 @@ dependencies:
   shared_preferences:
   cross_file_image:
   flutter_layout_grid:
-
+  flutter_speed_dial:
 
 dev_dependencies:
   flutter_test:

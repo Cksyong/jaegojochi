@@ -2,13 +2,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:jaegojochi/add_Stock_page.dart';
 import 'package:jaegojochi/stock_Detail_Info.dart';
-import 'add_Stock_page.dart';
 import 'Search_Page.dart';
 import 'db/Stock.dart';
 import 'db/DatabaseHelper.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -55,6 +56,18 @@ class mainPage extends StatefulWidget {
 
 class _mainPageState extends State<mainPage> {
   String _scanBarcode = 'Unknown';
+
+  //FOR FAB
+  ValueNotifier<bool> isDialOpen = ValueNotifier(false);
+
+  WillPopScope() async {
+    if (isDialOpen.value) {
+      isDialOpen.value = false;
+      return false;
+    } else {
+      return true;
+    }
+  }
 
   Future<void> scanBarcodeNormal() async {
     String barcodeScanRes;
@@ -160,23 +173,31 @@ class _mainPageState extends State<mainPage> {
             );
           },
         ),
-        floatingActionButton: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+        floatingActionButton: SpeedDial(
+          animatedIcon: AnimatedIcons.menu_close,
+          openCloseDial: isDialOpen,
+          backgroundColor: const Color(0xfff5f5dc),
+          overlayColor: Colors.grey,
+          overlayOpacity: 0.5,
+          spacing: 15,
+          spaceBetweenChildren: 15,
+          closeManually: true,
           children: [
-            FloatingActionButton(
-              onPressed: () => scanBarcodeNormal(),
-              child: const Icon(Icons.scanner),
-            ),
-            FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const add_Stock_page()));
-              },
-              tooltip: 'Increment',
-              child: const Icon(Icons.add),
-            ),
+            SpeedDialChild(
+                child: const Icon(Icons.add),
+                label: '추가하기',
+                backgroundColor: const Color(0xfff5f5dc),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const add_Stock_page()));
+                }),
+            SpeedDialChild(
+                child: const Icon(Icons.scanner),
+                label: '바코드 입력',
+                backgroundColor: const Color(0xfff5f5dc),
+                onTap: () => scanBarcodeNormal())
           ],
         ));
   }
