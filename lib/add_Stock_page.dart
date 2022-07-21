@@ -5,9 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:jaegojochi/db/Utility.dart';
 import 'dart:developer';
-
 import 'db/DatabaseHelper.dart';
 import 'db/Stock.dart';
 import 'main.dart';
@@ -25,30 +23,6 @@ class _add_Stock_pageState extends State<add_Stock_page> {
   late DatabaseHelper dbHelper;
   late List<Stock> stocks;
 
-  //여기부터 디비용
-  void initState() {
-    super.initState();
-    stocks = [];
-    refreshlist();
-  }
-
-  refreshlist() {
-    DatabaseHelper.instance.getStocks().then((imgs) {
-      setState(() {
-        stocks.clear();
-        stocks.addAll(imgs);
-      });
-    });
-  }
-
-  // pickImagefromGallery(){
-  //   ImagePicker().pickImage(source: ImageSource.gallery).then((imgFile) {
-  //     final file = File(imgFile!.path);
-  //     String imgString = Utility.base64String(file.readAsBytesSync());
-  //     Stock stock = Stock(name: productNameController.text, amount: productAmountController.text, image: imgString, unit: _selectedValue.toString());
-  //   });
-  // }
-
   void addToDB(dynamic image) {
     String name = productNameController.text;
     String amount = productAmountController.text;
@@ -64,29 +38,11 @@ class _add_Stock_pageState extends State<add_Stock_page> {
       stockList.insert(
           0, Stock(name: name, amount: amount, unit: unit, image: fileEdit3));
     });
-    // ImagePicker().pickImage(source: ImageSource.gallery).then((imgFile) {
-    //   final file = File(imgFile!.path);
-    //   String imgString = Utility.base64String(file.readAsBytesSync());
-    //   log('이건 $imgString');
-    //   //log('이것도 $asdf');
-    //   DatabaseHelper.instance.insert(Stock(
-    //       name: productNameController.text,
-    //       amount: productAmountController.text,
-    //       image: imgString,
-    //       unit: _selectedValue.toString()));
-    // });
 
     DatabaseHelper.instance.insert(
         Stock(name: name, amount: amount, unit: unit, image: fileEdit3));
   }
 
-  void giveanywhere() {
-    ImagePicker().pickImage(source: ImageSource.gallery).then((imgFile) {
-      final file = File(imgFile!.path);
-      String imgString = Utility.base64String(file.readAsBytesSync());
-      return imgString;
-    });
-  }
 
   List<Stock> stockList = [];
   final ImagePicker _picker = ImagePicker();
@@ -138,14 +94,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      '품목명 : ' +
-                          name +
-                          '\n수량 : ' +
-                          amount +
-                          ' (' +
-                          _selectedValue +
-                          ')\n추가하시겠습니까?',
-                    ),
+                      '품목명 : $name \n수량 : $amount($_selectedValue)\n 추가하시겠습니까?'),
                   ],
                 ),
                 actions: <Widget>[
@@ -170,8 +119,6 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                           MaterialPageRoute(
                               builder: (BuildContext context) => mainPage()),
                           (route) => false);
-                      // Navigator.pushReplacement(context,
-                      //   MaterialPageRoute(builder: (context) => const mainPage()));
                     },
                     child: const Text("확인"),
                   ),
@@ -235,10 +182,8 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
+                          children: const [
                             CircularProgressIndicator(),
-                            // const Icon(Icons.add),
-                            // const Text('이미지 추가'),
                           ],
                         ),
                       ),
@@ -254,15 +199,6 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                     ],
                   ),
                 ),
-                // TextButton.icon(
-                //   onPressed: () {},
-                //   icon: Icon(Icons.add, size: 200),
-                //   label: Text('이미지 추가'),
-                //   style: TextButton.styleFrom(
-                //     // padding: EdgeInsets.all(30),
-                //     minimumSize: Size(70.0, 70.0),
-                //       onSurface: Colors.grey, backgroundColor: Colors.grey),
-                // ),
               ),
               TextField(
                 decoration: const InputDecoration(
@@ -313,7 +249,6 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                     })
               ],
             ),
-            // Text(stockList.toString()),
             SizedBox(
                 width: double.infinity,
                 child: TextButton(
@@ -379,11 +314,4 @@ class _add_Stock_pageState extends State<add_Stock_page> {
     });
   }
 
-// pickImageFromGallery() {
-//   ImagePicker.pickImage(source: ImageSource.gallery).then((imgFile) {
-//     String imgString = Utility.base64String(imgFile.readAsBytesSync());
-//
-//     refreshImages();
-//   });
-// }
 }

@@ -53,7 +53,7 @@ class _stock_Detail_InfoState extends State<stock_Detail_Info> {
           children: [
             FirstPage(name: widget.name),
             Center(
-              child: SecondPage(),
+              // child: SecondPage(),
             ),
           ],
         ),
