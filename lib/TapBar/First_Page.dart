@@ -17,7 +17,7 @@ class _FirstPageState extends State<FirstPage> {
   double amount = 0;
   String unit = '';
 
-  List<Stock> selectStock = [];
+  List<Stock> selectStock = [Stock(name:'default',amount: 'default',unit: 'default',image: 'default')];
 
   void initState() {
     super.initState();
@@ -48,7 +48,7 @@ class _FirstPageState extends State<FirstPage> {
             color: Colors.yellow,
             margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
             child: Text(
-              selectStock[0].name.toString(),
+              selectStock[1].name.toString(),
               style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
             ),
           ),
@@ -60,7 +60,7 @@ class _FirstPageState extends State<FirstPage> {
               Container(
                 color: Colors.blue,
                 alignment: Alignment.centerRight,
-                child: Text(selectStock[0].amount.toString(),
+                child: Text(selectStock[1].amount.toString(),
                     style:
                         TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
               ),
@@ -68,7 +68,7 @@ class _FirstPageState extends State<FirstPage> {
                 margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
                 color: Colors.red,
                 alignment: Alignment.centerRight,
-                child: Text(selectStock[0].unit.toString(),
+                child: Text(selectStock[1].unit.toString(),
                     style:
                         TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
               )
@@ -82,7 +82,7 @@ class _FirstPageState extends State<FirstPage> {
               context,
               MaterialPageRoute(
                   builder: (context) => manage_Stock_page(
-                        name: selectStock[0].name.toString(),
+                        name: selectStock[1].name.toString()
                       )));
         },
         child: const Icon(Icons.edit_calendar_rounded),
