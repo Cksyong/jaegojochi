@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:jaegojochi/stock_Detail_Info.dart';
 import 'add_Stock_page.dart';
 import 'Search_Page.dart';
@@ -38,7 +40,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: createMaterialColor(Color(0xff000000)),
+        primarySwatch: createMaterialColor(Color(0xfff5f5dc)),
       ),
       home: const mainPage(),
     );
@@ -53,6 +55,27 @@ class mainPage extends StatefulWidget {
 }
 
 class _mainPageState extends State<mainPage> {
+  String _scanBarcode = 'Unknown';
+
+  Future<void> scanBarcodeNormal() async {
+    String barcodeScanRes;
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+          '#ff6666', 'Cancel', true, ScanMode.BARCODE);
+      print(barcodeScanRes);
+    } on PlatformException {
+      barcodeScanRes = 'Failed to get platform version.';
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      _scanBarcode = barcodeScanRes;
+    });
+  }
+
+  //////////
   late Future<File> imageFile;
   late Image image;
   late List<Stock> stocks = [];
@@ -86,8 +109,7 @@ class _mainPageState extends State<mainPage> {
           ),
         ],
       ),
-      body:
-          ListView.separated(
+      body: ListView.separated(
               itemCount: stocks.length,
               itemBuilder: (ctx, index) {
                 return Container(

@@ -54,12 +54,12 @@ class _SearchPageState extends State<SearchPage> {
 
       autofocus: true,
       cursorColor: Colors.white,
-      style: TextStyle(
+      style: const TextStyle(
         color: Colors.white,
         fontSize: 20,
       ),
       textInputAction: TextInputAction.search,
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
         enabledBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
         focusedBorder:
@@ -118,7 +118,7 @@ class _SearchPageState extends State<SearchPage> {
             actions: !_searchBoolean
                 ? [
                     IconButton(
-                        icon: Icon(Icons.search),
+                        icon: const Icon(Icons.search),
                         onPressed: () {
                           setState(() {
                             _searchBoolean = true;
@@ -128,7 +128,7 @@ class _SearchPageState extends State<SearchPage> {
                   ]
                 : [
                     IconButton(
-                        icon: Icon(Icons.clear),
+                        icon: const Icon(Icons.clear),
                         onPressed: () {
                           setState(() {
                             _searchBoolean = false;
