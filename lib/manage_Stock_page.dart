@@ -171,8 +171,7 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
           });
     }
   }
-
-
+  //Actual body start
     return GestureDetector(
         onTap: () {
           FocusScopeNode currentFocus = FocusScope.of(context);

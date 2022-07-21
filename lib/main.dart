@@ -97,69 +97,87 @@ class _mainPageState extends State<mainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('재고최고'),
-        actions: [
-          IconButton(
-            // onPressed: (){},
-            onPressed: () => Navigator.of(context)
-                .push(MaterialPageRoute(builder: (__) => const SearchPage())),
-            icon: const Icon(Icons.search),
-          ),
-        ],
-      ),
-      body: ListView.separated(
-              itemCount: stocks.length,
-              itemBuilder: (ctx, index) {
-                return Container(
-                  height: 70,
-                  padding: const EdgeInsets.all(5),
-                  color: Colors.white,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [ stocks[index].image!.isEmpty //IF DB DOESN'T HAVE IMAGE
-                          ? Image.asset(  // SHOW TAKOYAKI
-                              'assets/image/no_stock_image.jpg',
-                              width: 80,
-                              height: 80,
-                            )
-                          : Container( // IF HAVE IMAGE
-                              width: 80,
-                              height: 80,
-                              child: Image( // SHOW ITS IMAGE
-                                  image: FileImage(File(stocks[index].image!))),
-                            ),
-                      Text(stocks[index].name.toString()), // DB NAME
-                      Text(stocks[index].amount.toString() + // DB AMOUNT
-                          stocks[index].unit.toString()), // UNIT
-                      IconButton( // MOVE TO ITS stock_Detail_Info
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => stock_Detail_Info(
-                                          name: stocks[index].name.toString(),
-                                        )));
-                          },
-                          icon: const Icon(Icons.more_vert)
-                      )],
-                  ),
-                );
+        appBar: AppBar(
+          title: const Text('재고최고'),
+          actions: [
+            IconButton(
+              // onPressed: (){},
+              onPressed: () => Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (__) => const SearchPage())),
+              icon: const Icon(Icons.search),
+            ),
+          ],
+        ),
+        body: ListView.separated(
+          itemCount: stocks.length,
+          itemBuilder: (ctx, index) {
+            return Container(
+              height: 70,
+              padding: const EdgeInsets.all(5),
+              color: Colors.white,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  stocks[index].image!.isEmpty //IF DB DOESN'T HAVE IMAGE
+                      ? Image.asset(
+                          // SHOW TAKOYAKI
+                          'assets/image/no_stock_image.jpg',
+                          width: 80,
+                          height: 80,
+                        )
+                      : Container(
+                          // IF HAVE IMAGE
+                          width: 80,
+                          height: 80,
+                          child: Image(
+                              // SHOW ITS IMAGE
+                              image: FileImage(File(stocks[index].image!))),
+                        ),
+                  Text(stocks[index].name.toString()),
+                  // DB NAME
+                  Text(stocks[index].amount.toString() + // DB AMOUNT
+                      stocks[index].unit.toString()),
+                  // UNIT
+                  IconButton(
+                      // MOVE TO ITS stock_Detail_Info
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => stock_Detail_Info(
+                                      name: stocks[index].name.toString(),
+                                    )));
+                      },
+                      icon: const Icon(Icons.more_vert))
+                ],
+              ),
+            );
+          },
+          separatorBuilder: (context, index) {
+            return const Divider(
+              thickness: 1,
+              color: Colors.black,
+            );
+          },
+        ),
+        floatingActionButton: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            FloatingActionButton(
+              onPressed: () => scanBarcodeNormal(),
+              child: const Icon(Icons.scanner),
+            ),
+            FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const add_Stock_page()));
               },
-          separatorBuilder: (context, index){
-                return const Divider(
-                  thickness: 1,
-                  color: Colors.black,
-                );
-          },),
-      floatingActionButton: FloatingActionButton( // MOVE TO add_Stock_Page
-        onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const add_Stock_page()));
-        },
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
-    );
+              tooltip: 'Increment',
+              child: const Icon(Icons.add),
+            ),
+          ],
+        ));
   }
 }
