@@ -51,6 +51,7 @@ class _SearchPageState extends State<SearchPage> {
           }
         });
       },
+
       autofocus: true,
       cursorColor: Colors.white,
       style: TextStyle(
