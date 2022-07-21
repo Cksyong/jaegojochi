@@ -7,7 +7,6 @@ import 'add_Stock_page.dart';
 import 'Search_Page.dart';
 import 'db/Stock.dart';
 import 'db/DatabaseHelper.dart';
-import 'package:cross_file_image/cross_file_image.dart';
 
 void main() => runApp(MyApp());
 
@@ -104,8 +103,8 @@ class _mainPageState extends State<mainPage> {
           IconButton(
             // onPressed: (){},
             onPressed: () => Navigator.of(context)
-                .push(MaterialPageRoute(builder: (__) => SearchPage(name: ''))),
-            icon: Icon(Icons.search),
+                .push(MaterialPageRoute(builder: (__) => const SearchPage())),
+            icon: const Icon(Icons.search),
           ),
         ],
       ),

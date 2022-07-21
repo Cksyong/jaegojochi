@@ -1,13 +1,11 @@
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'db/Stock.dart';
 import 'db/DatabaseHelper.dart';
 
 class SearchPage extends StatefulWidget {
-  final String name;
 
-  const SearchPage({Key? key, required this.name}) : super(key: key);
+  const SearchPage({Key? key}) : super(key: key);
 
   @override
   State<SearchPage> createState() => _SearchPageState();
@@ -18,7 +16,6 @@ class _SearchPageState extends State<SearchPage> {
   String _searchText = '';
 
   late Future<File> imageFile;
-  List<Stock> selectStock = [];
   late List<Stock> stocks = [];
 
   void initState() {
@@ -51,7 +48,6 @@ class _SearchPageState extends State<SearchPage> {
           }
         });
       },
-
       autofocus: true,
       cursorColor: Colors.white,
       style: const TextStyle(
@@ -61,9 +57,9 @@ class _SearchPageState extends State<SearchPage> {
       textInputAction: TextInputAction.search,
       decoration: const InputDecoration(
         enabledBorder:
-            UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+        UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
         focusedBorder:
-            UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+        UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
         hintText: 'Search',
         hintStyle: TextStyle(
           color: Colors.white60,
@@ -80,14 +76,14 @@ class _SearchPageState extends State<SearchPage> {
           index = _searchIndexList[index];
           return Card(
               child: ListTile(
-            leading: Container(
-                width: 60,
-                height: 60,
-                child: Image(image: FileImage(File(stocks[index].image!)))),
-            title: Text(stocks[index].name.toString()),
-            subtitle: Text(stocks[index].amount.toString() +
-                stocks[index].unit.toString()),
-          ));
+                leading: Container(
+                    width: 60,
+                    height: 60,
+                    child: Image(image: FileImage(File(stocks[index].image!)))),
+                title: Text(stocks[index].name.toString()),
+                subtitle: Text(stocks[index].amount.toString() +
+                    stocks[index].unit.toString()),
+              ));
         });
   }
 
@@ -97,14 +93,14 @@ class _SearchPageState extends State<SearchPage> {
         itemBuilder: (context, index) {
           return Card(
               child: ListTile(
-            leading: Container(
-                width: 60,
-                height: 60,
-                child: Image(image: FileImage(File(stocks[index].image!)))),
-            title: Text(stocks[index].name.toString()),
-            subtitle: Text(stocks[index].amount.toString() +
-                stocks[index].unit.toString()),
-          ));
+                leading: Container(
+                    width: 60,
+                    height: 60,
+                    child: Image(image: FileImage(File(stocks[index].image!)))),
+                title: Text(stocks[index].name.toString()),
+                subtitle: Text(stocks[index].amount.toString() +
+                    stocks[index].unit.toString()),
+              ));
         });
   }
 
@@ -114,27 +110,8 @@ class _SearchPageState extends State<SearchPage> {
 
     return Scaffold(
         appBar: AppBar(
-            title: !_searchBoolean ? Text(widget.name) : _searchTextField(),
-            actions: !_searchBoolean
-                ? [
-                    IconButton(
-                        icon: const Icon(Icons.search),
-                        onPressed: () {
-                          setState(() {
-                            _searchBoolean = true;
-                            _searchIndexList = [];
-                          });
-                        })
-                  ]
-                : [
-                    IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () {
-                          setState(() {
-                            _searchBoolean = false;
-                          });
-                        })
-                  ]),
-        body: !_searchBoolean ? _defaultListView() : _searchListView());
+          title: _searchTextField(),
+        ),
+        body: _defaultListView());
   }
 }

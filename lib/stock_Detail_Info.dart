@@ -1,19 +1,10 @@
-import 'dart:io';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:jaegojochi/TapBar/First_Page.dart';
 import 'package:jaegojochi/TapBar/Second_Page.dart';
-import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:developer';
 
 import 'TapBar/First_Page.dart';
 import 'TapBar/Second_Page.dart';
-import 'db/DatabaseHelper.dart';
 import 'db/Stock.dart';
-import 'manage_Stock_page.dart';
 
 class stock_Detail_Info extends StatefulWidget {
   final String name;
