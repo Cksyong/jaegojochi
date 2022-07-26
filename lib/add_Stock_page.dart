@@ -75,6 +75,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
       if(amount.startsWith('.') == true){
         amount = '0$amount';
       }
+
       if (name == "") {
         showToast('품목명');
         //TODO Toast외않됌?
