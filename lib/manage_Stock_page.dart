@@ -21,6 +21,7 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
   List<Stock> updateStock = [];
 
   void initState() {
+    //인자로 받아온 name(상품명) 기본키로 선택된 재고를 DB에서 찾기
     super.initState();
     DatabaseHelper.instance.getSelectStock(widget.name).then((value) {
       setState(() {
@@ -35,16 +36,18 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
     }).catchError((error) {
       print(error);
     });
-  }
+  } //End Of initState()
 
-  final ImagePicker _picker = ImagePicker();
-  dynamic _imageFile;
-  var _isBeforeImage = true;
+  final ImagePicker _picker = ImagePicker(); //카메라 또는 갤러리에서 사진 불러오는 기능
+  dynamic _imageFile; //불러온 사진 데이터를 저장하는 변수
+  var _isBeforeImage = true; //사진 변경 시 visibility를 조절하기 위한 변수
   var _isAfterImage = false;
-  final productAmountController = TextEditingController();
+  final productAmountController =
+      TextEditingController(); //TextField에서 입력값 받아오는 컨트롤러
 
   @override
-  Widget build(BuildContext context) {void _showAlertDialog(String way, String message) {
+  Widget build(BuildContext context) {
+    void _showAlertDialog(String way, String message) {
     showDialog(
         context: context,
         //barrierDismissible - Dialog 제외한 다른 화면 터치 x
@@ -56,12 +59,12 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                 borderRadius: BorderRadius.circular(10.0)),
             //Dialog Main Title
             title: Column(
-              children: const <Widget>[
+              children: const <Widget>[//다이얼로그 타이틀
                 Text("수량을 확인하세요."),
               ],
             ),
 
-            content: Column(
+            content: Column( //다이얼로그 본문
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -71,12 +74,11 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
               ],
             ),
             actions: <Widget>[
-              TextButton(
+              TextButton( //확인버튼만 있고 누르면 닫히고 끝
                 style: TextButton.styleFrom(
                   primary: Colors.black,
                 ),
                 onPressed: () {
-                  //TODO DB(내부저장소든 뭐든)에 추가하는 코드
                   Navigator.pop(context);
                 },
                 child: const Text("확인"),
@@ -86,19 +88,20 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
         });
   }
 
-  void editProductState(String method) {
-    var amountText = productAmountController.text;
-    double amount = 0;
-    double finalAmount = 0;
-    if (amountText != '') {
-      amount = double.parse(amountText);
+  void editProductState(String method) { //입력값에 따라 모든 행동을 총괄하는 함수
+    //DB 업데이트 포함
+    var amountText = productAmountController.text;//TextField 입력값 저장
+    double amount = 0; //문자열인 입력값 변환하여 저장할 변수
+    double finalAmount = 0; //추가/소진 연산 후 결과값을 저장할 변수
+    if (amountText != '') { //수량이 입력되었으면
+      amount = double.parse(amountText); //Double 타입으로 변환
     }
-    if (amount == 0) {
+    if (amount == 0) { //수량이 비었거나 0이면
       _showAlertDialog('', '추가/소진할 수량을 입력해주세요.');
     } else if (method == '소진' &&
-        double.parse(selectStock[0].amount!) < amount) {
+        double.parse(selectStock[0].amount!) < amount) { // '소진' 버튼을 눌렀는데 현재 값보다 입력값이 크면
       _showAlertDialog('', '소진할 수량은 현재 수량을 초과할 수 없습니다.');
-    } else {
+    } else { //정상 입력, 정상 진행
       if (method == '추가') {
         finalAmount = double.parse(selectStock[0].amount!) + amount;
       } else if (method == '소진') {
@@ -124,9 +127,7 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(
-                    '현재 수량 : ${selectStock[0].amount} ${selectStock[0].unit}\n변경 수량 : $amount (${selectStock[0].unit!})\n최종 수량 : $finalAmount\n$method하시겠습니까?',
-                  ),
+                  Text('현재 수량 : ${selectStock[0].amount} ${selectStock[0].unit}\n변경 수량 : $amount (${selectStock[0].unit!})\n최종 수량 : $finalAmount\n$method하시겠습니까?'),
                 ],
               ),
               actions: <Widget>[
@@ -144,7 +145,6 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                     primary: Colors.black,
                   ),
                   onPressed: () {
-                    //TODO DB(내부저장소든 뭐든)에 추가하는 코드
                     updateStock = selectStock;
                     if (_imageFile != null) {
                       File? file = File(_imageFile!.path);
@@ -155,7 +155,6 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                       updateStock[0].image = fileEdit3;
                     }
                     updateStock[0].amount = finalAmount.toString();
-                    //TODO 아직 몇발 남았다 20220714
                     DatabaseHelper.instance.update(updateStock[0]);
                     Navigator.pop(context);
                     Navigator.pushAndRemoveUntil(
@@ -409,4 +408,5 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
       _imageFile = pickedFile;
     });
   }
+
 }

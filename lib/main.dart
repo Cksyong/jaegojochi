@@ -59,15 +59,15 @@ class _mainPageState extends State<mainPage> {
 
   //FOR FAB
   ValueNotifier<bool> isDialOpen = ValueNotifier(false);
-
-  WillPopScope() async {
-    if (isDialOpen.value) {
-      isDialOpen.value = false;
-      return false;
-    } else {
-      return true;
-    }
-  }
+  //
+  // WillPopScope() async {
+  //   if (isDialOpen.value) {
+  //     isDialOpen.value = false;
+  //     return false;
+  //   } else {
+  //     return true;
+  //   }
+  // }
 
   Future<void> scanBarcodeNormal() async {
     String barcodeScanRes;
@@ -87,10 +87,7 @@ class _mainPageState extends State<mainPage> {
     });
   }
 
-  //////////
-  late Future<File> imageFile;
-  late Image image;
-  late List<Stock> stocks = [];
+  List<Stock> stocks = [];
 
   void initState() {
     super.initState();
@@ -181,7 +178,6 @@ class _mainPageState extends State<mainPage> {
           overlayOpacity: 0.5,
           spacing: 15,
           spaceBetweenChildren: 15,
-          closeManually: true,
           children: [
             SpeedDialChild(
                 child: const Icon(Icons.add),
@@ -194,7 +190,7 @@ class _mainPageState extends State<mainPage> {
                           builder: (context) => const add_Stock_page()));
                 }),
             SpeedDialChild(
-                child: const Icon(Icons.scanner),
+                child: const Icon(Icons.camera_alt),
                 label: '바코드 입력',
                 backgroundColor: const Color(0xfff5f5dc),
                 onTap: () => scanBarcodeNormal())

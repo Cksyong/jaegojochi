@@ -1,8 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-
-import '../db/DatabaseHelper.dart';
-import '../db/Stock.dart';
-import '../manage_Stock_page.dart';
+import 'package:jaegojochi/db/DatabaseHelper.dart';
+import 'package:jaegojochi/db/Stock.dart';
+import 'package:jaegojochi/manage_Stock_page.dart';
 
 class FirstPage extends StatefulWidget {
   final String name;
@@ -14,10 +14,10 @@ class FirstPage extends StatefulWidget {
 }
 
 class _FirstPageState extends State<FirstPage> {
-  double amount = 0;
-  String unit = '';
 
-  List<Stock> selectStock = [Stock(name:'default',amount: 'default',unit: 'default',image: 'default')];
+  List<Stock> selectStock = [
+    Stock(name: 'default', amount: 'default', unit: 'default', image: 'default')
+  ];
 
   void initState() {
     super.initState();
@@ -42,14 +42,25 @@ class _FirstPageState extends State<FirstPage> {
       body: Column(
         children: [
           Container(
+            height: MediaQuery.of(context).size.height * 0.45,
               padding: const EdgeInsets.fromLTRB(20, 50, 20, 20),
-              child: Image.asset('assets/image/takoyaki.jpg')),
+              child:
+          selectStock[1].image!.isEmpty //IF DB DOESN'T HAVE IMAGE
+              ? Image.asset(
+            // SHOW DEFAULT
+            'assets/image/no_stock_image.jpg',
+          )
+              : Image(
+                // SHOW ITS IMAGE
+                  image: FileImage(File(selectStock[1].image!)),
+          )
+          ),
           Container(
             color: Colors.yellow,
             margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
             child: Text(
               selectStock[1].name.toString(),
-              style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
+              //style: const TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
             ),
           ),
           const SizedBox(width: 0, height: 100),
@@ -61,16 +72,16 @@ class _FirstPageState extends State<FirstPage> {
                 color: Colors.blue,
                 alignment: Alignment.centerRight,
                 child: Text(selectStock[1].amount.toString(),
-                    style:
-                        TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
+                    //style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold)
+                ),
               ),
               Container(
                 margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
                 color: Colors.red,
                 alignment: Alignment.centerRight,
                 child: Text(selectStock[1].unit.toString(),
-                    style:
-                        TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
+                    //style:TextStyle(fontSize: 50, fontWeight: FontWeight.bold)
+                ),
               )
             ],
           ),
@@ -81,9 +92,8 @@ class _FirstPageState extends State<FirstPage> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => manage_Stock_page(
-                        name: selectStock[1].name.toString()
-                      )));
+                  builder: (context) =>
+                      manage_Stock_page(name: selectStock[1].name.toString())));
         },
         child: const Icon(Icons.edit_calendar_rounded),
       ),

@@ -28,14 +28,14 @@ class DatabaseHelper {
     return db;
   }
   _onCreate(Database db, int version) async{
-    await db.execute("create table stock($columnname TEXT PRIMARY KEY,$columnamount TEXT, $columnunit TEXT, $columnimage BLOB)");
+    await db.execute("create table $table($columnname TEXT PRIMARY KEY,$columnamount TEXT, $columnunit TEXT, $columnimage BLOB)");
   }
   //TO HERE INITIALIZED DATABASE FOR START
 
   //CRUD - CREATE
   Future<int> insert(Stock stock) async {
     Database db = await instance.database;
-    var res = await db.insert('stock', stock.toMap());
+    var res = await db.insert(table, stock.toMap());
     return res;
   }
 
