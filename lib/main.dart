@@ -59,6 +59,7 @@ class _mainPageState extends State<mainPage> {
 
   //FOR FAB
   ValueNotifier<bool> isDialOpen = ValueNotifier(false);
+
   //
   // WillPopScope() async {
   //   if (isDialOpen.value) {
@@ -111,7 +112,6 @@ class _mainPageState extends State<mainPage> {
           title: const Text('재고최고'),
           actions: [
             IconButton(
-              // onPressed: (){},
               onPressed: () => Navigator.of(context)
                   .push(MaterialPageRoute(builder: (__) => const SearchPage())),
               icon: const Icon(Icons.search),
@@ -130,19 +130,21 @@ class _mainPageState extends State<mainPage> {
                 children: [
                   stocks[index].image!.isEmpty //IF DB DOESN'T HAVE IMAGE
                       ? Image.asset(
-                          // SHOW TAKOYAKI
+                          // SHOW DEFAULT
                           'assets/image/no_stock_image.jpg',
-                          width: 80,
-                          height: 80,
+                          width: MediaQuery.of(context).size.height * 0.069,
+                          height: MediaQuery.of(context).size.height * 0.069,
                         )
                       : Container(
                           // IF HAVE IMAGE
-                          width: 80,
-                          height: 80,
-                          child: Image(
-                              // SHOW ITS IMAGE
-                              image: FileImage(File(stocks[index].image!))),
-                        ),
+                      width: MediaQuery.of(context).size.height * 0.069,
+                      height: MediaQuery.of(context).size.height * 0.069,
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  fit: BoxFit.fitWidth,
+                                  alignment: FractionalOffset.center,
+                                  image:
+                                      FileImage(File(stocks[index].image!))))),
                   Text(stocks[index].name.toString()),
                   // DB NAME
                   Text(stocks[index].amount.toString() + // DB AMOUNT
@@ -193,8 +195,21 @@ class _mainPageState extends State<mainPage> {
                 child: const Icon(Icons.camera_alt),
                 label: '바코드 입력',
                 backgroundColor: const Color(0xfff5f5dc),
-                onTap: () => scanBarcodeNormal())
+                onTap: () => scanBarcodeNormal()),
+
+            SpeedDialChild(
+                child: const Icon(Icons.cloud_download),
+                label: '데이터 복원',
+                backgroundColor: const Color(0xfff5f5dc),
+                onTap: () {}
+            ),
+            SpeedDialChild(
+                child: const Icon(Icons.backup),
+                label: '데이터 백업',
+                backgroundColor: const Color(0xfff5f5dc),
+                onTap: () {})
           ],
+
         ));
   }
 }

@@ -202,8 +202,8 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                       Container(
                         margin: const EdgeInsets.only(top: 20),
                         child: SizedBox(
-                          width: double.infinity,
-                          height: 300,
+                          width: MediaQuery.of(context).size.height * 0.42,
+                          height: MediaQuery.of(context).size.height * 0.42,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
@@ -238,8 +238,8 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                                             )
                                           : SizedBox(
                                               // IF HAVE IMAGE
-                                              width: 300,
-                                              height: 300,
+                                              width : MediaQuery.of(context).size.height * 0.4,
+                                              height: MediaQuery.of(context).size.height * 0.4,
                                               child: Image(
                                                   // SHOW ITS IMAGE
                                                   image: FileImage(File(

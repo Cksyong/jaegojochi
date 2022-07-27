@@ -6,6 +6,11 @@ import 'dart:io' as io;
 import 'dart:async';
 
 class DatabaseHelper {
+  static const SECRET_KEY = "2021_PRIVATE_KEY_ENCRYPT_2021";
+  static const DATABASE_VERSION = 1;
+
+  List<Stock> tables =[];
+
   static const _databaseName = "stock.db";
   static const table = 'stock';
 
@@ -25,8 +30,10 @@ class DatabaseHelper {
     io.Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, _databaseName);
     var db = await openDatabase(path, version: 1, onCreate: _onCreate);
+    print(path);
     return db;
   }
+
   _onCreate(Database db, int version) async{
     await db.execute("create table $table($columnname TEXT PRIMARY KEY,$columnamount TEXT, $columnunit TEXT, $columnimage BLOB)");
   }
@@ -47,6 +54,7 @@ class DatabaseHelper {
     if(maps.isNotEmpty ){
       for(int i=0; i<maps.length; i++) {
         stocks.add(Stock.fromMap(maps[i]));
+        tables.add(Stock.fromMap(maps[i]));
       }
     }
     return stocks;
