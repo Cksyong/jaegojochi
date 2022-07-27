@@ -14,9 +14,13 @@ class FirstPage extends StatefulWidget {
 }
 
 class _FirstPageState extends State<FirstPage> {
-
   List<Stock> selectStock = [
-    Stock(name: 'default', amount: 'default', unit: 'default', image: 'default')
+    Stock(
+        name: 'default',
+        amount: 'default',
+        unit: 'default',
+        image: 'default',
+        code: 0)
   ];
 
   void initState() {
@@ -28,7 +32,8 @@ class _FirstPageState extends State<FirstPage> {
               name: element.name,
               amount: element.amount,
               unit: element.unit,
-              image: element.image));
+              image: element.image,
+              code: element.code));
         });
       });
     }).catchError((error) {
@@ -42,24 +47,30 @@ class _FirstPageState extends State<FirstPage> {
       body: Column(
         children: [
           Container(
-            height: MediaQuery.of(context).size.height * 0.45,
+              height: MediaQuery.of(context).size.height * 0.45,
               padding: const EdgeInsets.fromLTRB(20, 50, 20, 20),
-              child:
-          selectStock[1].image!.isEmpty //IF DB DOESN'T HAVE IMAGE
-              ? Image.asset(
-            // SHOW DEFAULT
-            'assets/image/no_stock_image.jpg',
-          )
-              : Image(
-                // SHOW ITS IMAGE
-                  image: FileImage(File(selectStock[1].image!)),
-          )
-          ),
+              child: selectStock[1].image!.isEmpty //IF DB DOESN'T HAVE IMAGE
+                  ? Image.asset(
+                      // SHOW DEFAULT
+                      'assets/image/no_stock_image.jpg',
+                    )
+                  : Image(
+                      // SHOW ITS IMAGE
+                      image: FileImage(File(selectStock[1].image!)),
+                    )),
           Container(
             color: Colors.yellow,
             margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
             child: Text(
               selectStock[1].name.toString(),
+              //style: const TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
+            ),
+          ),
+          Container(
+            color: Colors.yellow,
+            margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+            child: Text(selectStock[1].code != 0 ?
+            selectStock[1].code.toString() : '',
               //style: const TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
             ),
           ),
@@ -71,16 +82,18 @@ class _FirstPageState extends State<FirstPage> {
               Container(
                 color: Colors.blue,
                 alignment: Alignment.centerRight,
-                child: Text(selectStock[1].amount.toString(),
-                    //style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold)
+                child: Text(
+                  selectStock[1].amount.toString(),
+                  //style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold)
                 ),
               ),
               Container(
                 margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
                 color: Colors.red,
                 alignment: Alignment.centerRight,
-                child: Text(selectStock[1].unit.toString(),
-                    //style:TextStyle(fontSize: 50, fontWeight: FontWeight.bold)
+                child: Text(
+                  selectStock[1].unit.toString(),
+                  //style:TextStyle(fontSize: 50, fontWeight: FontWeight.bold)
                 ),
               )
             ],

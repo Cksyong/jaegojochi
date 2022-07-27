@@ -3,15 +3,17 @@ class Stock {
   String? amount;
   String? unit;
   String? image;
+  int? code;
 
-  Stock({this.name, this.amount, this.unit, this.image});
+  Stock({this.name, this.amount, this.unit, this.image, this.code});
 
   Map<String, dynamic> toMap() {
     var map = <String, dynamic> {
       'name': name,
       'amount': amount,
       'unit': unit,
-      'image' : image
+      'image' : image,
+      'code' : code
     };
     return map;
   }
@@ -21,6 +23,7 @@ class Stock {
     amount = map['amount'];
     unit = map['unit'];
     image = map['image'];
+    code = map['code'];
   }
 
 

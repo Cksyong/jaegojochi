@@ -9,7 +9,8 @@ import 'db/Stock.dart';
 import 'main.dart';
 
 class add_Stock_page extends StatefulWidget {
-  const add_Stock_page({Key? key}) : super(key: key);
+  final int barcode;
+  const add_Stock_page({Key? key, required this.barcode}) : super(key: key);
 
   @override
   State<add_Stock_page> createState() => _add_Stock_pageState();
@@ -20,32 +21,41 @@ class _add_Stock_pageState extends State<add_Stock_page> {
   late Image image;
   late DatabaseHelper dbHelper;
   late List<Stock> stocks;
+  var _codeIsEnable = false;
+  var _codeChecked = false;
 
   void addToDB(dynamic image) {
     String name = productNameController.text;
     String amount = productAmountController.text;
-    String unit = _selectedValue.toString();
-    log('addToDB');
-    String fileEdit = "";
+    int code = 0;
+    if (productCodeController.text == '') {
 
-    // IF USER DOESN'T UPLOAD AN IMAGE
-    if(image != null){
-      File? file = File(image!.path);
-      fileEdit = file.toString();
-      fileEdit = fileEdit.substring(0, fileEdit.length -1);
-      fileEdit = fileEdit.replaceAll('File: \'', '');
+    } else {
+      code = int.parse(productCodeController.text);
     }
-    if(amount.startsWith('.') == true){
-      amount = '0$amount';
+      String unit = _selectedValue.toString();
+      log('addToDB');
+      String fileEdit = "";
+
+
+      // IF USER DOESN'T UPLOAD AN IMAGE
+      if(image != null){
+        File? file = File(image!.path);
+        fileEdit = file.toString();
+        fileEdit = fileEdit.substring(0, fileEdit.length -1);
+        fileEdit = fileEdit.replaceAll('File: \'', '');
+      }
+      if(amount.startsWith('.') == true){
+        amount = '0$amount';
+      }
+      setState(() {
+        stockList.insert(
+            0, Stock(name: name, amount: amount, unit: unit, image: fileEdit, code: code));
+      });
+      DatabaseHelper.instance
+          .insert(Stock(name: name, amount: amount, unit: unit, image: fileEdit, code: code));
     }
-    log(fileEdit);
-    setState(() {
-      stockList.insert(
-          0, Stock(name: name, amount: amount, unit: unit, image: fileEdit));
-    });
-    DatabaseHelper.instance
-        .insert(Stock(name: name, amount: amount, unit: unit, image: fileEdit));
-  }
+
 
 
   List<Stock> stockList = [];
@@ -55,7 +65,18 @@ class _add_Stock_pageState extends State<add_Stock_page> {
   var _selectedValue = 'EA';
   final productNameController = TextEditingController();
   final productAmountController = TextEditingController();
+  final productCodeController = TextEditingController();
   dynamic imageString;
+  dynamic blackColor = Colors.black;
+  dynamic greyColor = Colors.grey;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.barcode != 0) {
+      productCodeController.text = widget.barcode.toString();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -208,6 +229,41 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                     labelText: '품목명',
                     labelStyle: TextStyle(color: Colors.black)),
                 controller: productNameController,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.45,
+                    child: TextField(
+                      style: !_codeIsEnable ? TextStyle(color: Colors.grey) : TextStyle(color: Colors.black),
+
+                      decoration: InputDecoration(
+                          enabled: _codeIsEnable,
+                          enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.black)),
+                          focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.black)),
+                          labelText: '상품코드',
+                          labelStyle: !_codeIsEnable ? TextStyle(color: Colors.grey) : TextStyle(color: Colors.black)
+                      ),
+                      controller: productCodeController,
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Text('직접 입력'),
+                      Checkbox(value: _codeChecked, onChanged: (value) {
+                        setState(() {
+                          _codeChecked = value!;
+                          _codeIsEnable = value;
+                        });
+                      },
+                      ),
+                    ],
+                  )
+                ],
               ),
             ]),
             Row(

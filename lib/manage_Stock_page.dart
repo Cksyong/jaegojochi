@@ -30,12 +30,18 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
               name: element.name,
               amount: element.amount,
               unit: element.unit,
-              image: element.image));
+              image: element.image,
+          code: element.code));
+          if (element.code != 0) {
+            productCodeController.text = element.code.toString();
+          }
         });
       });
     }).catchError((error) {
       print(error);
     });
+
+
   } //End Of initState()
 
   final ImagePicker _picker = ImagePicker(); //카메라 또는 갤러리에서 사진 불러오는 기능
@@ -44,6 +50,9 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
   var _isAfterImage = false;
   final productAmountController =
       TextEditingController(); //TextField에서 입력값 받아오는 컨트롤러
+  var _codeIsEnable = false;
+  var _codeChecked = false;
+  final productCodeController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +105,7 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
     if (amountText != '') { //수량이 입력되었으면
       amount = double.parse(amountText); //Double 타입으로 변환
     }
-    if (amount == 0) { //수량이 비었거나 0이면
+    if (productAmountController.text == '') { //수량이 비었거나 0이면
       _showAlertDialog('', '추가/소진할 수량을 입력해주세요.');
     } else if (method == '소진' &&
         double.parse(selectStock[0].amount!) < amount) { // '소진' 버튼을 눌렀는데 현재 값보다 입력값이 크면
@@ -153,6 +162,12 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                       fileEdit.substring(0, fileEdit.length - 1);
                       var fileEdit3 = fileEdit2.replaceAll('File: \'', '');
                       updateStock[0].image = fileEdit3;
+                    }
+
+                    if (selectStock[0].code.toString() != productCodeController.text) {
+                      if (selectStock[0].code != 0) {
+                        updateStock[0].code = int.parse(productCodeController.text);
+                      }
                     }
                     updateStock[0].amount = finalAmount.toString();
                     DatabaseHelper.instance.update(updateStock[0]);
@@ -269,7 +284,44 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Text('추가/소진할 수량을 입력해주세요.'),
+                      Row(
+
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.max,
+                        children: <Widget>[
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.4,
+                            child: TextField(
+                              style: !_codeIsEnable ? TextStyle(color: Colors.grey) : TextStyle(color: Colors.black),
+
+                              decoration: InputDecoration(
+                                  enabled: _codeIsEnable,
+                                  enabledBorder: UnderlineInputBorder(
+                                      borderSide: BorderSide(color: Colors.black)),
+                                  focusedBorder: UnderlineInputBorder(
+                                      borderSide: BorderSide(color: Colors.black)),
+                                  labelText: '상품코드',
+                                  labelStyle: !_codeIsEnable ? TextStyle(color: Colors.grey) : TextStyle(color: Colors.black)
+                              ),
+                              controller: productCodeController,
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              Text('직접 입력'),
+                              Checkbox(value: _codeChecked, onChanged: (value) {
+                                setState(() {
+                                  _codeChecked = value!;
+                                  _codeIsEnable = value;
+                                });
+                              },
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      const Text('추가/소진할 수량을 입력해주세요.',),
                       const SizedBox(height: 20),
                       SizedBox(
                         width: MediaQuery.of(context).size.width,

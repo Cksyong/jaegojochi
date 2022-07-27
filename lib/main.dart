@@ -55,7 +55,7 @@ class mainPage extends StatefulWidget {
 }
 
 class _mainPageState extends State<mainPage> {
-  String _scanBarcode = 'Unknown';
+  int _scanBarcode = 0;
 
   //FOR FAB
   ValueNotifier<bool> isDialOpen = ValueNotifier(false);
@@ -76,6 +76,7 @@ class _mainPageState extends State<mainPage> {
       barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
           '#ff6666', 'Cancel', true, ScanMode.BARCODE);
       print(barcodeScanRes);
+
     } on PlatformException {
       barcodeScanRes = 'Failed to get platform version.';
     }
@@ -83,7 +84,9 @@ class _mainPageState extends State<mainPage> {
     if (!mounted) return;
 
     setState(() {
-      _scanBarcode = barcodeScanRes;
+      _scanBarcode = int.parse(barcodeScanRes);
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (__) => add_Stock_page(barcode: _scanBarcode)));
     });
   }
 
@@ -132,21 +135,32 @@ class _mainPageState extends State<mainPage> {
                       ? Image.asset(
                           // SHOW TAKOYAKI
                           'assets/image/no_stock_image.jpg',
-                          width: 80,
-                          height: 80,
+                          width: MediaQuery.of(context).size.height*0.069,
+                          height: MediaQuery.of(context).size.height*0.069,
+                    fit: BoxFit.fill,
                         )
                       : Container(
                           // IF HAVE IMAGE
-                          width: 80,
-                          height: 80,
+                    width: MediaQuery.of(context).size.height*0.069,
+                    height: MediaQuery.of(context).size.height*0.069,
                           child: Image(
                               // SHOW ITS IMAGE
-                              image: FileImage(File(stocks[index].image!))),
+                              image: FileImage(File(stocks[index].image!)),
+                              fit: BoxFit.cover),// = CenterCrop()
                         ),
-                  Text(stocks[index].name.toString()),
+                  Container(
+                    width: MediaQuery.of(context).size.width*0.4,
+                    alignment: Alignment.center,
+                    child: Text(stocks[index].name.toString(),
+                    overflow: TextOverflow.ellipsis,),
                   // DB NAME
-                  Text(stocks[index].amount.toString() + // DB AMOUNT
-                      stocks[index].unit.toString()),
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width*0.2,
+                    alignment: Alignment.center,
+                    child: Text(stocks[index].amount.toString() + // DB AMOUNT
+                        stocks[index].unit.toString()),
+                  ),
                   // UNIT
                   IconButton(
                       // MOVE TO ITS stock_Detail_Info
@@ -187,7 +201,7 @@ class _mainPageState extends State<mainPage> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const add_Stock_page()));
+                          builder: (context) => add_Stock_page(barcode: 0,)));
                 }),
             SpeedDialChild(
                 child: const Icon(Icons.camera_alt),

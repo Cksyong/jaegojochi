@@ -13,6 +13,7 @@ class DatabaseHelper {
   static const columnamount = 'amount';
   static const columnunit = 'unit';
   static const columnimage = 'image';
+  static const columncode = 'code';
 
   DatabaseHelper._privateConstructor();
   static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
@@ -28,7 +29,7 @@ class DatabaseHelper {
     return db;
   }
   _onCreate(Database db, int version) async{
-    await db.execute("create table $table($columnname TEXT PRIMARY KEY,$columnamount TEXT, $columnunit TEXT, $columnimage BLOB)");
+    await db.execute("create table $table($columnname TEXT PRIMARY KEY,$columnamount TEXT, $columnunit TEXT, $columnimage BLOB, $columncode INTEGER)");
   }
   //TO HERE INITIALIZED DATABASE FOR START
 
@@ -42,7 +43,7 @@ class DatabaseHelper {
   //CRUD - READ
   Future<List<Stock>> getStocks() async{
     Database db = await instance.database;
-    List<Map<String,dynamic>>? maps = await db.query(table, columns: [columnname,columnamount,columnunit,columnimage]);
+    List<Map<String,dynamic>>? maps = await db.query(table, columns: [columnname,columnamount,columnunit,columnimage,columncode]);
     List<Stock> stocks = [];
     if(maps.isNotEmpty ){
       for(int i=0; i<maps.length; i++) {
@@ -72,7 +73,18 @@ class DatabaseHelper {
       whereArgs: [name]
     );
     return List.generate(maps.length, (i) {
-      return Stock(name: maps[i]['name'], amount: maps[i]['amount'], unit: maps[i]['unit'], image: maps[i]['image']);
+      return Stock(name: maps[i]['name'], amount: maps[i]['amount'], unit: maps[i]['unit'], image: maps[i]['image'], code: maps[i]['code']);
+    });
+  }
+
+  Future<List<Stock>> getSelectStockFromCode(int code) async {
+    Database db = await instance.database;
+    final List<Map<String, dynamic>> maps = await db.query(
+        table, where: 'code = ?',
+        whereArgs: [code]
+    );
+    return List.generate(maps.length, (i) {
+      return Stock(name: maps[i]['name'], amount: maps[i]['amount'], unit: maps[i]['unit'], image: maps[i]['image'], code: maps[i]['code']);
     });
   }
 
