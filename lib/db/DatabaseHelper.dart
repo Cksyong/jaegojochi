@@ -36,7 +36,7 @@ class DatabaseHelper {
   }
 
   _onCreate(Database db, int version) async{
-    await db.execute("create table $table($columnname TEXT PRIMARY KEY,$columnamount TEXT, $columnunit TEXT, $columnimage BLOB, $columncode INTEGER)");
+    await db.execute("create table $table($columnname TEXT PRIMARY KEY,$columnamount TEXT, $columnunit TEXT, $columnimage BLOB, $columncode TEXT)");
   }
   //TO HERE INITIALIZED DATABASE FOR START
 
@@ -85,7 +85,7 @@ class DatabaseHelper {
     });
   }
 
-  Future<List<Stock>> getSelectStockFromCode(int code) async {
+  Future<List<Stock>> getSelectStockFromCode(String code) async {
     Database db = await instance.database;
     final List<Map<String, dynamic>> maps = await db.query(
         table, where: 'code = ?',

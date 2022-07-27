@@ -3,7 +3,7 @@ class Stock {
   String? amount;
   String? unit;
   String? image;
-  int? code;
+  String? code;
 
   Stock({this.name, this.amount, this.unit, this.image, this.code});
 

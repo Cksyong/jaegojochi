@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:developer';
@@ -73,7 +74,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
   @override
   void initState() {
     super.initState();
-    if (widget.barcode != 0) {
+    if (widget.barcode != '') {
       productCodeController.text = widget.barcode.toString();
     }
   }
@@ -89,6 +90,27 @@ class _add_Stock_pageState extends State<add_Stock_page> {
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER);
     }
+
+    Future<void> scanBarcodeNormal() async {
+      String barcodeScanRes;
+      // Platform messages may fail, so we use a try/catch PlatformException.
+      try {
+        barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+            '#ff6666', 'Cancel', true, ScanMode.BARCODE);
+        print(barcodeScanRes);
+      } on PlatformException {
+        barcodeScanRes = 'Failed to get platform version.';
+      }
+
+      if (!mounted) return;
+
+      setState(() {
+        if (barcodeScanRes != '-1') {
+          productCodeController.text = barcodeScanRes;
+        }
+      });
+    }
+
 
     bool checkDB(String name) {
       DatabaseHelper.instance.getSelectStock(name).then((value) {
@@ -278,83 +300,84 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                     labelStyle: TextStyle(color: Colors.black)),
                 controller: productNameController,
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.35,
+                    child: TextField(
+                      style: !_codeIsEnable ? TextStyle(color: Colors.grey) : TextStyle(color: Colors.black),
+
+                      decoration: InputDecoration(
+                          enabled: _codeIsEnable,
+                          enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.black)),
+                          focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.black)),
+                          labelText: '상품코드',
+                          labelStyle: !_codeIsEnable ? TextStyle(color: Colors.grey) : TextStyle(color: Colors.black)
+                      ),
+                      controller: productCodeController,
+                    ),
+                  ),
+                  IconButton(onPressed: () => scanBarcodeNormal(), icon: Icon(Icons.qr_code_scanner_rounded)),
+                  Row(
+                    children: [
+
+                      Text('직접 입력'),
+                      Checkbox(value: _codeChecked, onChanged: (value) {
+                        setState(() {
+                          _codeChecked = value!;
+                          _codeIsEnable = value;
+                        });
+                      },
+                      ),
+
+                    ],
+                  )
+                ],
+              ),
             ]),
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 Container(
-                  width: MediaQuery.of(context).size.width * 0.45,
                   margin: const EdgeInsets.only(right: 20),
                   width: 60,
                   height: 50,
                   child: TextField(
-                    style: !_codeIsEnable ? TextStyle(color: Colors.grey) : TextStyle(color: Colors.black),
-
-                    decoration: InputDecoration(
-                        enabled: _codeIsEnable,
-                        enabledBorder: UnderlineInputBorder(
+                    maxLines: 1,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'(^\d*\.?\d*)'))
+                    ], //double 타입 전용 조건
+                    decoration: const InputDecoration(
+                        enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.black)),
-                        focusedBorder: UnderlineInputBorder(
+                        focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.black)),
-                        labelText: '상품코드',
-                        labelStyle: !_codeIsEnable ? TextStyle(color: Colors.grey) : TextStyle(color: Colors.black)
-                    ),
-                    controller: productCodeController,
+                        labelText: '수량',
+                        labelStyle: TextStyle(color: Colors.black)),
+                    controller: productAmountController,
                   ),
                 ),
-                Row(
-                  children: [
-                    Text('직접 입력'),
-                    Checkbox(value: _codeChecked, onChanged: (value) {
+                DropdownButton(
+                    value: _selectedValue,
+                    items: _unitValue.map((value) {
+                      return DropdownMenuItem(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
                       setState(() {
-                        _codeChecked = value!;
-                        _codeIsEnable = value;
+                        _selectedValue = value.toString();
                       });
-                    },
-                    ),
-                  ],
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    Container(
-                      margin: const EdgeInsets.only(right: 20),
-                      width: 60,
-                      height: 50,
-                      child: TextField(
-                        maxLines: 1,
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'(^\d*\.?\d*)'))
-                        ], //double 타입 전용 조건
-                        decoration: const InputDecoration(
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.black)),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.black)),
-                            labelText: '수량',
-                            labelStyle: TextStyle(color: Colors.black)),
-                        controller: productAmountController,
-                      ),
-                    ),
-                    DropdownButton(
-                        value: _selectedValue,
-                        items: _unitValue.map((value) {
-                          return DropdownMenuItem(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedValue = value.toString();
-                          });
-                        })
-                  ],
-                ),
-
+                    })
+              ],
+            ),
             SizedBox(
                 width: double.infinity,
                 child: TextButton(

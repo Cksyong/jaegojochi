@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jaegojochi/db/DatabaseHelper.dart';
 import 'package:jaegojochi/db/Stock.dart';
@@ -43,6 +44,26 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
 
 
   } //End Of initState()
+
+  Future<void> scanBarcodeNormal() async {
+    String barcodeScanRes;
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+          '#ff6666', 'Cancel', true, ScanMode.BARCODE);
+      print(barcodeScanRes);
+    } on PlatformException {
+      barcodeScanRes = 'Failed to get platform version.';
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      if (barcodeScanRes != '-1') {
+        productCodeController.text = barcodeScanRes;
+      }
+    });
+  }
 
   final ImagePicker _picker = ImagePicker(); //카메라 또는 갤러리에서 사진 불러오는 기능
   dynamic _imageFile; //불러온 사진 데이터를 저장하는 변수
@@ -166,7 +187,7 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
 
                     if (selectStock[0].code.toString() != productCodeController.text) {
                       if (selectStock[0].code != 0) {
-                        updateStock[0].code = int.parse(productCodeController.text);
+                        updateStock[0].code = productCodeController.text;
                       }
                     }
                     updateStock[0].amount = finalAmount.toString();
@@ -285,14 +306,14 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Row(
-
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisSize: MainAxisSize.max,
                         children: <Widget>[
                           Container(
-                            width: MediaQuery.of(context).size.width * 0.4,
+                            width: MediaQuery.of(context).size.width * 0.5,
                             child: TextField(
-                              style: !_codeIsEnable ? TextStyle(color: Colors.grey) : TextStyle(color: Colors.black),
+                              style: !_codeIsEnable ? TextStyle(color: Colors.grey,) : TextStyle(color: Colors.black),
 
                               decoration: InputDecoration(
                                   enabled: _codeIsEnable,
@@ -306,18 +327,25 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                               controller: productCodeController,
                             ),
                           ),
-                          Row(
-                            children: [
-                              Text('직접 입력'),
-                              Checkbox(value: _codeChecked, onChanged: (value) {
-                                setState(() {
-                                  _codeChecked = value!;
-                                  _codeIsEnable = value;
-                                });
-                              },
-                              ),
-                            ],
-                          )
+                          IconButton(onPressed: () => scanBarcodeNormal(), icon: Icon(Icons.qr_code_scanner_rounded)),
+
+                        ],
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+
+
+                          Checkbox(value: _codeChecked, onChanged: (value) {
+                            setState(() {
+                              _codeChecked = value!;
+                              _codeIsEnable = value;
+                            });
+                          },
+                          ),
+                          Text('직접 입력'),
+
                         ],
                       ),
                       const SizedBox(height: 20),
