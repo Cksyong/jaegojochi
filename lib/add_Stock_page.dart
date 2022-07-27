@@ -9,7 +9,7 @@ import 'db/Stock.dart';
 import 'main.dart';
 
 class add_Stock_page extends StatefulWidget {
-  final int barcode;
+  final String barcode;
   const add_Stock_page({Key? key, required this.barcode}) : super(key: key);
 
   @override
@@ -27,11 +27,11 @@ class _add_Stock_pageState extends State<add_Stock_page> {
   void addToDB(dynamic image) {
     String name = productNameController.text;
     String amount = productAmountController.text;
-    int code = 0;
+    String code = '';
     if (productCodeController.text == '') {
 
     } else {
-      code = int.parse(productCodeController.text);
+      code = productCodeController.text;
     }
       String unit = _selectedValue.toString();
       log('addToDB');
@@ -57,7 +57,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
     }
 
 
-
+  List<Stock> checkStocks = [];
   List<Stock> stockList = [];
   final ImagePicker _picker = ImagePicker();
   dynamic _imageFile;
@@ -90,13 +90,31 @@ class _add_Stock_pageState extends State<add_Stock_page> {
           gravity: ToastGravity.CENTER);
     }
 
+    bool checkDB(String name) {
+      DatabaseHelper.instance.getSelectStock(name).then((value) {
+        setState(() {
+          value.forEach((element) {
+            checkStocks.add(Stock(
+                name: element.name,
+                amount: element.amount,
+                unit: element.unit,
+                image: element.image));
+          });
+        });
+        return true;
+      }).catchError((error) {
+        print(error);
+        return false;
+      });
+      return false;
+    }
+
     void addProductDialog() {
       var name = productNameController.text;
       var amount = productAmountController.text;
-      if(amount.startsWith('.') == true){
+      if (amount.startsWith('.') == true) {
         amount = '0$amount';
       }
-
       if (name == "") {
         showToast('품목명');
         //TODO Toast외않됌?
@@ -115,51 +133,81 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                 title: Column(
                   children: const <Widget>[
                     Text("추가할 품목을 확인하세요."),
-                  ],
-                ),
+                  ],),
                 //
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      '품목명 : $name \n수량 : $amount($_selectedValue)\n 추가하시겠습니까?'),
-                  ],
-                ),
+                    Text('품목명 : $name \n수량 : $amount($_selectedValue)\n 추가하시겠습니까?'),],),
                 actions: <Widget>[
                   TextButton(
                     style: TextButton.styleFrom(
-                      primary: Colors.black,
-                    ),
+                      primary: Colors.black),
                     onPressed: () {
-                      Navigator.pop(context);
-                    },
+                      Navigator.pop(context);},
                     child: const Text("취소"),
                   ),
                   TextButton(
                     style: TextButton.styleFrom(
-                      primary: Colors.black,
-                    ),
+                      primary: Colors.black),
                     onPressed: () {
-                      addToDB(_imageFile);
-                      Navigator.pop(context);
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (BuildContext context) => mainPage()),
-                          (route) => false);
-                    },
+                      //IF DB ALREADY HAS SAME NAMES' on DATABASE
+                      if (checkDB(name) == false) {
+                        showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(10.0)),
+                                  title: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: const <Widget>[
+                                      Text("오류"),
+                                    ],),
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: const <Widget>[
+                                      Text("이미 중복된 품목이 존재합니다.")
+                                    ],),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      style: TextButton.styleFrom(
+                                        primary: Colors.black,
+                                      ),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text("확인"),
+                                    ),]);
+                            });
+                      } else if (checkDB(name) == true) {
+                        //
+                        addToDB(_imageFile);
+                        Navigator.pop(context);
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    const mainPage()),
+                            (route) => false);}
+                      else {
+                        log("뭐든 안됨 ㅠㅠ");
+                      }},
                     child: const Text("확인"),
-                  ),
-                ],
-              );
+                  ),],);
             });
       }
     }
 
     return GestureDetector(
-        onTap: (){
-      FocusScopeNode currentFocus = FocusScope.of(context);
+        onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
 
       if(!currentFocus.hasPrimaryFocus) {
         currentFocus.unfocus();
@@ -230,81 +278,83 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                     labelStyle: TextStyle(color: Colors.black)),
                 controller: productNameController,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.45,
-                    child: TextField(
-                      style: !_codeIsEnable ? TextStyle(color: Colors.grey) : TextStyle(color: Colors.black),
-
-                      decoration: InputDecoration(
-                          enabled: _codeIsEnable,
-                          enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.black)),
-                          focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.black)),
-                          labelText: '상품코드',
-                          labelStyle: !_codeIsEnable ? TextStyle(color: Colors.grey) : TextStyle(color: Colors.black)
-                      ),
-                      controller: productCodeController,
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      Text('직접 입력'),
-                      Checkbox(value: _codeChecked, onChanged: (value) {
-                        setState(() {
-                          _codeChecked = value!;
-                          _codeIsEnable = value;
-                        });
-                      },
-                      ),
-                    ],
-                  )
-                ],
-              ),
             ]),
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 Container(
+                  width: MediaQuery.of(context).size.width * 0.45,
                   margin: const EdgeInsets.only(right: 20),
                   width: 60,
                   height: 50,
                   child: TextField(
-                    maxLines: 1,
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'(^\d*\.?\d*)'))
-                    ], //double 타입 전용 조건
-                    decoration: const InputDecoration(
-                        enabledBorder: OutlineInputBorder(
+                    style: !_codeIsEnable ? TextStyle(color: Colors.grey) : TextStyle(color: Colors.black),
+
+                    decoration: InputDecoration(
+                        enabled: _codeIsEnable,
+                        enabledBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Colors.black)),
-                        focusedBorder: OutlineInputBorder(
+                        focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Colors.black)),
-                        labelText: '수량',
-                        labelStyle: TextStyle(color: Colors.black)),
-                    controller: productAmountController,
+                        labelText: '상품코드',
+                        labelStyle: !_codeIsEnable ? TextStyle(color: Colors.grey) : TextStyle(color: Colors.black)
+                    ),
+                    controller: productCodeController,
                   ),
                 ),
-                DropdownButton(
-                    value: _selectedValue,
-                    items: _unitValue.map((value) {
-                      return DropdownMenuItem(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
+                Row(
+                  children: [
+                    Text('직접 입력'),
+                    Checkbox(value: _codeChecked, onChanged: (value) {
                       setState(() {
-                        _selectedValue = value.toString();
+                        _codeChecked = value!;
+                        _codeIsEnable = value;
                       });
-                    })
-              ],
-            ),
+                    },
+                    ),
+                  ],
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Container(
+                      margin: const EdgeInsets.only(right: 20),
+                      width: 60,
+                      height: 50,
+                      child: TextField(
+                        maxLines: 1,
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(RegExp(r'(^\d*\.?\d*)'))
+                        ], //double 타입 전용 조건
+                        decoration: const InputDecoration(
+                            enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.black)),
+                            focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.black)),
+                            labelText: '수량',
+                            labelStyle: TextStyle(color: Colors.black)),
+                        controller: productAmountController,
+                      ),
+                    ),
+                    DropdownButton(
+                        value: _selectedValue,
+                        items: _unitValue.map((value) {
+                          return DropdownMenuItem(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedValue = value.toString();
+                          });
+                        })
+                  ],
+                ),
+
             SizedBox(
                 width: double.infinity,
                 child: TextButton(

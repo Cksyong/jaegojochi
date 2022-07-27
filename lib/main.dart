@@ -55,7 +55,7 @@ class mainPage extends StatefulWidget {
 }
 
 class _mainPageState extends State<mainPage> {
-  int _scanBarcode = 0;
+  String _scanBarcode = '';
 
   //FOR FAB
   ValueNotifier<bool> isDialOpen = ValueNotifier(false);
@@ -83,15 +83,13 @@ class _mainPageState extends State<mainPage> {
     if (!mounted) return;
 
     setState(() {
-      _scanBarcode = int.parse(barcodeScanRes);
+      _scanBarcode = barcodeScanRes;
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (__) => add_Stock_page(barcode: _scanBarcode)));
     });
   }
 
-  late Future<File> imageFile;
-  late Image image;
-  late List<Stock> stocks = [];
+  List<Stock> stocks = [];
 
   void initState() {
     super.initState();
@@ -111,98 +109,106 @@ class _mainPageState extends State<mainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('재고최고'),
-        actions: [
-          IconButton(
-            // onPressed: (){},
-            onPressed: () => Navigator.of(context)
-                .push(MaterialPageRoute(builder: (__) => SearchPage())),
-            icon: const Icon(Icons.search),
-          ),
-        ],
-      ),
-      body: ListView.separated(
-        itemCount: stocks.length,
-        itemBuilder: (ctx, index) {
-          return Container(
-            height: 70,
-            padding: const EdgeInsets.all(5),
-            color: Colors.white,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                stocks[index].image!.isEmpty //IF DB DOESN'T HAVE IMAGE
-                    ? Image.asset(
-                        // SHOW TAKOYAKI
-                        'assets/image/no_stock_image.jpg',
-                        width: 80,
-                        height: 80,
-                      )
-                    : SizedBox(
-                        // IF HAVE IMAGE
-                        width: 80,
-                        height: 80,
-                        child: Image(
-                            // SHOW ITS IMAGE
-                            image: FileImage(File(stocks[index].image!))),
-                      ),
-                Text(stocks[index].name.toString()),
-                // DB NAME
-                Text(stocks[index].amount.toString() + // DB AMOUNT
-                    stocks[index].unit.toString()),
-                // UNIT
-                IconButton(
-                    // MOVE TO ITS stock_Detail_Info
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => stock_Detail_Info(
-                            name: stocks[index].name.toString(),
-                          ),
-                        ),
-                      );
-                    },
-                    icon: const Icon(Icons.more_vert))
-              ],
+        appBar: AppBar(
+          title: const Text('재고최고'),
+          actions: [
+            IconButton(
+              onPressed: () => Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (__) => const SearchPage())),
+              icon: const Icon(Icons.search),
             ),
-          );
-        },
-        separatorBuilder: (context, index) {
-          return const Divider(
-            thickness: 1,
-            color: Colors.black,
-          );
-        },
-      ),
-      floatingActionButton: SpeedDial(
-        animatedIcon: AnimatedIcons.menu_close,
-        openCloseDial: isDialOpen,
-        backgroundColor: const Color(0xfff5f5dc),
-        overlayColor: Colors.grey,
-        overlayOpacity: 0.5,
-        spacing: 15,
-        spaceBetweenChildren: 15,
-        children: [
-          SpeedDialChild(
-            child: const Icon(Icons.add),
-            label: '추가하기',
-            backgroundColor: const Color(0xfff5f5dc),
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => add_Stock_page(barcode: 0,)));
-            },
-          ),
-          SpeedDialChild(
-              child: const Icon(Icons.scanner),
-              label: '바코드 입력',
-              backgroundColor: const Color(0xfff5f5dc),
-              onTap: () => scanBarcodeNormal())
-        ],
-      ),
-    );
+          ],
+        ),
+        body: ListView.separated(
+          itemCount: stocks.length,
+          itemBuilder: (ctx, index) {
+            return Container(
+              height: 70,
+              padding: const EdgeInsets.all(5),
+              color: Colors.white,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  stocks[index].image!.isEmpty //IF DB DOESN'T HAVE IMAGE
+                      ? Image.asset(
+                          // SHOW TAKOYAKI
+                          'assets/image/no_stock_image.jpg',
+                    width: MediaQuery.of(context).size.height * 0.069,
+                    height: MediaQuery.of(context).size.height * 0.069,
+                        )
+                      : Container(
+                    // IF HAVE IMAGE
+                      width: MediaQuery.of(context).size.height * 0.069,
+                      height: MediaQuery.of(context).size.height * 0.069,
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                              fit: BoxFit.fitWidth,
+                              alignment: FractionalOffset.center,
+                              image:
+                              FileImage(File(stocks[index].image!))))),
+                  Text(stocks[index].name.toString()),
+                  // DB NAME
+                  Text(stocks[index].amount.toString() + // DB AMOUNT
+                      stocks[index].unit.toString()),
+                  // UNIT
+                  IconButton(
+                      // MOVE TO ITS stock_Detail_Info
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => stock_Detail_Info(
+                                      name: stocks[index].name.toString(),
+                                    )));
+                      },
+                      icon: const Icon(Icons.more_vert))
+                ],
+              ),
+            );
+          },
+          separatorBuilder: (context, index) {
+            return const Divider(
+              thickness: 1,
+              color: Colors.black,
+            );
+          },
+        ),
+        floatingActionButton: SpeedDial(
+          animatedIcon: AnimatedIcons.menu_close,
+          openCloseDial: isDialOpen,
+          backgroundColor: const Color(0xfff5f5dc),
+          overlayColor: Colors.grey,
+          overlayOpacity: 0.5,
+          spacing: 15,
+          spaceBetweenChildren: 15,
+          children: [
+            SpeedDialChild(
+                child: const Icon(Icons.add),
+                label: '추가하기',
+                backgroundColor: const Color(0xfff5f5dc),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => add_Stock_page(barcode: '',)));
+                }),
+            SpeedDialChild(
+                child: const Icon(Icons.camera_alt),
+                label: '바코드 입력',
+                backgroundColor: const Color(0xfff5f5dc),
+                onTap: () => scanBarcodeNormal()),
+            SpeedDialChild(
+                child: const Icon(Icons.cloud_download),
+                label: '데이터 복원',
+                backgroundColor: const Color(0xfff5f5dc),
+                onTap: () {}
+            ),
+            SpeedDialChild(
+                child: const Icon(Icons.backup),
+                label: '데이터 백업',
+                backgroundColor: const Color(0xfff5f5dc),
+                onTap: () {})
+          ],
+        ));
   }
 }
