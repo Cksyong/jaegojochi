@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'dart:async';
 
 class SecondPage extends StatefulWidget {
   const SecondPage({Key? key}) : super(key: key);
@@ -11,82 +8,366 @@ class SecondPage extends StatefulWidget {
 }
 
 class _SecondPageState extends State<SecondPage> {
-  String _scanBarcode = 'Unknown';
+  final List<Map<String, dynamic>> _allUsers = [  {"id": 20220620, "name": "202", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "202", "age": 20},
+    {"id": 12312345, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 31200312, "name": "210", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 42388412, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 12312345, "name": "20", "age": 20},
+    {"id": 20220620, "name": "220", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 31239712, "name": "20", "age": 20},
+    {"id": 20220620, "name": "205", "age": 20},
+    {"id": 20220620, "name": "260", "age": 20},
+    {"id": 42341232, "name": "20", "age": 20},
+    {"id": 20220620, "name": "210", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 42341232, "name": "20", "age": 2},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "260", "age": 20},
+    {"id": 31231254, "name": "20", "age": 20},
+    {"id": 20220620, "name": "230", "age": 20},
+    {"id": 20220620, "name": "20", "age": 2},
+    {"id": 42341265, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 31231264, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 2},
+    {"id": 20220620, "name": "2", "age": 20},
+    {"id": 42341254, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 31231243, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "205", "age": 20},
+    {"id": 20220620, "name": "260", "age": 20},
+    {"id": 42341232, "name": "20", "age": 20},
+    {"id": 20220620, "name": "210", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 42341232, "name": "20", "age": 2},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "260", "age": 20},
+    {"id": 31231254, "name": "20", "age": 20},
+    {"id": 20220620, "name": "230", "age": 20},
+    {"id": 20220620, "name": "20", "age": 2},
+    {"id": 42341265, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 31231264, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 2},
+    {"id": 20220620, "name": "2", "age": 20},
+    {"id": 42341254, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 31231243, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "202", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "202", "age": 20},
+    {"id": 12312345, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 31200312, "name": "210", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 42388412, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 12312345, "name": "20", "age": 20},
+    {"id": 20220620, "name": "220", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 31239712, "name": "20", "age": 20},
+    {"id": 20220620, "name": "205", "age": 20},
+    {"id": 20220620, "name": "260", "age": 20},
+    {"id": 42341232, "name": "20", "age": 20},
+    {"id": 20220620, "name": "210", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 42341232, "name": "20", "age": 2},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "260", "age": 20},
+    {"id": 31231254, "name": "20", "age": 20},
+    {"id": 20220620, "name": "230", "age": 20},
+    {"id": 20220620, "name": "10", "age": 2},
+    {"id": 42341265, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 31231264, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 2},
+    {"id": 20220620, "name": "2", "age": 20},
+    {"id": 42341254, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "0", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 31231243, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "205", "age": 20},
+    {"id": 20220620, "name": "760", "age": 20},
+    {"id": 42341232, "name": "20", "age": 20},
+    {"id": 20220620, "name": "810", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "80", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 42341232, "name": "40", "age": 2},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "560", "age": 20},
+    {"id": 31231254, "name": "20", "age": 20},
+    {"id": 20220620, "name": "230", "age": 20},
+    {"id": 20220620, "name": "70", "age": 2},
+    {"id": 42341265, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 31231264, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 2},
+    {"id": 20220620, "name": "2", "age": 20},
+    {"id": 42341254, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "30", "age": 20},
+    {"id": 20220620, "name": "10", "age": 20},
+    {"id": 31231243, "name": "50", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "60", "age": 20},
+    {"id": 20220620, "name": "202", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "202", "age": 20},
+    {"id": 12312345, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 31200312, "name": "210", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 42388412, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 12312345, "name": "20", "age": 20},
+    {"id": 20220620, "name": "220", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 31239712, "name": "20", "age": 20},
+    {"id": 20220620, "name": "205", "age": 20},
+    {"id": 20220620, "name": "260", "age": 20},
+    {"id": 42341232, "name": "20", "age": 20},
+    {"id": 20220620, "name": "210", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 42341232, "name": "20", "age": 2},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "260", "age": 20},
+    {"id": 31231254, "name": "20", "age": 20},
+    {"id": 20220620, "name": "230", "age": 20},
+    {"id": 20220620, "name": "20", "age": 2},
+    {"id": 42341265, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 31231264, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 2},
+    {"id": 20220620, "name": "2", "age": 20},
+    {"id": 42341254, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 31231243, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "205", "age": 20},
+    {"id": 20220620, "name": "260", "age": 20},
+    {"id": 42341232, "name": "20", "age": 20},
+    {"id": 20220620, "name": "210", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 42341232, "name": "20", "age": 2},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "260", "age": 20},
+    {"id": 31231254, "name": "20", "age": 20},
+    {"id": 20220620, "name": "230", "age": 20},
+    {"id": 20220620, "name": "20", "age": 2},
+    {"id": 42341265, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 31231264, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 2},
+    {"id": 20220620, "name": "2", "age": 20},
+    {"id": 42341254, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 31231243, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "202", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "202", "age": 20},
+    {"id": 12312345, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 31200312, "name": "210", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 42388412, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 12312345, "name": "20", "age": 20},
+    {"id": 20220620, "name": "220", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 31239712, "name": "20", "age": 20},
+    {"id": 20220620, "name": "205", "age": 20},
+    {"id": 20220620, "name": "260", "age": 20},
+    {"id": 42341232, "name": "20", "age": 20},
+    {"id": 20220620, "name": "210", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 42341232, "name": "20", "age": 2},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "260", "age": 20},
+    {"id": 31231254, "name": "20", "age": 20},
+    {"id": 20220620, "name": "230", "age": 20},
+    {"id": 20220620, "name": "10", "age": 2},
+    {"id": 42341265, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 31231264, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 2},
+    {"id": 20220620, "name": "2", "age": 20},
+    {"id": 42341254, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "0", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 31231243, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "205", "age": 20},
+    {"id": 20220620, "name": "760", "age": 20},
+    {"id": 42341232, "name": "20", "age": 20},
+    {"id": 20220620, "name": "810", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "80", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 42341232, "name": "40", "age": 2},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "560", "age": 20},
+    {"id": 31231254, "name": "20", "age": 20},
+    {"id": 20220620, "name": "230", "age": 20},
+    {"id": 20220620, "name": "70", "age": 2},
+    {"id": 42341265, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 31231264, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 2},
+    {"id": 20220620, "name": "2", "age": 20},
+    {"id": 42341254, "name": "20", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "30", "age": 20},
+    {"id": 20220620, "name": "10", "age": 20},
+    {"id": 31231243, "name": "50", "age": 20},
+    {"id": 20220620, "name": "20", "age": 20},
+    {"id": 20220620, "name": "60", "age": 20},];
+
+  List<Map<String, dynamic>> _foundUsers = [];
 
   @override
-  void initState() {
+  initState() {
+    _foundUsers = _allUsers;
     super.initState();
   }
 
-  Future<void> startBarcodeScanStream() async {
-    FlutterBarcodeScanner.getBarcodeStreamReceiver(
-        '#ff6666', 'Cancel', true, ScanMode.BARCODE)!
-        .listen((barcode) => print(barcode));
-  }
-
-  // Future<void> scanQR() async {
-  //   String barcodeScanRes;
-  //   // Platform messages may fail, so we use a try/catch PlatformException.
-  //   try {
-  //     barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-  //         '#ff6666', 'Cancel', true, ScanMode.QR);
-  //     print(barcodeScanRes);
-  //   } on PlatformException {
-  //     barcodeScanRes = 'Failed to get platform version.';
-  //   }
-  //
-  //   // If the widget was removed from the tree while the asynchronous platform
-  //   // message was in flight, we want to discard the reply rather than calling
-  //   // setState to update our non-existent appearance.
-  //   if (!mounted) return;
-  //
-  //   setState(() {
-  //     _scanBarcode = barcodeScanRes;
-  //   });
-  // }
-
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> scanBarcodeNormal() async {
-    String barcodeScanRes;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-          '#ff6666', 'Cancel', true, ScanMode.BARCODE);
-      print(barcodeScanRes);
-    } on PlatformException {
-      barcodeScanRes = 'Failed to get platform version.';
+  void _runFilter(String enteredKeyword) {
+    List<Map<String, dynamic>> results = [];
+    if (enteredKeyword.isEmpty) {
+      results = _allUsers;
+    } else {
+      results = _allUsers
+          .where((user) =>
+              user["name"].toLowerCase().contains(enteredKeyword.toLowerCase()))
+          .toList();
     }
 
-    if (!mounted) return;
-
-    setState(() {
-      _scanBarcode = barcodeScanRes;
-    });
+    setState(
+      () {
+        _foundUsers = results;
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Scaffold(
-            body: Builder(builder: (BuildContext context) {
-              return Container(
-                  alignment: Alignment.center,
-                  child: Flex(
-                      direction: Axis.vertical,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        ElevatedButton(
-                            onPressed: () => scanBarcodeNormal(),
-                            child: Text('Start barcode scan')),
-                        // ElevatedButton(
-                        //     onPressed: () => scanQR(),
-                        //     child: Text('Start QR scan')),
-                        ElevatedButton(
-                            onPressed: () => startBarcodeScanStream(),
-                            child: Text('Start barcode scan stream')),
-                        Text('Scan result : $_scanBarcode\n',
-                            style: TextStyle(fontSize: 20))
-                      ]));
-            })));
+    return Scaffold(
+      body: Column(
+        children: [
+          Container(
+            margin: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Colors.black, // red as border color.
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: const [
+                Text(" 수 정 일 "),
+                Text(" 추 가 "),
+                Text(" 소 진 "),
+                Text(" 총 량 "),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _foundUsers.length,
+              itemBuilder: (context, index) => Container(
+                margin: const EdgeInsets.fromLTRB(0, 10, 10, 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Text(_foundUsers[index]["id"].toString()),
+                    Text(_foundUsers[index]['name']),
+                    Text(_foundUsers[index]["age"].toString()),
+                    Text(_foundUsers[index]["age"].toString()),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

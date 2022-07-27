@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jaegojochi/TapBar/First_Page.dart';
 import 'package:jaegojochi/TapBar/Second_Page.dart';
-
 import 'TapBar/First_Page.dart';
 import 'TapBar/Second_Page.dart';
 import 'db/Stock.dart';
@@ -32,10 +31,10 @@ class _stock_Detail_InfoState extends State<stock_Detail_Info> {
           bottom: const TabBar(
             tabs: <Widget>[
               Tab(
-                child: Text('1'),
+                child: Text('정보'),
               ),
               Tab(
-                child: Text('2'),
+                child: Text('내역'),
               ),
             ],
           ),
@@ -48,7 +47,7 @@ class _stock_Detail_InfoState extends State<stock_Detail_Info> {
             ),
           ],
         ),
-
-    ));
+      ),
+    );
   }
 }

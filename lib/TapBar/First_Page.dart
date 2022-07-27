@@ -19,17 +19,18 @@ class _FirstPageState extends State<FirstPage> {
 
   List<Stock> selectStock = [Stock(name:'default',amount: 'default',unit: 'default',image: 'default')];
 
+  @override
   void initState() {
     super.initState();
     DatabaseHelper.instance.getSelectStock(widget.name).then((value) {
       setState(() {
-        value.forEach((element) {
+        for (var element in value) {
           selectStock.add(Stock(
               name: element.name,
               amount: element.amount,
               unit: element.unit,
               image: element.image));
-        });
+        }
       });
     }).catchError((error) {
       print(error);
@@ -45,11 +46,11 @@ class _FirstPageState extends State<FirstPage> {
               padding: const EdgeInsets.fromLTRB(20, 50, 20, 20),
               child: Image.asset('assets/image/takoyaki.jpg')),
           Container(
-            color: Colors.yellow,
+            color: Colors.green,
             margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
             child: Text(
               selectStock[1].name.toString(),
-              style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
             ),
           ),
           const SizedBox(width: 0, height: 100),
@@ -62,7 +63,7 @@ class _FirstPageState extends State<FirstPage> {
                 alignment: Alignment.centerRight,
                 child: Text(selectStock[1].amount.toString(),
                     style:
-                        TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
+                        const TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
               ),
               Container(
                 margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
@@ -70,7 +71,7 @@ class _FirstPageState extends State<FirstPage> {
                 alignment: Alignment.centerRight,
                 child: Text(selectStock[1].unit.toString(),
                     style:
-                        TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
+                        const TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
               )
             ],
           ),
