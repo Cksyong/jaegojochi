@@ -17,6 +17,8 @@ class stock_Detail_Info extends StatefulWidget {
 }
 
 class _stock_Detail_InfoState extends State<stock_Detail_Info> {
+  double amount = 0;
+  String unit = '';
 
   List<Stock> selectStock = [];
 
@@ -38,10 +40,10 @@ class _stock_Detail_InfoState extends State<stock_Detail_Info> {
           bottom: const TabBar(
             tabs: <Widget>[
               Tab(
-                child: Text('1'),
+                child: Text('정보'),
               ),
               Tab(
-                child: Text('2'),
+                child: Text('내역'),
               ),
             ],
           ),
@@ -54,7 +56,7 @@ class _stock_Detail_InfoState extends State<stock_Detail_Info> {
             ),
           ],
         ),
-
-    ));
+      ),
+    );
   }
 }

@@ -1,23 +1,23 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:jaegojochi/stock_Detail_Info.dart';
 import 'db/Stock.dart';
 import 'db/DatabaseHelper.dart';
 
 class SearchPage extends StatefulWidget {
 
-  const SearchPage({Key? key}) : super(key: key);
+  const SearchPage({Key? key,}) : super(key: key);
 
   @override
   State<SearchPage> createState() => _SearchPageState();
 }
 
 class _SearchPageState extends State<SearchPage> {
-  TextEditingController _filter = TextEditingController();
-  String _searchText = '';
 
   late Future<File> imageFile;
   late List<Stock> stocks = [];
 
+  @override
   void initState() {
     super.initState();
     stocks = [];
@@ -33,7 +33,7 @@ class _SearchPageState extends State<SearchPage> {
     });
   }
 
-  bool _searchBoolean = false;
+  // bool _searchBoolean = false;
   List<int> _searchIndexList = [];
 
   Widget _searchTextField() {
@@ -49,22 +49,29 @@ class _SearchPageState extends State<SearchPage> {
         });
       },
       autofocus: true,
-      cursorColor: Colors.white,
+      cursorColor: Colors.black,
       style: const TextStyle(
-        color: Colors.white,
+        color: Colors.black,
         fontSize: 20,
       ),
-      textInputAction: TextInputAction.search,
-      decoration: const InputDecoration(
+      // textInputAction: TextInputAction.search,
+      decoration: InputDecoration(
+        // suffixIcon: IconButton(
+        //     icon: const Icon(Icons.clear, color: Colors.black,
+        //     ),
+        //     onPressed: () {
+        //       setState(() {
+        //
+        //       }
+        //       );
+        //     }
+        //
+        // ),
         enabledBorder:
-        UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+            const UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
         focusedBorder:
-        UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+            const UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
         hintText: 'Search',
-        hintStyle: TextStyle(
-          color: Colors.white60,
-          fontSize: 20,
-        ),
       ),
     );
   }
@@ -74,44 +81,51 @@ class _SearchPageState extends State<SearchPage> {
         itemCount: _searchIndexList.length,
         itemBuilder: (context, index) {
           index = _searchIndexList[index];
-          return Card(
-              child: ListTile(
-                leading: Container(
-                    width: 60,
-                    height: 60,
-                    child: Image(image: FileImage(File(stocks[index].image!)))),
-                title: Text(stocks[index].name.toString()),
-                subtitle: Text(stocks[index].amount.toString() +
-                    stocks[index].unit.toString()),
-              ));
+          return ListTile(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => stock_Detail_Info(
+                name: stocks[index].name.toString(),
+              )));
+            },
+            leading: SizedBox(
+              width: 60,
+              height: 60,
+              child: Image(image: FileImage(File(stocks[index].image!))),
+            ),
+            title: Text(stocks[index].name.toString()),
+            subtitle: Text(stocks[index].amount.toString() +
+                stocks[index].unit.toString()),
+          );
         });
   }
 
-  Widget _defaultListView() {
-    return ListView.builder(
-        itemCount: stocks.length,
-        itemBuilder: (context, index) {
-          return Card(
-              child: ListTile(
-                leading: Container(
-                    width: 60,
-                    height: 60,
-                    child: Image(image: FileImage(File(stocks[index].image!)))),
-                title: Text(stocks[index].name.toString()),
-                subtitle: Text(stocks[index].amount.toString() +
-                    stocks[index].unit.toString()),
-              ));
-        });
-  }
+  // Widget _defaultListView() {
+  //   return ListView.builder(
+  //       itemCount: stocks.length,
+  //       itemBuilder: (context, index) {
+  //         return ListTile(
+  //           leading: Container(
+  //               width: 60,
+  //               height: 60,
+  //               child: Image(image: FileImage(File(stocks[index].image!)))),
+  //           title: Text(stocks[index].name.toString()),
+  //           subtitle: Text(stocks[index].amount.toString() +
+  //               stocks[index].unit.toString()),
+  //         );
+  //       });
+  // }
 
   @override
   Widget build(BuildContext context) {
-    // var name = _filter.text;
-
     return Scaffold(
-        appBar: AppBar(
-          title: _searchTextField(),
-        ),
-        body: _defaultListView());
+      appBar: AppBar(
+        title: _searchTextField(),
+      ),
+      // body: !_searchBoolean ? _defaultListView() : _searchListView()
+      body: _searchListView(),
+    );
   }
 }

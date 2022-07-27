@@ -59,15 +59,15 @@ class _mainPageState extends State<mainPage> {
 
   //FOR FAB
   ValueNotifier<bool> isDialOpen = ValueNotifier(false);
-  //
-  // WillPopScope() async {
-  //   if (isDialOpen.value) {
-  //     isDialOpen.value = false;
-  //     return false;
-  //   } else {
-  //     return true;
-  //   }
-  // }
+
+  WillPopScope() async {
+    if (isDialOpen.value) {
+      isDialOpen.value = false;
+      return false;
+    } else {
+      return true;
+    }
+  }
 
   Future<void> scanBarcodeNormal() async {
     String barcodeScanRes;
@@ -76,7 +76,6 @@ class _mainPageState extends State<mainPage> {
       barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
           '#ff6666', 'Cancel', true, ScanMode.BARCODE);
       print(barcodeScanRes);
-
     } on PlatformException {
       barcodeScanRes = 'Failed to get platform version.';
     }
@@ -90,7 +89,9 @@ class _mainPageState extends State<mainPage> {
     });
   }
 
-  List<Stock> stocks = [];
+  late Future<File> imageFile;
+  late Image image;
+  late List<Stock> stocks = [];
 
   void initState() {
     super.initState();
@@ -110,105 +111,98 @@ class _mainPageState extends State<mainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('재고최고'),
-          actions: [
-            IconButton(
-              // onPressed: (){},
-              onPressed: () => Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (__) => const SearchPage())),
-              icon: const Icon(Icons.search),
-            ),
-          ],
-        ),
-        body: ListView.separated(
-          itemCount: stocks.length,
-          itemBuilder: (ctx, index) {
-            return Container(
-              height: 70,
-              padding: const EdgeInsets.all(5),
-              color: Colors.white,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  stocks[index].image!.isEmpty //IF DB DOESN'T HAVE IMAGE
-                      ? Image.asset(
-                          // SHOW TAKOYAKI
-                          'assets/image/no_stock_image.jpg',
-                          width: MediaQuery.of(context).size.height*0.069,
-                          height: MediaQuery.of(context).size.height*0.069,
-                    fit: BoxFit.fill,
-                        )
-                      : Container(
-                          // IF HAVE IMAGE
-                    width: MediaQuery.of(context).size.height*0.069,
-                    height: MediaQuery.of(context).size.height*0.069,
-                          child: Image(
-                              // SHOW ITS IMAGE
-                              image: FileImage(File(stocks[index].image!)),
-                              fit: BoxFit.cover),// = CenterCrop()
+      appBar: AppBar(
+        title: const Text('재고최고'),
+        actions: [
+          IconButton(
+            // onPressed: (){},
+            onPressed: () => Navigator.of(context)
+                .push(MaterialPageRoute(builder: (__) => SearchPage())),
+            icon: const Icon(Icons.search),
+          ),
+        ],
+      ),
+      body: ListView.separated(
+        itemCount: stocks.length,
+        itemBuilder: (ctx, index) {
+          return Container(
+            height: 70,
+            padding: const EdgeInsets.all(5),
+            color: Colors.white,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                stocks[index].image!.isEmpty //IF DB DOESN'T HAVE IMAGE
+                    ? Image.asset(
+                        // SHOW TAKOYAKI
+                        'assets/image/no_stock_image.jpg',
+                        width: 80,
+                        height: 80,
+                      )
+                    : SizedBox(
+                        // IF HAVE IMAGE
+                        width: 80,
+                        height: 80,
+                        child: Image(
+                            // SHOW ITS IMAGE
+                            image: FileImage(File(stocks[index].image!))),
+                      ),
+                Text(stocks[index].name.toString()),
+                // DB NAME
+                Text(stocks[index].amount.toString() + // DB AMOUNT
+                    stocks[index].unit.toString()),
+                // UNIT
+                IconButton(
+                    // MOVE TO ITS stock_Detail_Info
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => stock_Detail_Info(
+                            name: stocks[index].name.toString(),
+                          ),
                         ),
-                  Container(
-                    width: MediaQuery.of(context).size.width*0.4,
-                    alignment: Alignment.center,
-                    child: Text(stocks[index].name.toString(),
-                    overflow: TextOverflow.ellipsis,),
-                  // DB NAME
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width*0.2,
-                    alignment: Alignment.center,
-                    child: Text(stocks[index].amount.toString() + // DB AMOUNT
-                        stocks[index].unit.toString()),
-                  ),
-                  // UNIT
-                  IconButton(
-                      // MOVE TO ITS stock_Detail_Info
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => stock_Detail_Info(
-                                      name: stocks[index].name.toString(),
-                                    )));
-                      },
-                      icon: const Icon(Icons.more_vert))
-                ],
-              ),
-            );
-          },
-          separatorBuilder: (context, index) {
-            return const Divider(
-              thickness: 1,
-              color: Colors.black,
-            );
-          },
-        ),
-        floatingActionButton: SpeedDial(
-          animatedIcon: AnimatedIcons.menu_close,
-          openCloseDial: isDialOpen,
-          backgroundColor: const Color(0xfff5f5dc),
-          overlayColor: Colors.grey,
-          overlayOpacity: 0.5,
-          spacing: 15,
-          spaceBetweenChildren: 15,
-          children: [
-            SpeedDialChild(
-                child: const Icon(Icons.add),
-                label: '추가하기',
-                backgroundColor: const Color(0xfff5f5dc),
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => add_Stock_page(barcode: 0,)));
-                }),
-            SpeedDialChild(
-                child: const Icon(Icons.camera_alt),
-                label: '바코드 입력',
-                backgroundColor: const Color(0xfff5f5dc),
-                onTap: () => scanBarcodeNormal())
-          ],
-        ));
+                      );
+                    },
+                    icon: const Icon(Icons.more_vert))
+              ],
+            ),
+          );
+        },
+        separatorBuilder: (context, index) {
+          return const Divider(
+            thickness: 1,
+            color: Colors.black,
+          );
+        },
+      ),
+      floatingActionButton: SpeedDial(
+        animatedIcon: AnimatedIcons.menu_close,
+        openCloseDial: isDialOpen,
+        backgroundColor: const Color(0xfff5f5dc),
+        overlayColor: Colors.grey,
+        overlayOpacity: 0.5,
+        spacing: 15,
+        spaceBetweenChildren: 15,
+        children: [
+          SpeedDialChild(
+            child: const Icon(Icons.add),
+            label: '추가하기',
+            backgroundColor: const Color(0xfff5f5dc),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => add_Stock_page(barcode: 0,)));
+            },
+          ),
+          SpeedDialChild(
+              child: const Icon(Icons.scanner),
+              label: '바코드 입력',
+              backgroundColor: const Color(0xfff5f5dc),
+              onTap: () => scanBarcodeNormal())
+        ],
+      ),
+    );
   }
 }

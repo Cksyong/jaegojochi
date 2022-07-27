@@ -1,8 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:jaegojochi/db/DatabaseHelper.dart';
-import 'package:jaegojochi/db/Stock.dart';
-import 'package:jaegojochi/manage_Stock_page.dart';
+
+import '../db/DatabaseHelper.dart';
+import '../db/Stock.dart';
+import '../manage_Stock_page.dart';
 
 class FirstPage extends StatefulWidget {
   final String name;
@@ -14,15 +15,12 @@ class FirstPage extends StatefulWidget {
 }
 
 class _FirstPageState extends State<FirstPage> {
-  List<Stock> selectStock = [
-    Stock(
-        name: 'default',
-        amount: 'default',
-        unit: 'default',
-        image: 'default',
-        code: 0)
-  ];
+  double amount = 0;
+  String unit = '';
 
+  List<Stock> selectStock = [Stock(name:'default',amount: 'default',unit: 'default',image: 'default')];
+
+  @override
   void initState() {
     super.initState();
     DatabaseHelper.instance.getSelectStock(widget.name).then((value) {
@@ -59,7 +57,7 @@ class _FirstPageState extends State<FirstPage> {
                       image: FileImage(File(selectStock[1].image!)),
                     )),
           Container(
-            color: Colors.yellow,
+            color: Colors.green,
             margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
             child: Text(
               selectStock[1].name.toString(),
@@ -82,19 +80,17 @@ class _FirstPageState extends State<FirstPage> {
               Container(
                 color: Colors.blue,
                 alignment: Alignment.centerRight,
-                child: Text(
-                  selectStock[1].amount.toString(),
-                  //style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold)
-                ),
+                child: Text(selectStock[1].amount.toString(),
+                    style:
+                        const TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
               ),
               Container(
                 margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
                 color: Colors.red,
                 alignment: Alignment.centerRight,
-                child: Text(
-                  selectStock[1].unit.toString(),
-                  //style:TextStyle(fontSize: 50, fontWeight: FontWeight.bold)
-                ),
+                child: Text(selectStock[1].unit.toString(),
+                    style:
+                        const TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
               )
             ],
           ),
