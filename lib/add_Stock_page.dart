@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:sqflite/sqflite.dart';
 import 'dart:developer';
 import 'db/DatabaseHelper.dart';
 import 'db/Stock.dart';
@@ -25,7 +26,42 @@ class _add_Stock_pageState extends State<add_Stock_page> {
   var _codeIsEnable = false;
   var _codeChecked = false;
 
-  void addToDB(dynamic image) {
+  _showErrorDialog() {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius:
+                  BorderRadius.circular(10.0)),
+              title: Column(
+                crossAxisAlignment:
+                CrossAxisAlignment.start,
+                children: const <Widget>[
+                  Text("오류"),
+                ],),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment:
+                CrossAxisAlignment.start,
+                children: const <Widget>[
+                  Text("이미 중복된 품목이 존재합니다.")
+                ],),
+              actions: <Widget>[
+                TextButton(
+                  style: TextButton.styleFrom(
+                    primary: Colors.black,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text("확인"),
+                ),]);
+        });
+  }
+
+  void addToDB(dynamic image) async {
     String name = productNameController.text;
     String amount = productAmountController.text;
     String code = '';
@@ -53,8 +89,23 @@ class _add_Stock_pageState extends State<add_Stock_page> {
         stockList.insert(
             0, Stock(name: name, amount: amount, unit: unit, image: fileEdit, code: code));
       });
-      DatabaseHelper.instance
-          .insert(Stock(name: name, amount: amount, unit: unit, image: fileEdit, code: code));
+
+
+        DatabaseHelper.instance
+            .insert(Stock(name: name,
+            amount: amount,
+            unit: unit,
+            image: fileEdit,
+            code: code)).onError((error, stackTrace) => _showErrorDialog()).then((value) =>
+
+            Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) =>
+                const mainPage()),
+                (route) => false)
+            );
+
     }
 
 
@@ -112,24 +163,31 @@ class _add_Stock_pageState extends State<add_Stock_page> {
     }
 
 
-    bool checkDB(String name) {
-      DatabaseHelper.instance.getSelectStock(name).then((value) {
-        setState(() {
-          value.forEach((element) {
-            checkStocks.add(Stock(
-                name: element.name,
-                amount: element.amount,
-                unit: element.unit,
-                image: element.image));
-          });
-        });
-        return true;
-      }).catchError((error) {
-        print(error);
-        return false;
-      });
-      return false;
-    }
+    // void checkDB(String name, dynamic image) {
+    //
+    //     var isDub = true;
+    //   DatabaseHelper.instance.getSelectStock(name).onError((error, stackTrace) => addToDB(image)).then((value) {
+    //     // setState(() {
+    //     //
+    //     //   value.forEach((element) {
+    //     //     checkStocks.add(Stock(
+    //     //         name: element.name,
+    //     //         amount: element.amount,
+    //     //         unit: element.unit,
+    //     //         image: element.image,
+    //     //         code: element.code));
+    //     //   });
+    //     // });
+    //     _showErrorDialog();
+    //   }).catchError((error) {
+    //     isDub = false;
+    //     print(error);
+    //
+    //
+    //   });
+    // }
+
+
 
     void addProductDialog() {
       var name = productNameController.text;
@@ -175,52 +233,9 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                       primary: Colors.black),
                     onPressed: () {
                       //IF DB ALREADY HAS SAME NAMES' on DATABASE
-                      if (checkDB(name) == false) {
-                        showDialog(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(10.0)),
-                                  title: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: const <Widget>[
-                                      Text("오류"),
-                                    ],),
-                                  content: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: const <Widget>[
-                                      Text("이미 중복된 품목이 존재합니다.")
-                                    ],),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      style: TextButton.styleFrom(
-                                        primary: Colors.black,
-                                      ),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: const Text("확인"),
-                                    ),]);
-                            });
-                      } else if (checkDB(name) == true) {
-                        //
-                        addToDB(_imageFile);
-                        Navigator.pop(context);
-                        Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    const mainPage()),
-                            (route) => false);}
-                      else {
-                        log("뭐든 안됨 ㅠㅠ");
-                      }},
+                      addToDB(_imageFile);
+
+                      },
                     child: const Text("확인"),
                   ),],);
             });
@@ -324,7 +339,6 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                   IconButton(onPressed: () => scanBarcodeNormal(), icon: Icon(Icons.qr_code_scanner_rounded)),
                   Row(
                     children: [
-
                       Text('직접 입력'),
                       Checkbox(value: _codeChecked, onChanged: (value) {
                         setState(() {

@@ -1,5 +1,7 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../db/DatabaseHelper.dart';
 import '../db/Stock.dart';
@@ -41,6 +43,8 @@ class _FirstPageState extends State<FirstPage> {
 
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
       body: Column(
         children: [
