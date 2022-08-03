@@ -5,7 +5,7 @@ import 'Stock.dart';
 import 'dart:io' as io;
 import 'dart:async';
 
-class DatabaseHelper {
+class DetailDBHelper {
   static const SECRET_KEY = "2021_PRIVATE_KEY_ENCRYPT_2021";
   static const DATABASE_VERSION = 1;
 
@@ -20,8 +20,8 @@ class DatabaseHelper {
   static const columnimage = 'image';
   static const columncode = 'code';
 
-  DatabaseHelper._privateConstructor();
-  static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
+  DetailDBHelper._privateConstructor();
+  static final DetailDBHelper instance = DetailDBHelper._privateConstructor();
 
   static Database? db;
   Future<Database> get database async => db ??= await _initDatabase();
@@ -35,8 +35,8 @@ class DatabaseHelper {
     return db;
   }
 
-  Future<void> _onCreate(Database db, int version) async{
-    await db.execute("create table $table($columnname TEXT PRIMARY KEY,$columnamount TEXT, $columnunit TEXT, $columnimage TEXT, $columncode TEXT)");
+  _onCreate(Database db, int version) async{
+    await db.execute("create table $table($columnname TEXT PRIMARY KEY,$columnamount TEXT, $columnunit TEXT, $columnimage BLOB, $columncode TEXT)");
   }
   //TO HERE INITIALIZED DATABASE FOR START
 

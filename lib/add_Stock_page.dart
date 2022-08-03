@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -65,6 +66,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
     String name = productNameController.text;
     String amount = productAmountController.text;
     String code = '';
+    log('${image.toString()}lfiehog');
     if (productCodeController.text == '') {
 
     } else {
@@ -82,12 +84,16 @@ class _add_Stock_pageState extends State<add_Stock_page> {
         fileEdit = fileEdit.substring(0, fileEdit.length -1);
         fileEdit = fileEdit.replaceAll('File: \'', '');
       }
+
+      var bytes = File(image!.path).readAsBytesSync();
+      String img64 = base64Encode(bytes);
+
       if(amount.startsWith('.') == true){
         amount = '0$amount';
       }
       setState(() {
         stockList.insert(
-            0, Stock(name: name, amount: amount, unit: unit, image: fileEdit, code: code));
+            0, Stock(name: name, amount: amount, unit: unit, image: img64, code: code));
       });
 
 
@@ -95,7 +101,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
             .insert(Stock(name: name,
             amount: amount,
             unit: unit,
-            image: fileEdit,
+            image: img64,
             code: code)).onError((error, stackTrace) => _showErrorDialog()).then((value) =>
 
             Navigator.pushAndRemoveUntil(
@@ -453,7 +459,9 @@ class _add_Stock_pageState extends State<add_Stock_page> {
   takePhoto(ImageSource source) async {
     final pickedFile = await _picker.pickImage(source: source);
     setState(() {
+      log(pickedFile.toString());
       _imageFile = pickedFile;
+      log(_imageFile.toString());
     });
   }
 
