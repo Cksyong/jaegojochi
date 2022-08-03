@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'package:cross_file_image/cross_file_image.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -20,7 +22,7 @@ class _FirstPageState extends State<FirstPage> {
   double amount = 0;
   String unit = '';
 
-  List<Stock> selectStock = [Stock(name:'default',amount: 'default',unit: 'default',image: 'default')];
+  List<Stock> selectStock = [Stock(name:'default',amount: 'default',unit: 'default',)];
 
   @override
   void initState() {
@@ -52,14 +54,14 @@ class _FirstPageState extends State<FirstPage> {
           Container(
               height: MediaQuery.of(context).size.height * 0.45,
               padding: const EdgeInsets.fromLTRB(20, 50, 20, 20),
-              child: selectStock[1].image!.isEmpty //IF DB DOESN'T HAVE IMAGE
+              child: selectStock[1].image!.toString() == '' //IF DB DOESN'T HAVE IMAGE
                   ? Image.asset(
                       // SHOW DEFAULT
                       'assets/image/no_stock_image.jpg',
                     )
-                  : Image(
+                  : Image.memory(
                       // SHOW ITS IMAGE
-                      image: FileImage(File(selectStock[1].image!)),
+                      Base64Decoder().convert(selectStock[1].image!),
                     )),
           Container(
             color: Colors.green,

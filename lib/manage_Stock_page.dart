@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:cross_file_image/cross_file_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -182,7 +184,7 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                       var fileEdit2 =
                       fileEdit.substring(0, fileEdit.length - 1);
                       var fileEdit3 = fileEdit2.replaceAll('File: \'', '');
-                      updateStock[0].image = fileEdit3;
+                      updateStock[0].image = _imageFile;
                     }
 
                     if (selectStock[0].code.toString() != productCodeController.text) {
@@ -266,8 +268,7 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                                     Visibility(
                                       visible: _isBeforeImage,
                                       child: selectStock[0]
-                                              .image!
-                                              .isEmpty //IF DB DOESN'T HAVE IMAGE
+                                              .image!.toString() == '' //IF DB DOESN'T HAVE IMAGE
                                           ? Image.asset(
                                               // SHOW TAKOYAKI
                                               'assets/image/no_stock_image.jpg',
@@ -276,22 +277,23 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                                               // IF HAVE IMAGE
                                               width : MediaQuery.of(context).size.height * 0.4,
                                               height: MediaQuery.of(context).size.height * 0.4,
-                                              child: Image(
+                                              child: Image.memory(
                                                   // SHOW ITS IMAGE
-                                                  image: FileImage(File(
-                                                      selectStock[0].image!))),
+                                                  Base64Decoder().convert(selectStock[0].image!)),
                                             ),
                                     ),
                                     Visibility(
                                         visible: _isAfterImage,
-                                        child: Image(
-                                          image: _imageFile == null
-                                              ? FileImage(File(
-                                                      selectStock[0].image!))
-                                                  as ImageProvider
-                                              : FileImage(
+                                        child: _imageFile == null
+                                            ? Image.memory(
+                                           Base64Decoder().convert(selectStock[0].image!)/* FileImage(File(
+                                                      selectStock[0].image!))*/
+                                                  //as ImageProvider
+                                        )
+                                              : Image(image: FileImage(
                                                   File(_imageFile.path)),
-                                        ))
+                                        )
+                                    )
                                   ],
                                 ),
                               ),

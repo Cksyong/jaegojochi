@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'package:cross_file_image/cross_file_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -123,6 +125,55 @@ class _mainPageState extends State<mainPage> {
     });
   }
 
+  _deleteSureDialog() {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius:
+                  BorderRadius.circular(10.0)),
+              title: Column(
+                crossAxisAlignment:
+                CrossAxisAlignment.start,
+                children: const <Widget>[
+                  Text("전체 데이터 삭제"),
+                ],),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment:
+                CrossAxisAlignment.start,
+                children: const <Widget>[
+                  Text("백업되지 않은 데이터는 복구할 수 없습니다.\n계속하시겠습니까?")
+                ],),
+              actions: <Widget>[
+                TextButton(
+                  style: TextButton.styleFrom(
+                    primary: Colors.black,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text("취소"),
+                ),
+                TextButton(
+                  style: TextButton.styleFrom(
+                    primary: Colors.black,
+                  ),
+                  onPressed: () {
+                    DatabaseHelper.instance.clearTable();
+                    setState(() {stocks.clear();} );
+
+                    Navigator.pop(context);
+                  },
+                  child: const Text("확인"),
+                ),
+
+              ]);
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -146,7 +197,7 @@ class _mainPageState extends State<mainPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                stocks[index].image!.isEmpty //IF DB DOESN'T HAVE IMAGE
+                stocks[index].image!.toString() == '' //IF DB DOESN'T HAVE IMAGE
                     ? Image.asset(
                         // SHOW TAKOYAKI
                         'assets/image/no_stock_image.jpg',
@@ -158,9 +209,10 @@ class _mainPageState extends State<mainPage> {
                         // IF HAVE IMAGE
                   width: MediaQuery.of(context).size.height*0.069,
                   height: MediaQuery.of(context).size.height*0.069,
-                        child: Image(
+                        child: Image.memory(
                             // SHOW ITS IMAGE
-                            image: FileImage(File(stocks[index].image!)),
+                             /*FileImage(File(stocks[index].image!))*/
+                            Base64Decoder().convert(stocks[index].image!),
                             fit: BoxFit.cover),
                       ),
                 Container(
@@ -236,7 +288,12 @@ class _mainPageState extends State<mainPage> {
               child: const Icon(Icons.backup),
               label: '데이터 백업',
               backgroundColor: const Color(0xfff5f5dc),
-              onTap: () {})
+              onTap: () {}),
+          SpeedDialChild(
+              child: const Icon(Icons.restart_alt),
+              label: '전체 데이터 삭제',
+              backgroundColor: const Color(0xfff5f5dc),
+              onTap: () { _deleteSureDialog(); })
         ],
       ),
     );

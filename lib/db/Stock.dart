@@ -1,3 +1,5 @@
+import 'package:image_picker/image_picker.dart';
+
 class Stock {
   String? name;
   String? amount;

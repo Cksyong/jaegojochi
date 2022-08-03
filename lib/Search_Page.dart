@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
+import 'package:cross_file_image/cross_file_image.dart';
 import 'package:flutter/material.dart';
 import 'package:jaegojochi/stock_Detail_Info.dart';
 import 'db/Stock.dart';
@@ -93,7 +95,7 @@ class _SearchPageState extends State<SearchPage> {
             leading: SizedBox(
               width: 60,
               height: 60,
-              child: Image(image: FileImage(File(stocks[index].image!))),
+              child: Image.memory(Base64Decoder().convert(stocks[index].image!)),
             ),
             title: Text(stocks[index].name.toString()),
             subtitle: Text(stocks[index].amount.toString() +
