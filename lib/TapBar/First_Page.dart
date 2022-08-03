@@ -39,6 +39,7 @@ class _FirstPageState extends State<FirstPage> {
     }).catchError((error) {
       print(error);
     });
+    log(selectStock[0].name.toString());
   }
 
   @override
@@ -102,6 +103,10 @@ class _FirstPageState extends State<FirstPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+
+          log("hi");
+          log(selectStock[1].name.toString());
+          print(selectStock[1].name.toString());
           Navigator.push(
               context,
               MaterialPageRoute(

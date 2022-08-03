@@ -96,7 +96,7 @@ class _stock_Detail_InfoState extends State<stock_Detail_Info> {
           ),
           body: TabBarView(
             children: [
-              FirstPage(name: widget.name),
+              FirstPage(name: widget.name.toString()),
               const Center(
                 child: SecondPage(),
               ),

@@ -451,7 +451,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
   }
 
   takePhoto(ImageSource source) async {
-    final pickedFile = await _picker.pickImage(source: source);
+    var pickedFile = await _picker.pickImage(source: source);
     setState(() {
       _imageFile = pickedFile;
     });
