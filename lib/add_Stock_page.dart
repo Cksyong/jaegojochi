@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:sqflite/sqflite.dart';
 import 'dart:developer';
 import 'db/DatabaseHelper.dart';
 import 'db/Stock.dart';
@@ -73,22 +74,17 @@ class _add_Stock_pageState extends State<add_Stock_page> {
     }
       String unit = _selectedValue.toString();
       log('addToDB');
-      // String fileEdit = "";
-      String img64 = "";
+      String fileEdit = "";
+    String img64 = '';
+
 
       // IF USER DOESN'T UPLOAD AN IMAGE
       if(image != null){
-        // File? file = File(image!.path);
-        // fileEdit = file.toString();
-        // fileEdit = fileEdit.substring(0, fileEdit.length -1);
-        // fileEdit = fileEdit.replaceAll('File: \'', '');
         var bytes = File(image!.path).readAsBytesSync();
         img64 = base64Encode(bytes);
-        log("tlqkf + {$img64}");
       }
-      //
-      // var bytes = File(image!.path).readAsBytesSync();
-      // String img64 = base64Encode(bytes);
+
+
 
       if(amount.startsWith('.') == true){
         amount = '0$amount';
@@ -156,7 +152,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
       try {
         barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
             '#ff6666', 'Cancel', true, ScanMode.BARCODE);
-        log(barcodeScanRes);
+        print(barcodeScanRes);
       } on PlatformException {
         barcodeScanRes = 'Failed to get platform version.';
       }
@@ -327,27 +323,27 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
-                  SizedBox(
+                  Container(
                     width: MediaQuery.of(context).size.width * 0.35,
                     child: TextField(
-                      style: !_codeIsEnable ? const TextStyle(color: Colors.grey) : const TextStyle(color: Colors.black),
+                      style: !_codeIsEnable ? TextStyle(color: Colors.grey) : TextStyle(color: Colors.black),
 
                       decoration: InputDecoration(
                           enabled: _codeIsEnable,
-                          enabledBorder: const UnderlineInputBorder(
+                          enabledBorder: UnderlineInputBorder(
                               borderSide: BorderSide(color: Colors.black)),
-                          focusedBorder: const UnderlineInputBorder(
+                          focusedBorder: UnderlineInputBorder(
                               borderSide: BorderSide(color: Colors.black)),
                           labelText: '상품코드',
-                          labelStyle: !_codeIsEnable ? const TextStyle(color: Colors.grey) : const TextStyle(color: Colors.black)
+                          labelStyle: !_codeIsEnable ? TextStyle(color: Colors.grey) : TextStyle(color: Colors.black)
                       ),
                       controller: productCodeController,
                     ),
                   ),
-                  IconButton(onPressed: () => scanBarcodeNormal(), icon: const Icon(Icons.qr_code_scanner_rounded)),
+                  IconButton(onPressed: () => scanBarcodeNormal(), icon: Icon(Icons.qr_code_scanner_rounded)),
                   Row(
                     children: [
-                      const Text('직접 입력'),
+                      Text('직접 입력'),
                       Checkbox(value: _codeChecked, onChanged: (value) {
                         setState(() {
                           _codeChecked = value!;
@@ -459,7 +455,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
   }
 
   takePhoto(ImageSource source) async {
-    var pickedFile = await _picker.pickImage(source: source);
+    final pickedFile = await _picker.pickImage(source: source, imageQuality: 30);
     setState(() {
       log(pickedFile.toString());
       _imageFile = pickedFile;

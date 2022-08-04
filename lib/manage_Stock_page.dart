@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:cross_file_image/cross_file_image.dart';
 import 'package:flutter/material.dart';
@@ -177,14 +178,18 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                     primary: Colors.black,
                   ),
                   onPressed: () {
+                    String img64 = '';
                     updateStock = selectStock;
                     if (_imageFile != null) {
-                      File? file = File(_imageFile!.path);
-                      var fileEdit = file.toString();
-                      var fileEdit2 =
-                      fileEdit.substring(0, fileEdit.length - 1);
-                      var fileEdit3 = fileEdit2.replaceAll('File: \'', '');
-                      updateStock[0].image = _imageFile;
+                      // File? file = File(_imageFile!.path);
+                      // var fileEdit = file.toString();
+                      // var fileEdit2 =
+                      // fileEdit.substring(0, fileEdit.length - 1);
+                      // var fileEdit3 = fileEdit2.replaceAll('File: \'', '');
+                      var bytes = File(_imageFile!.path).readAsBytesSync();
+                      img64 = base64Encode(bytes);
+                      updateStock[0].image = img64;
+
                     }
 
                     if (selectStock[0].code.toString() != productCodeController.text) {
@@ -473,6 +478,9 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                   Icons.photo_library,
                   size: 50,
                 ),
+
+
+
                 label: const Text('Gallery'),
               ),
             ],
@@ -483,7 +491,7 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
   }
 
   takePhoto(ImageSource source) async {
-    final pickedFile = await _picker.pickImage(source: source);
+    final pickedFile = await _picker.pickImage(source: source, imageQuality: 30);
     setState(() {
       _isBeforeImage = false;
       _isAfterImage = true;
