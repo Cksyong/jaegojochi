@@ -479,6 +479,7 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                   size: 50,
                 ),
 
+
                 label: const Text('Gallery'),
               ),
             ],
