@@ -480,6 +480,7 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                 ),
 
 
+
                 label: const Text('Gallery'),
               ),
             ],
