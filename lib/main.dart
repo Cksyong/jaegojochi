@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
-import 'package:cross_file_image/cross_file_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -42,7 +40,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: createMaterialColor(Color(0xfff5f5dc)),
+        primarySwatch: createMaterialColor(const Color(0xfff5f5dc)),
       ),
       home: const mainPage(),
     );

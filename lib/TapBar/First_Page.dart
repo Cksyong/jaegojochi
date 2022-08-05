@@ -1,9 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:io';
-import 'package:cross_file_image/cross_file_image.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 import '../db/DatabaseHelper.dart';
 import '../db/Stock.dart';
@@ -39,8 +36,9 @@ class _FirstPageState extends State<FirstPage> {
         });
       });
     }).catchError((error) {
-      print(error);
+      log(error);
     });
+    log(selectStock[0].name.toString());
   }
 
   @override
@@ -104,6 +102,9 @@ class _FirstPageState extends State<FirstPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+
+          log("hi");
+          log(selectStock[1].name.toString());
           Navigator.push(
               context,
               MaterialPageRoute(
