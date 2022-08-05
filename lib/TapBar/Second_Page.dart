@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+
+import 'package:jaegojochi/db/Stock.dart';
 
 class SecondPage extends StatefulWidget {
   const SecondPage({Key? key}) : super(key: key);
@@ -318,6 +321,10 @@ class _SecondPageState extends State<SecondPage> {
           .where((user) =>
               user["name"].toLowerCase().contains(enteredKeyword.toLowerCase()))
           .toList();
+      List<Stock> selectStock = [];
+      final myArrayJson = jsonEncode(selectStock);
+      final myArrayDecode = jsonDecode(myArrayJson);
+      myArrayDecode[0] = '';
     }
 
     setState(
