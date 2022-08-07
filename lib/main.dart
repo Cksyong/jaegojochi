@@ -8,8 +8,23 @@ import 'Search_Page.dart';
 import 'db/Stock.dart';
 import 'db/DatabaseHelper.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:firebase_core/firebase_core.dart';
-//import 'firebase_options.dart';
+
+//파이어베이스 쓸때 필요
+// import 'package:firebase_core/firebase_core.dart';
+//
+// import 'firebase_options.dart';
+//
+//
+// // ...
+//
+//
+// await Firebase.initializeApp(
+//
+// options: DefaultFirebaseOptions.currentPlatform,
+//
+// );
+
+
 
 
 void main() {

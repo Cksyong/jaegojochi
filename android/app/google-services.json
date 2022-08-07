@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "279618873262",
+    "project_id": "jaegochoigo-2ce35",
+    "storage_bucket": "jaegochoigo-2ce35.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:279618873262:android:4f4fc05eafe554420fca3f",
+        "android_client_info": {
+          "package_name": "com.jhkorea.jaegojochi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "279618873262-fhnrmnl4sdilphip60fgprhqdlr3249n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAev162kAuDi_lQzK4eKH6X4HdR74mB6cY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "279618873262-fhnrmnl4sdilphip60fgprhqdlr3249n.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "279618873262-40oavc8umjtgqtbct30arbimbscu5uui.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.jhkorea.jaegojochi"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
