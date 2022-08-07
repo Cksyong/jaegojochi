@@ -8,8 +8,22 @@ import 'Search_Page.dart';
 import 'db/Stock.dart';
 import 'db/DatabaseHelper.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:firebase_core/firebase_core.dart';
+//import 'firebase_options.dart';
 
-void main() => runApp(const MyApp());
+
+void main() {
+
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+
+
+  runApp(const MyApp());
+
+}
+
+
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -68,6 +82,7 @@ class _mainPageState extends State<mainPage> {
       return true;
     }
   }
+
 
   Future<void> scanBarcodeNormal() async {
     String barcodeScanRes;
