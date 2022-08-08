@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:jaegojochi/TapBar/First_Page.dart';
 import 'package:jaegojochi/TapBar/Second_Page.dart';
@@ -20,6 +21,9 @@ class stock_Detail_Info extends StatefulWidget {
 class _stock_Detail_InfoState extends State<stock_Detail_Info> {
 
   List<Stock> selectStock = [];
+
+
+
 
   @override
   Widget build(BuildContext context) {

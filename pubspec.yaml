@@ -46,6 +46,8 @@ dependencies:
   flutter_layout_grid:
   flutter_speed_dial:
   firebase_core: ^1.20.0
+  cloud_firestore: ^3.4.3
+  firebase_auth: ^3.6.2
 
 dev_dependencies:
   flutter_test:

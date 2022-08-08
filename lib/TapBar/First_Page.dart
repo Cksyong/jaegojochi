@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import '../db/DatabaseHelper.dart';
 import '../db/Stock.dart';
 import '../manage_Stock_page.dart';
@@ -39,6 +40,41 @@ class _FirstPageState extends State<FirstPage> {
       log(error);
     });
     log(selectStock[0].name.toString());
+
+
+    FirebaseAuth auth = FirebaseAuth.instance;
+      var db = FirebaseFirestore.instance;
+    List<Stock> stocks = [];
+      db.collection('auth.currentUser.toString()').get().then((event) {
+        for (var doc in event.docs) {
+          // print("${doc["amount"]}");
+          // stocks.add(Stock(name: doc['name'], amount: doc['amount'], code: doc['code'], unit: doc['unit'], image: doc['image']));
+          DatabaseHelper.instance
+              .insert(Stock(name: doc['name'], amount: doc['amount'], code: doc['code'], unit: doc['unit'], image: doc['image']));
+        }
+      });
+
+
+    DatabaseHelper.instance.getStocks().then((imgs) {
+      setState(() {
+        stocks.clear();
+        stocks.addAll(imgs);
+      });
+    });
+
+
+    for (int i = 0; i<stocks.length; i++) {
+      final backUpData = <String, dynamic> {
+        'amount' : stocks[i].amount,
+        'name' : stocks[i].name,
+        'code' : stocks[i].code,
+        'image' : stocks[i].image,
+        'unit' : stocks[i].unit
+      };
+      db.collection('auth.currentUser.toString()').doc(stocks[i].name).set(backUpData);
+
+    }
+
   }
 
   @override
