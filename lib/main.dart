@@ -3,12 +3,14 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:jaegojochi/add_Stock_page.dart';
 import 'package:jaegojochi/stock_Detail_Info.dart';
 import 'Search_Page.dart';
 import 'db/Stock.dart';
 import 'db/DatabaseHelper.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'BUR/backuprestore.dart';
 
 //파이어베이스 쓸때 필요
 // import 'package:firebase_core/firebase_core.dart';
@@ -25,7 +27,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 //
 // );
 
-
+final GoogleSignIn googleSignIn = GoogleSignIn();
 
 
 void main() async {
@@ -142,6 +144,11 @@ class _mainPageState extends State<mainPage> {
     super.initState();
     stocks = [];
     refreshlist();
+    Firebase.initializeApp().whenComplete(() {
+      print("completed");
+      setState(() {});
+    });
+
   }
 
   refreshlist() {
@@ -307,21 +314,20 @@ class _mainPageState extends State<mainPage> {
               backgroundColor: const Color(0xfff5f5dc),
               onTap: () => scanBarcodeNormal()),
           SpeedDialChild(
-              child: const Icon(Icons.cloud_download),
-              label: '데이터 복원',
-              backgroundColor: const Color(0xfff5f5dc),
-              onTap: () {}
-          ),
-          SpeedDialChild(
               child: const Icon(Icons.backup),
               label: '데이터 백업',
               backgroundColor: const Color(0xfff5f5dc),
-              onTap: () {}),
+              onTap: () {
+                googleSignIn.signIn().then((value) => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const backuprestore())
+                ));
+              }),
           SpeedDialChild(
               child: const Icon(Icons.restart_alt),
               label: '전체 데이터 삭제',
               backgroundColor: const Color(0xfff5f5dc),
-              onTap: () { _deleteSureDialog(); })
+              onTap: () { _deleteSureDialog(); }),
         ],
       ),
     );
