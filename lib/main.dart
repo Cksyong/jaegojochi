@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:jaegojochi/add_Stock_page.dart';
 import 'package:jaegojochi/stock_Detail_Info.dart';
@@ -335,6 +336,13 @@ class _mainPageState extends State<mainPage> {
               label: '데이터 백업',
               backgroundColor: const Color(0xfff5f5dc),
               onTap: () {
+                Fluttertoast.showToast(
+                    msg: '데이터 백업/복원을 위해 구글 로그인이 필요합니다.',
+                    backgroundColor: Colors.black,
+                    textColor: Colors.white,
+                    fontSize: 16.0,
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM);
                 signInWithGoogle()
                     .then((value) =>
                     Navigator.push(

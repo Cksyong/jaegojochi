@@ -76,16 +76,14 @@ class _add_Stock_pageState extends State<add_Stock_page> {
       String fileEdit = "";
 
 
+      String img64 = '';
       // IF USER DOESN'T UPLOAD AN IMAGE
       if(image != null){
-        File? file = File(image!.path);
-        fileEdit = file.toString();
-        fileEdit = fileEdit.substring(0, fileEdit.length -1);
-        fileEdit = fileEdit.replaceAll('File: \'', '');
+        var bytes = File(image!.path).readAsBytesSync();
+        img64 = base64Encode(bytes);
       }
 
-      var bytes = File(image!.path).readAsBytesSync();
-      String img64 = base64Encode(bytes);
+
 
       if(amount.startsWith('.') == true){
         amount = '0$amount';

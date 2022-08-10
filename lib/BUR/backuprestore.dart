@@ -17,7 +17,18 @@ class backuprestore extends StatefulWidget{
 class _backuprestore extends State<backuprestore> {
 
 
-
+  List<Stock> stocks = [];
+  @override
+  void initState() {
+    super.initState();
+    DatabaseHelper.instance.getStocks().then((value) {
+      setState(() {
+        stocks.clear();
+        stocks.addAll(value);
+      });
+    }).catchError((error) {
+    });
+  }
 
 
   FirebaseAuth auth = FirebaseAuth.instance;
@@ -27,10 +38,10 @@ class _backuprestore extends State<backuprestore> {
   restoreData() {
 
 
-
-    db.collection(auth.currentUser.toString()).get().then((event) {
+    print(auth.currentUser!.email.toString());
+    db.collection(auth.currentUser!.email.toString()).get().then((event) {
       for (var doc in event.docs) {
-// print("${doc["amount"]}");
+        print("${doc["amount"]}");
 // stocks.add(Stock(name: doc['name'], amount: doc['amount'], code: doc['code'], unit: doc['unit'], image: doc['image']));
         DatabaseHelper.instance
             .insert(Stock(name: doc['name'], amount: doc['amount'], code: doc['code'], unit: doc['unit'], image: doc['image']));
@@ -39,9 +50,9 @@ class _backuprestore extends State<backuprestore> {
   }
 
   void backUpData() {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    List<Stock> stocks = [];
-    print(auth.currentUser.toString());
+
+
+
     DatabaseHelper.instance.getStocks().then((imgs) {
       setState(() {
         stocks.clear();
@@ -58,7 +69,7 @@ class _backuprestore extends State<backuprestore> {
         'image' : stocks[i].image,
         'unit' : stocks[i].unit
       };
-      db.collection(auth.currentUser.toString()).doc(stocks[i].name).set(backUpData);
+      db.collection(auth.currentUser!.email.toString()).doc(stocks[i].name).set(backUpData);
 
     }
   }
@@ -77,15 +88,31 @@ class _backuprestore extends State<backuprestore> {
       ),
       // body: !_searchBoolean ? _defaultListView() : _searchListView()
       body: Container(
-        color: Colors.cyan,
+        color: Colors.white,
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
           children: [
-            ElevatedButton(onPressed: (){backUpData();}, child: const Text('백업하기') ),
-            ElevatedButton(onPressed: (){restoreData();}, child: const Text('복원하기') ),
+            Text('구글 계정을 통해\n재고최고 서버에 데이터를 백업하거나\n서버에 백업된 데이터를 불러올 수 있습니다.',
+            textAlign: TextAlign.center,),
+            Column(
+              children: [
+                Text('현재 로그인 계정 : ${auth.currentUser!.email.toString()}'),
+                ElevatedButton(onPressed: () {googleSignIn.signOut();}, child: Text('변경하기'))
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                ElevatedButton(onPressed: (){backUpData();}, child: const Text('백업하기') ),
+                ElevatedButton(onPressed: (){restoreData();}, child: const Text('복원하기') ),
+              ],
+            ),
 
 
           ],
