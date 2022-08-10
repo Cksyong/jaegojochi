@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -102,6 +103,25 @@ class _mainPageState extends State<mainPage> {
   }
 
 
+  Future<UserCredential> signInWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    // Once signed in, return the UserCredential
+    return await FirebaseAuth.instance.signInWithCredential(credential);
+  }
+
+
+
   Future<void> scanBarcodeNormal() async {
     String barcodeScanRes;
     // Platform messages may fail, so we use a try/catch PlatformException.
@@ -125,9 +145,6 @@ class _mainPageState extends State<mainPage> {
                 .push(MaterialPageRoute(builder: (__) =>
                 stock_Detail_Info(name: stocks[i].name.toString(),)));
             break;
-
-
-
         }
       }
       if (!isExistBarcode && barcodeScanRes != '-1') {
@@ -318,10 +335,13 @@ class _mainPageState extends State<mainPage> {
               label: '데이터 백업',
               backgroundColor: const Color(0xfff5f5dc),
               onTap: () {
-                googleSignIn.signIn().then((value) => Navigator.push(
+                signInWithGoogle()
+                    .then((value) =>
+                    Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const backuprestore())
-                ));
+                )
+                );
               }),
           SpeedDialChild(
               child: const Icon(Icons.restart_alt),
