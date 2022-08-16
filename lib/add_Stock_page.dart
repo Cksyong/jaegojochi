@@ -69,8 +69,8 @@ class _add_Stock_pageState extends State<add_Stock_page> {
     String name = productNameController.text;
     String amount = productAmountController.text;
     String date = DateTime.now().toString().substring(0, 10);
-    String up = '-';
-    String down = '-';
+    String up = '--';
+    String down = '--';
     String total = productAmountController.text;
     String code = '';
 

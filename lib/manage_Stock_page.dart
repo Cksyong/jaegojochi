@@ -179,10 +179,10 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
         }
         if (finalAmount > double.parse(selectStock[0].amount!)) {
           productUpController.text = amountText;
-          productDownController.text = '-';
+          productDownController.text = '--';
           productTotalController.text = finalAmount.toString();
         } else if (finalAmount < double.parse(selectStock[0].amount!)) {
-          productUpController.text = '-';
+          productUpController.text = '--';
           productDownController.text = amountText;
           productTotalController.text = finalAmount.toString();
         }
@@ -284,13 +284,15 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
             centerTitle: true, //툴바 타이틀 가운데정렬
           ),
           body: Container(
+            color: Colors.redAccent,
               // width: double.infinity,
+              height: MediaQuery.of(context).size.height,
               margin: const EdgeInsets.fromLTRB(60, 30, 60, 30),
               child: Column(
-                mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Column(
+                    mainAxisSize: MainAxisSize.max,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const Text('재고 사진을 수정하려면'),

@@ -16,10 +16,12 @@ class SecondPage extends StatefulWidget {
   @override
   State<SecondPage> createState() => _SecondPageState();
 }
-class _SecondPageState extends State<SecondPage> {
 
+class _SecondPageState extends State<SecondPage> {
   @override
+
   List<LogData> logData = [];
+  List<LogData> reversedLogData = [];
 
   void initState() {
     super.initState();
@@ -32,13 +34,13 @@ class _SecondPageState extends State<SecondPage> {
       setState(() {
         logData.clear();
         logData.addAll(name);
+        reversedLogData = List.from(logData.reversed);
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: Column(
         children: [
@@ -61,40 +63,61 @@ class _SecondPageState extends State<SecondPage> {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: logData.length,
+              itemCount: reversedLogData.length,
               itemBuilder: (context, index) => Container(
-                margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                padding: EdgeInsets.fromLTRB(15, 5, 15, 3),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Container(
-                        width: MediaQuery.of(context).size.height*0.111,
-                        child: Text(logData[index].date.toString(),
-                          style: const TextStyle(
-                              fontWeight: FontWeight.w700,
-                             ),
-                        )),
+                      alignment: Alignment.center,
+                      width: MediaQuery.of(context).size.height*0.111,
+                      child: Text(
+                        reversedLogData[index].date.toString(),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    // Spacer(
+                    //   flex: 2,
+                    // ),
                     Container(
-                        width: MediaQuery.of(context).size.height*0.069,
-                        child: Text(logData[index].up.toString(),
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w700,
-                          ),
-                        )),
+                      alignment: Alignment.center,
+                      width: MediaQuery.of(context).size.height*0.111,
+                      child: Text(
+                        reversedLogData[index].up.toString(),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    // Spacer(
+                    //   flex: 2,
+                    // ),
                     Container(
-                        width: MediaQuery.of(context).size.height*0.059,
-                        child: Text(logData[index].down.toString(),
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w700,
-                          ),
-                        )),
+                      alignment: Alignment.center,
+                      width: MediaQuery.of(context).size.height*0.111,
+                      child: Text(
+                        reversedLogData[index].down.toString(),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    // Spacer(
+                    //   flex: 2,
+                    // ),
                     Container(
-                        width: MediaQuery.of(context).size.height*0.080,
-                        child: Text(logData[index].total.toString(),
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w700,
-                          ),
-                        )),
+                      alignment: Alignment.center,
+                      width: MediaQuery.of(context).size.height*0.111,
+                      child: Text(
+                        reversedLogData[index].total.toString(),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
                     // Text('data'),
                   ],
                 ),
