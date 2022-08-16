@@ -13,6 +13,7 @@ import 'db/Stock.dart';
 import 'db/DatabaseHelper.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'BUR/backuprestore.dart';
+import 'firebase_options.dart';
 
 //파이어베이스 쓸때 필요
 // import 'package:firebase_core/firebase_core.dart';
@@ -33,14 +34,11 @@ final GoogleSignIn googleSignIn = GoogleSignIn();
 
 
 void main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-  await Firebase.initializeApp();
-
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
-
 }
 
 
@@ -104,7 +102,7 @@ class _mainPageState extends State<mainPage> {
   }
 
 
-  Future<UserCredential> signInWithGoogle() async {
+  Future<String> signInWithGoogle() async {
     // Trigger the authentication flow
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
@@ -118,7 +116,8 @@ class _mainPageState extends State<mainPage> {
     );
 
     // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance.signInWithCredential(credential);
+    await FirebaseAuth.instance.signInWithCredential(credential);
+    return '구글 로그인 성공';
   }
 
 

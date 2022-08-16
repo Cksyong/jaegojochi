@@ -3,21 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>1087865148439-h5lfmf319rc0bgqmrrgoam294779junv.apps.googleusercontent.com</string>
+	<string>279618873262-40oavc8umjtgqtbct30arbimbscu5uui.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.1087865148439-h5lfmf319rc0bgqmrrgoam294779junv</string>
+	<string>com.googleusercontent.apps.279618873262-40oavc8umjtgqtbct30arbimbscu5uui</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>279618873262-i2iai95u8gnia0g5st8e4kmcftlp68vf.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyD9KHV0Y2YQtH2MJtYzsjaXVdd4GAJN4dk</string>
+	<string>AIzaSyCgtHT-tWPO7d2W2ysiH8W-kgfx-IjXRb8</string>
 	<key>GCM_SENDER_ID</key>
-	<string>1087865148439</string>
+	<string>279618873262</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.jhkorea.jaegojochi</string>
 	<key>PROJECT_ID</key>
-	<string>jaegochoigo-32486</string>
+	<string>jaegochoigo-2ce35</string>
 	<key>STORAGE_BUCKET</key>
-	<string>jaegochoigo-32486.appspot.com</string>
+	<string>jaegochoigo-2ce35.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:1087865148439:ios:55c867cc4ea908c9c8b852</string>
+	<string>1:279618873262:ios:584a2f90e89fc7190fca3f</string>
 </dict>
 </plist>

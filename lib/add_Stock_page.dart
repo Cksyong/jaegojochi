@@ -295,8 +295,6 @@ class _add_Stock_pageState extends State<add_Stock_page> {
           children: <Widget>[
             Column(children: <Widget>[
               SizedBox(
-                width: double.infinity,
-                height: 300,
                 child: TextButton(
                   onPressed: () {
                     showModalBottomSheet(

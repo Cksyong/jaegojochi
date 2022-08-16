@@ -104,9 +104,11 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
     void _showAlertDialog(String way, String message) {
       showDialog(
           context: context,
+          //barrierDismissible - Dialog 제외한 다른 화면 터치 x
           barrierDismissible: false,
           builder: (BuildContext context) {
             return AlertDialog(
+              // RoundedRectangleBorder - Dialog 화면 모서리 둥글게 조절
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0)),
               //Dialog Main Title
