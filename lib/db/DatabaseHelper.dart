@@ -23,6 +23,7 @@ class DatabaseHelper {
   static const columnimage = 'image';
   static const columncode = 'code';
 
+  // static const columnnum = 'num';
   static const columndate = 'date';
   static const columnup = 'up';
   static const columndown = 'down';
@@ -149,6 +150,7 @@ create table $name($columndate TEXT,$columnup TEXT,$columndown TEXT,$columntotal
     final List<Map<String, dynamic>> maps = await db.query(name);
     return List.generate(maps.length, (i) {
       return LogData(
+        // num: maps[i]['num'],
         date: maps[i]['date'],
         up: maps[i]['up'],
         down: maps[i]['down'],

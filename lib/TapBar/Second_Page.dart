@@ -1,11 +1,5 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:jaegojochi/db/DetailDBHelper.dart';
 import 'package:jaegojochi/db/Log.dart';
-import 'package:jaegojochi/db/Stock.dart';
-
 import '../db/DatabaseHelper.dart';
 
 class SecondPage extends StatefulWidget {
@@ -79,9 +73,6 @@ class _SecondPageState extends State<SecondPage> {
                         ),
                       ),
                     ),
-                    // Spacer(
-                    //   flex: 2,
-                    // ),
                     Container(
                       alignment: Alignment.center,
                       width: MediaQuery.of(context).size.height*0.111,
@@ -92,9 +83,6 @@ class _SecondPageState extends State<SecondPage> {
                         ),
                       ),
                     ),
-                    // Spacer(
-                    //   flex: 2,
-                    // ),
                     Container(
                       alignment: Alignment.center,
                       width: MediaQuery.of(context).size.height*0.111,
@@ -105,9 +93,6 @@ class _SecondPageState extends State<SecondPage> {
                         ),
                       ),
                     ),
-                    // Spacer(
-                    //   flex: 2,
-                    // ),
                     Container(
                       alignment: Alignment.center,
                       width: MediaQuery.of(context).size.height*0.111,

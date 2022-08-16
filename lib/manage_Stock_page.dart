@@ -1,17 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
-
-import 'package:cross_file_image/cross_file_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jaegojochi/db/DatabaseHelper.dart';
-import 'package:jaegojochi/db/DetailDBHelper.dart';
 import 'package:jaegojochi/db/Stock.dart';
 import 'package:jaegojochi/main.dart';
-
 import 'db/Log.dart';
 
 class manage_Stock_page extends StatefulWidget {
@@ -109,11 +104,9 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
     void _showAlertDialog(String way, String message) {
       showDialog(
           context: context,
-          //barrierDismissible - Dialog 제외한 다른 화면 터치 x
           barrierDismissible: false,
           builder: (BuildContext context) {
             return AlertDialog(
-              // RoundedRectangleBorder - Dialog 화면 모서리 둥글게 조절
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0)),
               //Dialog Main Title
@@ -149,10 +142,6 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
             );
           });
     }
-
-    // var amountText = productAmountController.text; //TextField 입력값 저장
-    // double amount = 0; //문자열인 입력값 변환하여 저장할 변수
-
     void editProductState(String method) {
       //입력값에 따라 모든 행동을 총괄하는 함수
       //DB 업데이트 포함
@@ -185,12 +174,10 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
           productUpController.text = '--';
           productDownController.text = amountText;
           productTotalController.text = finalAmount.toString();
-        }
-        ;
+        };
 
         showDialog(
             context: context,
-            //barrierDismissible - Dialog 제외한 다른 화면 터치 x
             barrierDismissible: false,
             builder: (BuildContext context) {
               return AlertDialog(
@@ -228,15 +215,9 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                     ),
                     onPressed: () {
                       addToDB(widget.name);
-                      // insertLog[0].date = DateTime.now().toString();
                       String img64 = '';
                       updateStock = selectStock;
                       if (_imageFile != null) {
-                        // File? file = File(_imageFile!.path);
-                        // var fileEdit = file.toString();
-                        // var fileEdit2 =
-                        // fileEdit.substring(0, fileEdit.length - 1);
-                        // var fileEdit3 = fileEdit2.replaceAll('File: \'', '');
                         var bytes = File(_imageFile!.path).readAsBytesSync();
                         img64 = base64Encode(bytes);
                         updateStock[0].image = img64;
@@ -265,7 +246,6 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
             });
       }
     }
-
     //Actual body start
     return GestureDetector(
         onTap: () {
@@ -287,9 +267,9 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
             color: Colors.redAccent,
               // width: double.infinity,
               height: MediaQuery.of(context).size.height,
-              margin: const EdgeInsets.fromLTRB(60, 30, 60, 30),
+              margin: const EdgeInsets.fromLTRB(60, 10, 60, 10),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   Column(
                     mainAxisSize: MainAxisSize.max,
@@ -298,10 +278,11 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                       const Text('재고 사진을 수정하려면'),
                       const Text('아래 사진을 클릭해주세요.'),
                       Container(
+                        color: Colors.blueAccent,
                         margin: const EdgeInsets.only(top: 20),
                         child: SizedBox(
-                          width: MediaQuery.of(context).size.height * 0.42,
-                          height: MediaQuery.of(context).size.height * 0.42,
+                          // width: MediaQuery.of(context).size.height * 0.42,
+                          // height: MediaQuery.of(context).size.height * 0.42,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
@@ -369,6 +350,7 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                           ),
                         ),
                       ),
+                      SizedBox(height:  20,),
                       Text(
                         selectStock[0].name!,
                         style: Theme.of(context).textTheme.bodyText1,

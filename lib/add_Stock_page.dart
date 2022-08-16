@@ -69,6 +69,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
     String name = productNameController.text;
     String amount = productAmountController.text;
     String date = DateTime.now().toString().substring(0, 10);
+    String num = '1';
     String up = '--';
     String down = '--';
     String total = productAmountController.text;
@@ -108,6 +109,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
 
     DatabaseHelper.instance.insertLog(
         LogData(
+          // num: num,
           date: date,
           up: up,
           down: down,
@@ -285,7 +287,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
         elevation: 0.0,
       ),
       body: Container(
-        margin: const EdgeInsets.only(top: 70.0, left: 50.0, right: 50.0),
+        margin: const EdgeInsets.only(top: 70.0, left: 30.0, right: 30.0),
         child: Column(
           // crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

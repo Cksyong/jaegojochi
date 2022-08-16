@@ -1,10 +1,9 @@
-import 'package:image_picker/image_picker.dart';
-
 class LogData {
   String? date;
   String? up;
   String? down;
   String? total;
+  // String? num;
 
 
 
@@ -12,6 +11,7 @@ class LogData {
 
   Map<String, dynamic> toMap() {
     var map = <String, dynamic> {
+      // 'num' : num,
       'date': date,
       'up': up,
       'down': down,
@@ -21,6 +21,7 @@ class LogData {
   }
 
   LogData.fromMap(Map<String, dynamic> map){
+    // num = map['num'];
     date = map['date'];
     up = map['up'];
     down = map['down'];
