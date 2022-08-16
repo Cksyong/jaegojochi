@@ -22,9 +22,6 @@ class _stock_Detail_InfoState extends State<stock_Detail_Info> {
 
   List<Stock> selectStock = [];
 
-
-
-
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -84,7 +81,6 @@ class _stock_Detail_InfoState extends State<stock_Detail_Info> {
                             ],
                           );
                         });
-                    //DatabaseHelper.instance.delete(widget.name);
                   },
                   icon: const Icon(Icons.delete))
             ],

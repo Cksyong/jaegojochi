@@ -1,12 +1,9 @@
-import 'package:image_picker/image_picker.dart';
 
 class LogData {
   String? date;
   String? up;
   String? down;
   String? total;
-
-
 
   LogData({this.date, this.up, this.down, this.total});
 
