@@ -12,7 +12,7 @@ import 'Search_Page.dart';
 import 'db/Stock.dart';
 import 'db/DatabaseHelper.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'BUR/backuprestore.dart';
+import 'BUR/dataBackupRestore.dart';
 import 'firebase_options.dart';
 
 //파이어베이스 쓸때 필요
@@ -215,8 +215,13 @@ class _mainPageState extends State<mainPage> {
                     primary: Colors.black,
                   ),
                   onPressed: () {
+                    setState(() {
+                    for (var i = 0; i<stocks.length; i++) {
+                      DatabaseHelper.instance.deleteLog(stocks[i].name!);
+                    }
+                    stocks.clear();
                     DatabaseHelper.instance.clearTable();
-                    setState(() {stocks.clear();} );
+          } );
 
                     Navigator.pop(context);
                   },
@@ -347,7 +352,7 @@ class _mainPageState extends State<mainPage> {
                     .then((value) =>
                     Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const backuprestore())
+                  MaterialPageRoute(builder: (context) => const dataBackupRestore())
                 )
                 );
               }),

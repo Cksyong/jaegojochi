@@ -66,7 +66,7 @@ create table $name($columndate TEXT,$columnup TEXT,$columndown TEXT,$columntotal
     return res;
   }
 
-  Future<int> insertLog(LogData log,String name) async {
+  Future<int> insertLog(LogData log, String name) async {
     Database db = await instance.database;
     var res = await db.insert(name, log.toMap());
     return res;
@@ -178,4 +178,5 @@ create table $name($columndate TEXT,$columnup TEXT,$columndown TEXT,$columntotal
     Database db = await instance.database;
     return await db.rawQuery("DELETE FROM $table");
   }
+
 }
