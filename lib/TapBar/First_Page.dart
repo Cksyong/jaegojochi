@@ -58,13 +58,13 @@ class _FirstPageState extends State<FirstPage> {
               padding: const EdgeInsets.fromLTRB(20, 50, 20, 20),
               child: selectStock[1].image!.toString() == '' //IF DB DOESN'T HAVE IMAGE
                   ? Image.asset(
-                      // SHOW DEFAULT
-                      'assets/image/no_stock_image.jpg',
-                    )
+                // SHOW DEFAULT
+                'assets/image/no_stock_image.jpg',
+              )
                   : Image.memory(
-                      // SHOW ITS IMAGE
-                      Base64Decoder().convert(selectStock[1].image!),
-                    )),
+                // SHOW ITS IMAGE
+                Base64Decoder().convert(selectStock[1].image!),
+              )),
           Container(
             color: Colors.green,
             margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
@@ -91,7 +91,7 @@ class _FirstPageState extends State<FirstPage> {
                 alignment: Alignment.centerRight,
                 child: Text(selectStock[1].amount.toString(),
                     style:
-                        const TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
+                    const TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
               ),
               Container(
                 margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
@@ -99,7 +99,7 @@ class _FirstPageState extends State<FirstPage> {
                 alignment: Alignment.centerRight,
                 child: Text(selectStock[1].unit.toString(),
                     style:
-                        const TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
+                    const TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
               )
             ],
           ),

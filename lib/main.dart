@@ -158,6 +158,7 @@ class _mainPageState extends State<mainPage> {
 
   List<Stock> stocks = [];
 
+
   void initState() {
     super.initState();
     stocks = [];

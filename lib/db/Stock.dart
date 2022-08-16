@@ -7,6 +7,7 @@ class Stock {
   String? image;
   String? code;
 
+
   Stock({this.name, this.amount, this.unit, this.image, this.code});
 
   Map<String, dynamic> toMap() {
@@ -15,7 +16,8 @@ class Stock {
       'amount': amount,
       'unit': unit,
       'image' : image,
-      'code' : code
+      'code' : code,
+
     };
     return map;
   }
