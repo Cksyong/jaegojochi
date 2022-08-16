@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:jaegojochi/db/Log.dart';
+import 'package:sqflite/sqflite.dart';
 import 'dart:developer';
 import 'db/DatabaseHelper.dart';
 import 'db/Stock.dart';
@@ -13,6 +15,8 @@ import 'main.dart';
 class add_Stock_page extends StatefulWidget {
   final String barcode;
   const add_Stock_page({Key? key, required this.barcode}) : super(key: key);
+
+  static Database? db;
 
   @override
   State<add_Stock_page> createState() => _add_Stock_pageState();
@@ -64,56 +68,72 @@ class _add_Stock_pageState extends State<add_Stock_page> {
   void addToDB(dynamic image) async {
     String name = productNameController.text;
     String amount = productAmountController.text;
+    String date = DateTime.now().toString().substring(0, 10);
+    String up = '-';
+    String down = '-';
+    String total = productAmountController.text;
     String code = '';
+
+    DatabaseHelper.instance.onCreateLog(name);
+
     log('${image.toString()}lfiehog');
     if (productCodeController.text == '') {
-
     } else {
       code = productCodeController.text;
     }
-      String unit = _selectedValue.toString();
-      log('addToDB');
-      String fileEdit = "";
+    String unit = _selectedValue.toString();
+    log('addToDB');
+    String fileEdit = "";
+    String img64 = '';
 
+    // IF USER DOESN'T UPLOAD AN IMAGE
+    if (image != null) {
+      var bytes = File(image!.path).readAsBytesSync();
+      img64 = base64Encode(bytes);
+    }
+    if (amount.startsWith('.') == true) {
+      amount = '0$amount';
+    }
+    setState(() {
+      stockList.insert(
+          0,
+          Stock(
+              name: name,
+              amount: amount,
+              unit: unit,
+              image: img64,
+              code: code));
+      logdata.insert(0, LogData(date: date, up: up, down: down, total: total));
+    });
 
-      String img64 = '';
-      // IF USER DOESN'T UPLOAD AN IMAGE
-      if(image != null){
-        var bytes = File(image!.path).readAsBytesSync();
-        img64 = base64Encode(bytes);
-      }
+    DatabaseHelper.instance.insertLog(
+        LogData(
+          date: date,
+          up: up,
+          down: down,
+          total: total,
+        ),
+        name);
 
-
-
-      if(amount.startsWith('.') == true){
-        amount = '0$amount';
-      }
-      setState(() {
-        stockList.insert(
-            0, Stock(name: name, amount: amount, unit: unit, image: img64, code: code));
-      });
-
-
-        DatabaseHelper.instance
-            .insert(Stock(name: name,
-            amount: amount,
-            unit: unit,
-            image: img64,
-            code: code)).onError((error, stackTrace) => _showErrorDialog()).then((value) =>
-
-            Navigator.pushAndRemoveUntil(
+    DatabaseHelper.instance
+        .insert(Stock(
+          name: name,
+          amount: amount,
+          unit: unit,
+          image: img64,
+          code: code,
+        ))
+        .onError((error, stackTrace) => _showErrorDialog())
+        .then((value) => Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-                builder: (BuildContext context) =>
-                const mainPage()),
-                (route) => false)
-            );
-
-    }
-
+                builder: (BuildContext context) => const mainPage()),
+            (route) => false));
+  }
 
   List<Stock> checkStocks = [];
   List<Stock> stockList = [];
+  List<LogData> logdata = [];
   final ImagePicker _picker = ImagePicker();
   dynamic _imageFile;
   final _unitValue = ['EA', 'kg', 'g', 'L', 'ml', 'cm', 'm', 'oz'];
@@ -121,6 +141,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
   final productNameController = TextEditingController();
   final productAmountController = TextEditingController();
   final productCodeController = TextEditingController();
+  final productTotalController = TextEditingController();
   dynamic imageString;
   dynamic blackColor = Colors.black;
   dynamic greyColor = Colors.grey;
@@ -222,25 +243,28 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text('품목명 : $name \n수량 : $amount($_selectedValue)\n 추가하시겠습니까?'),],),
+                    Text(
+                        '품목명 : $name \n수량 : $amount($_selectedValue)\n 추가하시겠습니까?'),
+                  ],
+                ),
                 actions: <Widget>[
                   TextButton(
-                    style: TextButton.styleFrom(
-                      primary: Colors.black),
+                    style: TextButton.styleFrom(primary: Colors.black),
                     onPressed: () {
-                      Navigator.pop(context);},
+                      Navigator.pop(context);
+                    },
                     child: const Text("취소"),
                   ),
                   TextButton(
-                    style: TextButton.styleFrom(
-                      primary: Colors.black),
+                    style: TextButton.styleFrom(primary: Colors.black),
                     onPressed: () {
                       //IF DB ALREADY HAS SAME NAMES' on DATABASE
                       addToDB(_imageFile);
-
-                      },
+                    },
                     child: const Text("확인"),
-                  ),],);
+                  ),
+                ],
+              );
             });
       }
     }
@@ -455,6 +479,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
 
   takePhoto(ImageSource source) async {
     final pickedFile = await _picker.pickImage(source: source, imageQuality: 30);
+
     setState(() {
       log(pickedFile.toString());
       _imageFile = pickedFile;
