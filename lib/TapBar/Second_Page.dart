@@ -1,334 +1,44 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:jaegojochi/db/DetailDBHelper.dart';
+import 'package:jaegojochi/db/Log.dart';
+import 'package:jaegojochi/db/Stock.dart';
+
+import '../db/DatabaseHelper.dart';
 
 class SecondPage extends StatefulWidget {
-  const SecondPage({Key? key}) : super(key: key);
+  final String name;
+
+  const SecondPage({Key? key, required this.name}) : super(key: key);
 
   @override
   State<SecondPage> createState() => _SecondPageState();
 }
-
 class _SecondPageState extends State<SecondPage> {
-  final List<Map<String, dynamic>> _allUsers = [  {"id": 20220620, "name": "202", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "202", "age": 20},
-    {"id": 12312345, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 31200312, "name": "210", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 42388412, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 12312345, "name": "20", "age": 20},
-    {"id": 20220620, "name": "220", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 31239712, "name": "20", "age": 20},
-    {"id": 20220620, "name": "205", "age": 20},
-    {"id": 20220620, "name": "260", "age": 20},
-    {"id": 42341232, "name": "20", "age": 20},
-    {"id": 20220620, "name": "210", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 42341232, "name": "20", "age": 2},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "260", "age": 20},
-    {"id": 31231254, "name": "20", "age": 20},
-    {"id": 20220620, "name": "230", "age": 20},
-    {"id": 20220620, "name": "20", "age": 2},
-    {"id": 42341265, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 31231264, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 2},
-    {"id": 20220620, "name": "2", "age": 20},
-    {"id": 42341254, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 31231243, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "205", "age": 20},
-    {"id": 20220620, "name": "260", "age": 20},
-    {"id": 42341232, "name": "20", "age": 20},
-    {"id": 20220620, "name": "210", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 42341232, "name": "20", "age": 2},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "260", "age": 20},
-    {"id": 31231254, "name": "20", "age": 20},
-    {"id": 20220620, "name": "230", "age": 20},
-    {"id": 20220620, "name": "20", "age": 2},
-    {"id": 42341265, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 31231264, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 2},
-    {"id": 20220620, "name": "2", "age": 20},
-    {"id": 42341254, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 31231243, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "202", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "202", "age": 20},
-    {"id": 12312345, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 31200312, "name": "210", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 42388412, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 12312345, "name": "20", "age": 20},
-    {"id": 20220620, "name": "220", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 31239712, "name": "20", "age": 20},
-    {"id": 20220620, "name": "205", "age": 20},
-    {"id": 20220620, "name": "260", "age": 20},
-    {"id": 42341232, "name": "20", "age": 20},
-    {"id": 20220620, "name": "210", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 42341232, "name": "20", "age": 2},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "260", "age": 20},
-    {"id": 31231254, "name": "20", "age": 20},
-    {"id": 20220620, "name": "230", "age": 20},
-    {"id": 20220620, "name": "10", "age": 2},
-    {"id": 42341265, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 31231264, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 2},
-    {"id": 20220620, "name": "2", "age": 20},
-    {"id": 42341254, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "0", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 31231243, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "205", "age": 20},
-    {"id": 20220620, "name": "760", "age": 20},
-    {"id": 42341232, "name": "20", "age": 20},
-    {"id": 20220620, "name": "810", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "80", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 42341232, "name": "40", "age": 2},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "560", "age": 20},
-    {"id": 31231254, "name": "20", "age": 20},
-    {"id": 20220620, "name": "230", "age": 20},
-    {"id": 20220620, "name": "70", "age": 2},
-    {"id": 42341265, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 31231264, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 2},
-    {"id": 20220620, "name": "2", "age": 20},
-    {"id": 42341254, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "30", "age": 20},
-    {"id": 20220620, "name": "10", "age": 20},
-    {"id": 31231243, "name": "50", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "60", "age": 20},
-    {"id": 20220620, "name": "202", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "202", "age": 20},
-    {"id": 12312345, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 31200312, "name": "210", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 42388412, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 12312345, "name": "20", "age": 20},
-    {"id": 20220620, "name": "220", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 31239712, "name": "20", "age": 20},
-    {"id": 20220620, "name": "205", "age": 20},
-    {"id": 20220620, "name": "260", "age": 20},
-    {"id": 42341232, "name": "20", "age": 20},
-    {"id": 20220620, "name": "210", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 42341232, "name": "20", "age": 2},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "260", "age": 20},
-    {"id": 31231254, "name": "20", "age": 20},
-    {"id": 20220620, "name": "230", "age": 20},
-    {"id": 20220620, "name": "20", "age": 2},
-    {"id": 42341265, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 31231264, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 2},
-    {"id": 20220620, "name": "2", "age": 20},
-    {"id": 42341254, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 31231243, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "205", "age": 20},
-    {"id": 20220620, "name": "260", "age": 20},
-    {"id": 42341232, "name": "20", "age": 20},
-    {"id": 20220620, "name": "210", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 42341232, "name": "20", "age": 2},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "260", "age": 20},
-    {"id": 31231254, "name": "20", "age": 20},
-    {"id": 20220620, "name": "230", "age": 20},
-    {"id": 20220620, "name": "20", "age": 2},
-    {"id": 42341265, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 31231264, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 2},
-    {"id": 20220620, "name": "2", "age": 20},
-    {"id": 42341254, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 31231243, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "202", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "202", "age": 20},
-    {"id": 12312345, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 31200312, "name": "210", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 42388412, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 12312345, "name": "20", "age": 20},
-    {"id": 20220620, "name": "220", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 31239712, "name": "20", "age": 20},
-    {"id": 20220620, "name": "205", "age": 20},
-    {"id": 20220620, "name": "260", "age": 20},
-    {"id": 42341232, "name": "20", "age": 20},
-    {"id": 20220620, "name": "210", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 42341232, "name": "20", "age": 2},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "260", "age": 20},
-    {"id": 31231254, "name": "20", "age": 20},
-    {"id": 20220620, "name": "230", "age": 20},
-    {"id": 20220620, "name": "10", "age": 2},
-    {"id": 42341265, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 31231264, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 2},
-    {"id": 20220620, "name": "2", "age": 20},
-    {"id": 42341254, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "0", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 31231243, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "205", "age": 20},
-    {"id": 20220620, "name": "760", "age": 20},
-    {"id": 42341232, "name": "20", "age": 20},
-    {"id": 20220620, "name": "810", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "80", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 42341232, "name": "40", "age": 2},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "560", "age": 20},
-    {"id": 31231254, "name": "20", "age": 20},
-    {"id": 20220620, "name": "230", "age": 20},
-    {"id": 20220620, "name": "70", "age": 2},
-    {"id": 42341265, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 31231264, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 2},
-    {"id": 20220620, "name": "2", "age": 20},
-    {"id": 42341254, "name": "20", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "30", "age": 20},
-    {"id": 20220620, "name": "10", "age": 20},
-    {"id": 31231243, "name": "50", "age": 20},
-    {"id": 20220620, "name": "20", "age": 20},
-    {"id": 20220620, "name": "60", "age": 20},];
-
-  List<Map<String, dynamic>> _foundUsers = [];
 
   @override
-  initState() {
-    _foundUsers = _allUsers;
+  List<LogData> logData = [];
+
+  void initState() {
     super.initState();
+    logData = [];
+    refreshlist(widget.name);
   }
 
-  void _runFilter(String enteredKeyword) {
-    List<Map<String, dynamic>> results = [];
-    if (enteredKeyword.isEmpty) {
-      results = _allUsers;
-    } else {
-      results = _allUsers
-          .where((user) =>
-              user["name"].toLowerCase().contains(enteredKeyword.toLowerCase()))
-          .toList();
-    }
-
-    setState(
-      () {
-        _foundUsers = results;
-      },
-    );
+  refreshlist(String name) {
+    DatabaseHelper.instance.getStocksLog(name).then((name) {
+      setState(() {
+        logData.clear();
+        logData.addAll(name);
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: Column(
         children: [
@@ -351,16 +61,41 @@ class _SecondPageState extends State<SecondPage> {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: _foundUsers.length,
+              itemCount: logData.length,
               itemBuilder: (context, index) => Container(
-                margin: const EdgeInsets.fromLTRB(0, 10, 10, 0),
+                margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Text(_foundUsers[index]["id"].toString()),
-                    Text(_foundUsers[index]['name']),
-                    Text(_foundUsers[index]["age"].toString()),
-                    Text(_foundUsers[index]["age"].toString()),
+                    Container(
+                        width: MediaQuery.of(context).size.height*0.111,
+                        child: Text(logData[index].date.toString(),
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w700,
+                             ),
+                        )),
+                    Container(
+                        width: MediaQuery.of(context).size.height*0.069,
+                        child: Text(logData[index].up.toString(),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w700,
+                          ),
+                        )),
+                    Container(
+                        width: MediaQuery.of(context).size.height*0.059,
+                        child: Text(logData[index].down.toString(),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w700,
+                          ),
+                        )),
+                    Container(
+                        width: MediaQuery.of(context).size.height*0.080,
+                        child: Text(logData[index].total.toString(),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w700,
+                          ),
+                        )),
+                    // Text('data'),
                   ],
                 ),
               ),

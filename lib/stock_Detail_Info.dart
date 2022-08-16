@@ -66,6 +66,7 @@ class _stock_Detail_InfoState extends State<stock_Detail_Info> {
                                 ),
                                 onPressed: () {
                                   DatabaseHelper.instance.delete(widget.name);
+                                  DatabaseHelper.instance.deleteLog(widget.name);
                                   Navigator.pop(context);
                                   Navigator.pushAndRemoveUntil(
                                       context,
@@ -97,8 +98,8 @@ class _stock_Detail_InfoState extends State<stock_Detail_Info> {
           body: TabBarView(
             children: [
               FirstPage(name: widget.name.toString()),
-              const Center(
-                child: SecondPage(),
+              Center(
+                child: SecondPage(name: widget.name.toString()),
               ),
             ],
           ),

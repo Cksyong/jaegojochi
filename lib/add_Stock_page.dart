@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:jaegojochi/db/Log.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:developer';
 import 'db/DatabaseHelper.dart';
@@ -13,7 +14,10 @@ import 'main.dart';
 
 class add_Stock_page extends StatefulWidget {
   final String barcode;
+
   const add_Stock_page({Key? key, required this.barcode}) : super(key: key);
+
+  static Database? db;
 
   @override
   State<add_Stock_page> createState() => _add_Stock_pageState();
@@ -34,21 +38,18 @@ class _add_Stock_pageState extends State<add_Stock_page> {
         builder: (BuildContext context) {
           return AlertDialog(
               shape: RoundedRectangleBorder(
-                  borderRadius:
-                  BorderRadius.circular(10.0)),
+                  borderRadius: BorderRadius.circular(10.0)),
               title: Column(
-                crossAxisAlignment:
-                CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: const <Widget>[
                   Text("오류"),
-                ],),
+                ],
+              ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment:
-                CrossAxisAlignment.start,
-                children: const <Widget>[
-                  Text("이미 중복된 품목이 존재합니다.")
-                ],),
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const <Widget>[Text("이미 중복된 품목이 존재합니다.")],
+              ),
               actions: <Widget>[
                 TextButton(
                   style: TextButton.styleFrom(
@@ -58,63 +59,80 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                     Navigator.pop(context);
                   },
                   child: const Text("확인"),
-                ),]);
+                ),
+              ]);
         });
   }
 
   void addToDB(dynamic image) async {
     String name = productNameController.text;
     String amount = productAmountController.text;
+    String date = DateTime.now().toString().substring(0, 10);
+    String up = '-';
+    String down = '-';
+    String total = productAmountController.text;
     String code = '';
+
+    DatabaseHelper.instance.onCreateLog(name);
+
     log('${image.toString()}lfiehog');
     if (productCodeController.text == '') {
-
     } else {
       code = productCodeController.text;
     }
-      String unit = _selectedValue.toString();
-      log('addToDB');
-      String fileEdit = "";
+    String unit = _selectedValue.toString();
+    log('addToDB');
+    String fileEdit = "";
     String img64 = '';
 
+    // IF USER DOESN'T UPLOAD AN IMAGE
+    if (image != null) {
+      var bytes = File(image!.path).readAsBytesSync();
+      img64 = base64Encode(bytes);
+    }
+    if (amount.startsWith('.') == true) {
+      amount = '0$amount';
+    }
+    setState(() {
+      stockList.insert(
+          0,
+          Stock(
+              name: name,
+              amount: amount,
+              unit: unit,
+              image: img64,
+              code: code));
+      logdata.insert(0, LogData(date: date, up: up, down: down, total: total));
+    });
 
-      // IF USER DOESN'T UPLOAD AN IMAGE
-      if(image != null){
-        var bytes = File(image!.path).readAsBytesSync();
-        img64 = base64Encode(bytes);
-      }
+    DatabaseHelper.instance.insertLog(
+        LogData(
+          date: date,
+          up: up,
+          down: down,
+          total: total,
+        ),
+        name);
 
-
-
-      if(amount.startsWith('.') == true){
-        amount = '0$amount';
-      }
-      setState(() {
-        stockList.insert(
-            0, Stock(name: name, amount: amount, unit: unit, image: img64, code: code));
-      });
-
-
-        DatabaseHelper.instance
-            .insert(Stock(name: name,
-            amount: amount,
-            unit: unit,
-            image: img64,
-            code: code)).onError((error, stackTrace) => _showErrorDialog()).then((value) =>
-
-            Navigator.pushAndRemoveUntil(
+    DatabaseHelper.instance
+        .insert(Stock(
+          name: name,
+          amount: amount,
+          unit: unit,
+          image: img64,
+          code: code,
+        ))
+        .onError((error, stackTrace) => _showErrorDialog())
+        .then((value) => Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-                builder: (BuildContext context) =>
-                const mainPage()),
-                (route) => false)
-            );
-
-    }
-
+                builder: (BuildContext context) => const mainPage()),
+            (route) => false));
+  }
 
   List<Stock> checkStocks = [];
   List<Stock> stockList = [];
+  List<LogData> logdata = [];
   final ImagePicker _picker = ImagePicker();
   dynamic _imageFile;
   final _unitValue = ['EA', 'kg', 'g', 'L', 'ml', 'cm', 'm', 'oz'];
@@ -122,6 +140,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
   final productNameController = TextEditingController();
   final productAmountController = TextEditingController();
   final productCodeController = TextEditingController();
+  final productTotalController = TextEditingController();
   dynamic imageString;
   dynamic blackColor = Colors.black;
   dynamic greyColor = Colors.grey;
@@ -166,7 +185,6 @@ class _add_Stock_pageState extends State<add_Stock_page> {
       });
     }
 
-
     // void checkDB(String name, dynamic image) {
     //
     //     var isDub = true;
@@ -190,8 +208,6 @@ class _add_Stock_pageState extends State<add_Stock_page> {
     //
     //   });
     // }
-
-
 
     void addProductDialog() {
       var name = productNameController.text;
@@ -217,31 +233,35 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                 title: Column(
                   children: const <Widget>[
                     Text("추가할 품목을 확인하세요."),
-                  ],),
+                  ],
+                ),
                 //
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text('품목명 : $name \n수량 : $amount($_selectedValue)\n 추가하시겠습니까?'),],),
+                    Text(
+                        '품목명 : $name \n수량 : $amount($_selectedValue)\n 추가하시겠습니까?'),
+                  ],
+                ),
                 actions: <Widget>[
                   TextButton(
-                    style: TextButton.styleFrom(
-                      primary: Colors.black),
+                    style: TextButton.styleFrom(primary: Colors.black),
                     onPressed: () {
-                      Navigator.pop(context);},
+                      Navigator.pop(context);
+                    },
                     child: const Text("취소"),
                   ),
                   TextButton(
-                    style: TextButton.styleFrom(
-                      primary: Colors.black),
+                    style: TextButton.styleFrom(primary: Colors.black),
                     onPressed: () {
                       //IF DB ALREADY HAS SAME NAMES' on DATABASE
                       addToDB(_imageFile);
-
-                      },
+                    },
                     child: const Text("확인"),
-                  ),],);
+                  ),
+                ],
+              );
             });
       }
     }
@@ -250,165 +270,173 @@ class _add_Stock_pageState extends State<add_Stock_page> {
         onTap: () {
           FocusScopeNode currentFocus = FocusScope.of(context);
 
-      if(!currentFocus.hasPrimaryFocus) {
-        currentFocus.unfocus();
-      }
-    },
-    child : Scaffold(
-      resizeToAvoidBottomInset : false,
-      appBar: AppBar(
-        title: const Text('품목 추가'),
-        centerTitle: true, //툴바 타이틀 가운데정렬
-        elevation: 0.0,
-      ),
-      body: Container(
-        margin: const EdgeInsets.only(top: 70.0, left: 50.0, right: 50.0),
-        child: Column(
-          // crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          mainAxisSize: MainAxisSize.max,
-          children: <Widget>[
-            Column(children: <Widget>[
-              SizedBox(
-                width: double.infinity,
-                height: 300,
-                child: TextButton(
-                  onPressed: () {
-                    showModalBottomSheet(
-                        context: context,
-                        builder: ((builder) => bottomSheet()));
-                  },
-                  style: TextButton.styleFrom(
-                    primary: Colors.black,
-                    onSurface: Colors.grey,
-                    backgroundColor: Colors.grey,
-                  ),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Visibility(
-                        visible: true,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: const [
-                            CircularProgressIndicator(),
-                          ],
-                        ),
-                      ),
-                      Visibility(
-                          visible: true,
-                          child: Image(
-                            image: _imageFile == null
-                                ? const AssetImage(
-                                'assets/image/add_image_button.jpg')
-                            as ImageProvider
-                                : FileImage(File(_imageFile.path)),
-                          ))
-                    ],
-                  ),
-                ),
-              ),
-              TextField(
-                decoration: const InputDecoration(
-                    enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black)),
-                    focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black)),
-                    labelText: '품목명',
-                    labelStyle: TextStyle(color: Colors.black)),
-                controller: productNameController,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.35,
-                    child: TextField(
-                      style: !_codeIsEnable ? TextStyle(color: Colors.grey) : TextStyle(color: Colors.black),
-
-                      decoration: InputDecoration(
-                          enabled: _codeIsEnable,
-                          enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.black)),
-                          focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.black)),
-                          labelText: '상품코드',
-                          labelStyle: !_codeIsEnable ? TextStyle(color: Colors.grey) : TextStyle(color: Colors.black)
-                      ),
-                      controller: productCodeController,
-                    ),
-                  ),
-                  IconButton(onPressed: () => scanBarcodeNormal(), icon: Icon(Icons.qr_code_scanner_rounded)),
-                  Row(
-                    children: [
-                      Text('직접 입력'),
-                      Checkbox(value: _codeChecked, onChanged: (value) {
-                        setState(() {
-                          _codeChecked = value!;
-                          _codeIsEnable = value;
-                        });
-                      },
-                      ),
-
-                    ],
-                  )
-                ],
-              ),
-            ]),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisAlignment: MainAxisAlignment.end,
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+        },
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          appBar: AppBar(
+            title: const Text('품목 추가'),
+            centerTitle: true, //툴바 타이틀 가운데정렬
+            elevation: 0.0,
+          ),
+          body: Container(
+            margin: const EdgeInsets.only(top: 70.0, left: 50.0, right: 50.0),
+            child: Column(
+              // crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                Container(
-                  margin: const EdgeInsets.only(right: 20),
-                  width: 60,
-                  height: 50,
-                  child: TextField(
-                    maxLines: 1,
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'(^\d*\.?\d*)'))
-                    ], //double 타입 전용 조건
-                    decoration: const InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.black)),
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.black)),
-                        labelText: '수량',
-                        labelStyle: TextStyle(color: Colors.black)),
-                    controller: productAmountController,
-                  ),
-                ),
-                DropdownButton(
-                    value: _selectedValue,
-                    items: _unitValue.map((value) {
-                      return DropdownMenuItem(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedValue = value.toString();
-                      });
-                    })
-              ],
-            ),
-            SizedBox(
-                width: double.infinity,
-                child: TextButton(
-                    onPressed: () => addProductDialog(),
-                    style: TextButton.styleFrom(
+                Column(children: <Widget>[
+                  SizedBox(
+                    width: double.infinity,
+                    height: 300,
+                    child: TextButton(
+                      onPressed: () {
+                        showModalBottomSheet(
+                            context: context,
+                            builder: ((builder) => bottomSheet()));
+                      },
+                      style: TextButton.styleFrom(
                         primary: Colors.black,
                         onSurface: Colors.grey,
-                        backgroundColor: Colors.grey),
-                    child: const Text('추가하기')))
-          ],
-        ),
-      ),
-    ));
+                        backgroundColor: Colors.grey,
+                      ),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Visibility(
+                            visible: true,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: const [
+                                CircularProgressIndicator(),
+                              ],
+                            ),
+                          ),
+                          Visibility(
+                              visible: true,
+                              child: Image(
+                                image: _imageFile == null
+                                    ? const AssetImage(
+                                            'assets/image/add_image_button.jpg')
+                                        as ImageProvider
+                                    : FileImage(File(_imageFile.path)),
+                              ))
+                        ],
+                      ),
+                    ),
+                  ),
+                  TextField(
+                    decoration: const InputDecoration(
+                        enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black)),
+                        focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black)),
+                        labelText: '품목명',
+                        labelStyle: TextStyle(color: Colors.black)),
+                    controller: productNameController,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize: MainAxisSize.max,
+                    children: <Widget>[
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.35,
+                        child: TextField(
+                          style: !_codeIsEnable
+                              ? TextStyle(color: Colors.grey)
+                              : TextStyle(color: Colors.black),
+                          decoration: InputDecoration(
+                              enabled: _codeIsEnable,
+                              enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.black)),
+                              focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.black)),
+                              labelText: '상품코드',
+                              labelStyle: !_codeIsEnable
+                                  ? TextStyle(color: Colors.grey)
+                                  : TextStyle(color: Colors.black)),
+                          controller: productCodeController,
+                        ),
+                      ),
+                      IconButton(
+                          onPressed: () => scanBarcodeNormal(),
+                          icon: Icon(Icons.qr_code_scanner_rounded)),
+                      Row(
+                        children: [
+                          Text('직접 입력'),
+                          Checkbox(
+                            value: _codeChecked,
+                            onChanged: (value) {
+                              setState(() {
+                                _codeChecked = value!;
+                                _codeIsEnable = value;
+                              });
+                            },
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ]),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Container(
+                      margin: const EdgeInsets.only(right: 20),
+                      width: 60,
+                      height: 50,
+                      child: TextField(
+                        maxLines: 1,
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'(^\d*\.?\d*)'))
+                        ],
+                        //double 타입 전용 조건
+                        decoration: const InputDecoration(
+                            enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.black)),
+                            focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.black)),
+                            labelText: '수량',
+                            labelStyle: TextStyle(color: Colors.black)),
+                        controller: productAmountController,
+                      ),
+                    ),
+                    DropdownButton(
+                        value: _selectedValue,
+                        items: _unitValue.map((value) {
+                          return DropdownMenuItem(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedValue = value.toString();
+                          });
+                        })
+                  ],
+                ),
+                SizedBox(
+                    width: double.infinity,
+                    child: TextButton(
+                        onPressed: () => addProductDialog(),
+                        style: TextButton.styleFrom(
+                            primary: Colors.black,
+                            onSurface: Colors.grey,
+                            backgroundColor: Colors.grey),
+                        child: const Text('추가하기')))
+              ],
+            ),
+          ),
+        ));
   }
 
   Widget bottomSheet() {
@@ -455,12 +483,12 @@ class _add_Stock_pageState extends State<add_Stock_page> {
   }
 
   takePhoto(ImageSource source) async {
-    final pickedFile = await _picker.pickImage(source: source, imageQuality: 30);
+    final pickedFile =
+        await _picker.pickImage(source: source, imageQuality: 30);
     setState(() {
       log(pickedFile.toString());
       _imageFile = pickedFile;
       log(_imageFile.toString());
     });
   }
-
 }

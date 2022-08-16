@@ -70,9 +70,9 @@ class _SearchPageState extends State<SearchPage> {
         //
         // ),
         enabledBorder:
-            UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+        UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
         focusedBorder:
-            UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+        UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
         hintText: 'Search',
       ),
     );
@@ -80,55 +80,55 @@ class _SearchPageState extends State<SearchPage> {
 
   Widget _searchListView() {
     return ListView.separated(
-        itemCount: _searchIndexList.length,
+      itemCount: _searchIndexList.length,
       itemBuilder: (ctx,index){
-          return Container(
-            height: 70,
-            padding: const EdgeInsets.all(5),
-            color: Colors.white,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                stocks[index].image!.toString() == ''
-                ? Image.asset('assets/image/no_stock_image.jpg',
-                width: MediaQuery.of(context).size.height*0.069,
-                height: MediaQuery.of(context).size.height*0.069,
-                fit: BoxFit.fill)
-                     : Container(
+        return Container(
+          height: 70,
+          padding: const EdgeInsets.all(5),
+          color: Colors.white,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              stocks[index].image!.toString() == ''
+                  ? Image.asset('assets/image/no_stock_image.jpg',
                   width: MediaQuery.of(context).size.height*0.069,
                   height: MediaQuery.of(context).size.height*0.069,
-                  child: Image.memory(
+                  fit: BoxFit.fill)
+                  : Container(
+                width: MediaQuery.of(context).size.height*0.069,
+                height: MediaQuery.of(context).size.height*0.069,
+                child: Image.memory(
                     Base64Decoder().convert(stocks[index].image!),
                     fit: BoxFit.cover),
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width*0.4,
-                  alignment: Alignment.center,
-                  child: Text(stocks[index].name.toString(),
-                  overflow: TextOverflow.ellipsis),
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width*0.2,
-                  alignment: Alignment.center,
-                  child: Text(stocks[index].amount.toString() +
-                  stocks[index].unit.toString()),
-                ),
-                IconButton(
-                  // MOVE TO ITS stock_Detail_Info
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => stock_Detail_Info(
-                            name: stocks[index].name.toString(),
-                          ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width*0.4,
+                alignment: Alignment.center,
+                child: Text(stocks[index].name.toString(),
+                    overflow: TextOverflow.ellipsis),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width*0.2,
+                alignment: Alignment.center,
+                child: Text(stocks[index].amount.toString() +
+                    stocks[index].unit.toString()),
+              ),
+              IconButton(
+                // MOVE TO ITS stock_Detail_Info
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => stock_Detail_Info(
+                          name: stocks[index].name.toString(),
                         ),
-                      );
-                    },
-                    icon: const Icon(Icons.more_vert))
-              ],
-            ),
-          );
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.more_vert))
+            ],
+          ),
+        );
       },
       separatorBuilder: (context, index) {
         return const Divider(
