@@ -50,6 +50,7 @@ dependencies:
   google_sign_in: ^5.4.0
   firebase_auth: ^3.6.2
   cloud_firestore: ^3.4.3
+  is_first_run:
 
 dev_dependencies:
   flutter_test:

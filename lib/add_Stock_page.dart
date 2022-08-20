@@ -14,7 +14,8 @@ import 'main.dart';
 
 class add_Stock_page extends StatefulWidget {
   final String barcode;
-  const add_Stock_page({Key? key, required this.barcode}) : super(key: key);
+  final bool isLogin;
+  const add_Stock_page({Key? key, required this.barcode, required this.isLogin}) : super(key: key);
 
   static Database? db;
 
@@ -69,7 +70,6 @@ class _add_Stock_pageState extends State<add_Stock_page> {
     String name = productNameController.text;
     String amount = productAmountController.text;
     String date = DateTime.now().toString().substring(0, 10);
-    String num = '1';
     String up = '--';
     String down = '--';
     String total = productAmountController.text;
@@ -131,6 +131,11 @@ class _add_Stock_pageState extends State<add_Stock_page> {
             MaterialPageRoute(
                 builder: (BuildContext context) => const mainPage()),
             (route) => false));
+
+    if (widget.isLogin) {
+      //TODO 회원일경우 파이어베이스에 데이터 추가하기
+      print(widget.isLogin.toString());
+    }
   }
 
   List<Stock> checkStocks = [];

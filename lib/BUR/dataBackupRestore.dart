@@ -127,7 +127,6 @@ class _backuprestore extends State<dataBackupRestore> {
               .set(logData);
         }
       });
-      Navigator.pop(context);
     }
   }
 
@@ -179,6 +178,7 @@ class _backuprestore extends State<dataBackupRestore> {
                   } else if (!method) {
                     restoreData();
                   }
+                  Navigator.pop(context);
                 },
                 child: const Text("확인"),
               ),

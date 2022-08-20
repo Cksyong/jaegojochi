@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -6,29 +7,18 @@ import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:is_first_run/is_first_run.dart';
+import 'package:jaegojochi/LoginMainPage.dart';
+import 'package:jaegojochi/MySharedPerferences.dart';
 import 'package:jaegojochi/add_Stock_page.dart';
 import 'package:jaegojochi/stock_Detail_Info.dart';
 import 'Search_Page.dart';
+import 'db/Log.dart';
 import 'db/Stock.dart';
 import 'db/DatabaseHelper.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'BUR/dataBackupRestore.dart';
 import 'firebase_options.dart';
-
-//파이어베이스 쓸때 필요
-// import 'package:firebase_core/firebase_core.dart';
-//
-// import 'firebase_options.dart';
-//
-//
-// // ...
-//
-//
-// await Firebase.initializeApp(
-//
-// options: DefaultFirebaseOptions.currentPlatform,
-//
-// );
 
 final GoogleSignIn googleSignIn = GoogleSignIn();
 
@@ -43,8 +33,23 @@ void main() async {
 
 
 
-class MyApp extends StatelessWidget {
+
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() {
+    return _MyAppState();
+  }
+}
+
+class _MyAppState extends State<MyApp> {
+
+  bool isLoggedIn = false;
+  bool isOnline = false;
+
+
+
 
   MaterialColor createMaterialColor(Color color) {
     List strengths = <double>[.05];
@@ -66,21 +71,36 @@ class MyApp extends StatelessWidget {
     return MaterialColor(color.value, swatch);
   }
 
+  _MyAppState() {
+    MySharedPreferences.instance.getBooleanValue("loggedin").then((value) => setState(() {
+      isLoggedIn = value;
+      print('ddddddddd${isLoggedIn.toString()}');
+    }));
+
+  }
+
+
+
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+
+
+
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: createMaterialColor(const Color(0xfff5f5dc)),
       ),
-      home: const mainPage(),
+      home: isLoggedIn ? mainPage() : LoginMainPage(),
     );
   }
 }
 
+
 class mainPage extends StatefulWidget {
-  const mainPage({Key? key}) : super(key: key);
+  const mainPage({Key? key,}) : super(key: key);
 
   @override
   State<mainPage> createState() => _mainPageState();
@@ -88,6 +108,7 @@ class mainPage extends StatefulWidget {
 
 class _mainPageState extends State<mainPage> {
   String _scanBarcode = '';
+  bool isLogin = false;
 
   //FOR FAB
   ValueNotifier<bool> isDialOpen = ValueNotifier(false);
@@ -150,18 +171,39 @@ class _mainPageState extends State<mainPage> {
       if (!isExistBarcode && barcodeScanRes != '-1') {
         Navigator.of(context)
             .push(MaterialPageRoute(
-            builder: (__) => add_Stock_page(barcode: _scanBarcode)));
+            builder: (__) => add_Stock_page(barcode: _scanBarcode, isLogin: isLogin,)));
       }
     });
   }
 
   List<Stock> stocks = [];
+  var db = FirebaseFirestore.instance;
+  FirebaseAuth auth = FirebaseAuth.instance;
+
+
 
 
   void initState() {
     super.initState();
-    stocks = [];
-    refreshlist();
+    FirebaseAuth auth = FirebaseAuth.instance;
+    bool isOnline = false;
+    MySharedPreferences.instance.getBooleanValue("online").then((value) => setState(() {
+      print('isisisi$isOnline');
+      isOnline = value;
+    })).then((value) {
+      stocks = [];
+
+      if (isOnline) {
+        print(isOnline.toString());
+        restoreList();
+      } else if (!isOnline) {
+        print(isOnline.toString());
+        refreshlist();
+      }
+    });
+
+
+
     Firebase.initializeApp().whenComplete(() {
       print("completed");
       setState(() {});
@@ -174,6 +216,51 @@ class _mainPageState extends State<mainPage> {
         stocks.clear();
         stocks.addAll(imgs);
       });
+    });
+  }
+
+  restoreList() {
+    stocks.clear();
+    String _currentUser = auth.currentUser!.email.toString();
+    DatabaseHelper.instance.clearTable();
+    print(_currentUser);
+    setState(() {
+      db.collection(_currentUser).get().then((event) {
+        for (var doc in event.docs) {
+          stocks.add(Stock(name: doc['name'],
+              amount: doc['amount'],
+              code: doc['code'],
+              unit: doc['unit'],
+              image: doc['image']));
+          DatabaseHelper.instance.insert(Stock(
+              name: doc['name'],
+              amount: doc['amount'],
+              code: doc['code'],
+              unit: doc['unit'],
+              image: doc['image']));
+          logRestoreProcess(doc['name']);
+        }
+      });
+    });
+  }
+
+  void logRestoreProcess(String name) { //데이터 복원 - 로그 저장 함수
+    String _currentUser = auth.currentUser!.email.toString();
+    db.collection(_currentUser)
+        .doc(name)
+        .collection('logData')
+        .get()
+        .then((value) {
+      DatabaseHelper.instance.onCreateLog(name);
+      for (var doc in value.docs) {
+        DatabaseHelper.instance.insertLog(
+            LogData(
+                date: doc['date'],
+                up: doc['up'],
+                down: doc['down'],
+                total: doc['total']),
+            name);
+      }
     });
   }
 
@@ -327,7 +414,7 @@ class _mainPageState extends State<mainPage> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => add_Stock_page(barcode: '',)));
+                      builder: (context) => add_Stock_page(barcode: '', isLogin: isLogin)));
             },
           ),
           SpeedDialChild(

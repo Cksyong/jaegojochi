@@ -165,8 +165,10 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
         //정상 입력, 정상 진행
         if (method == '추가') {
           finalAmount = double.parse(selectStock[0].amount!) + amount;
+          finalAmount = ((100*finalAmount).roundToDouble())/100;
         } else if (method == '소진') {
           finalAmount = double.parse(selectStock[0].amount!) - amount;
+          finalAmount = ((100*finalAmount).roundToDouble())/100;
         }
         if (finalAmount > double.parse(selectStock[0].amount!)) {
           productUpController.text = amountText;

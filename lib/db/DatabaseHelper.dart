@@ -56,7 +56,7 @@ create table $table($columnname TEXT PRIMARY KEY,$columnamount TEXT,$columnunit 
   Future<void> onCreateLog(String name) async{
     Database db = await instance.database;
     await db.execute("""
-create table $name($columndate TEXT,$columnup TEXT,$columndown TEXT,$columntotal TEXT)""");
+create table "$name"($columndate TEXT,$columnup TEXT,$columndown TEXT,$columntotal TEXT)""");
   }
 
   //CRUD - CREATE
@@ -68,7 +68,7 @@ create table $name($columndate TEXT,$columnup TEXT,$columndown TEXT,$columntotal
 
   Future<int> insertLog(LogData log, String name) async {
     Database db = await instance.database;
-    var res = await db.insert(name, log.toMap());
+    var res = await db.insert("$name", log.toMap());
     return res;
   }
 
@@ -127,7 +127,7 @@ create table $name($columndate TEXT,$columnup TEXT,$columndown TEXT,$columntotal
 
   Future<void> deleteLog(String name) async {
     Database db = await instance.database;
-   await  db.execute("DROP table IF EXISTS $name");
+   await  db.execute("DROP table IF EXISTS '$name' ");
   }
 
   // FOR stock_Detail_Info, send selected stock
