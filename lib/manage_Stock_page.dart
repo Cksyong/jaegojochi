@@ -144,6 +144,7 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
             );
           });
     }
+
     void editProductState(String method) {
       //입력값에 따라 모든 행동을 총괄하는 함수
       //DB 업데이트 포함
@@ -165,10 +166,10 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
         //정상 입력, 정상 진행
         if (method == '추가') {
           finalAmount = double.parse(selectStock[0].amount!) + amount;
-          finalAmount = ((100*finalAmount).roundToDouble())/100;
+          finalAmount = ((100 * finalAmount).roundToDouble()) / 100;
         } else if (method == '소진') {
           finalAmount = double.parse(selectStock[0].amount!) - amount;
-          finalAmount = ((100*finalAmount).roundToDouble())/100;
+          finalAmount = ((100 * finalAmount).roundToDouble()) / 100;
         }
         if (finalAmount > double.parse(selectStock[0].amount!)) {
           productUpController.text = amountText;
@@ -178,7 +179,8 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
           productUpController.text = '--';
           productDownController.text = amountText;
           productTotalController.text = finalAmount.toString();
-        };
+        }
+        ;
 
         showDialog(
             context: context,
@@ -250,6 +252,7 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
             });
       }
     }
+
     //Actual body start
     return GestureDetector(
         onTap: () {
@@ -268,7 +271,7 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
             centerTitle: true, //툴바 타이틀 가운데정렬
           ),
           body: Container(
-            color: Colors.redAccent,
+              color: Colors.redAccent,
               // width: double.infinity,
               height: MediaQuery.of(context).size.height,
               margin: const EdgeInsets.fromLTRB(60, 10, 60, 10),
@@ -354,7 +357,9 @@ class _manage_Stock_pageState extends State<manage_Stock_page> {
                           ),
                         ),
                       ),
-                      SizedBox(height:  20,),
+                      SizedBox(
+                        height: 20,
+                      ),
                       Text(
                         selectStock[0].name!,
                         style: Theme.of(context).textTheme.bodyText1,

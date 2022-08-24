@@ -54,6 +54,7 @@ class _LoginMainPageState extends State<LoginMainPage> {
     }
   }
 
+
   Future<String> signInWithGoogle() async {
     // Trigger the authentication flow
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
@@ -79,6 +80,7 @@ class _LoginMainPageState extends State<LoginMainPage> {
       print("completed");
       setState(() {});
     });
+
   }
 
   @override
@@ -112,6 +114,7 @@ class _LoginMainPageState extends State<LoginMainPage> {
                         signInWithGoogle().then((value) {
                           MySharedPreferences.instance.setBooleanValue("loggedin", true);
                           MySharedPreferences.instance.setBooleanValue("online", true);
+                          Navigator.pop(context);
                           Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -144,6 +147,7 @@ class _LoginMainPageState extends State<LoginMainPage> {
                       onPressed: () {
                         MySharedPreferences.instance.setBooleanValue("loggedin", true);
                         MySharedPreferences.instance.setBooleanValue("online", false);
+                        Navigator.pop(context);
                         Navigator.push(
                             context,
                             MaterialPageRoute(
