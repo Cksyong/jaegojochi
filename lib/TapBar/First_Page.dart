@@ -1,5 +1,6 @@
+import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
-
 import '../db/DatabaseHelper.dart';
 import '../db/Stock.dart';
 import '../manage_Stock_page.dart';
@@ -17,8 +18,9 @@ class _FirstPageState extends State<FirstPage> {
   double amount = 0;
   String unit = '';
 
-  List<Stock> selectStock = [Stock(name:'default',amount: 'default',unit: 'default',image: 'default')];
+  List<Stock> selectStock = [Stock(name:'default',amount: 'default',unit: 'default',)];
 
+  @override
   void initState() {
     super.initState();
     DatabaseHelper.instance.getSelectStock(widget.name).then((value) {
@@ -28,28 +30,53 @@ class _FirstPageState extends State<FirstPage> {
               name: element.name,
               amount: element.amount,
               unit: element.unit,
-              image: element.image));
+              image: element.image,
+              code: element.code));
         });
       });
     }).catchError((error) {
-      print(error);
+      log(error);
     });
+    log(selectStock[0].name.toString());
+
+
+
+
   }
 
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
       body: Column(
         children: [
           Container(
+              height: MediaQuery.of(context).size.height * 0.45,
               padding: const EdgeInsets.fromLTRB(20, 50, 20, 20),
-              child: Image.asset('assets/image/takoyaki.jpg')),
+              child: selectStock[1].image!.toString() == '' //IF DB DOESN'T HAVE IMAGE
+                  ? Image.asset(
+                // SHOW DEFAULT
+                'assets/image/no_stock_image.jpg',
+              )
+                  : Image.memory(
+                // SHOW ITS IMAGE
+                Base64Decoder().convert(selectStock[1].image!),
+              )),
           Container(
-            color: Colors.yellow,
+            color: Colors.green,
             margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
             child: Text(
               selectStock[1].name.toString(),
-              style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
+              //style: const TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
+            ),
+          ),
+          Container(
+            color: Colors.yellow,
+            margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+            child: Text(selectStock[1].code != 0 ?
+            selectStock[1].code.toString() : '',
+              //style: const TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
             ),
           ),
           const SizedBox(width: 0, height: 100),
@@ -62,7 +89,7 @@ class _FirstPageState extends State<FirstPage> {
                 alignment: Alignment.centerRight,
                 child: Text(selectStock[1].amount.toString(),
                     style:
-                        TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
+                    const TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
               ),
               Container(
                 margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
@@ -70,7 +97,7 @@ class _FirstPageState extends State<FirstPage> {
                 alignment: Alignment.centerRight,
                 child: Text(selectStock[1].unit.toString(),
                     style:
-                        TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
+                    const TextStyle(fontSize: 50, fontWeight: FontWeight.bold)),
               )
             ],
           ),
@@ -78,12 +105,14 @@ class _FirstPageState extends State<FirstPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+
+          log("hi");
+          log(selectStock[1].name.toString());
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => manage_Stock_page(
-                        name: selectStock[1].name.toString()
-                      )));
+                  builder: (context) =>
+                      manage_Stock_page(name: selectStock[1].name.toString())));
         },
         child: const Icon(Icons.edit_calendar_rounded),
       ),

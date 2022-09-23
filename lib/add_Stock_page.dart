@@ -1,15 +1,23 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:jaegojochi/db/Log.dart';
+import 'package:sqflite/sqflite.dart';
 import 'dart:developer';
 import 'db/DatabaseHelper.dart';
 import 'db/Stock.dart';
 import 'main.dart';
 
 class add_Stock_page extends StatefulWidget {
-  const add_Stock_page({Key? key}) : super(key: key);
+  final String barcode;
+  final bool isLogin;
+  const add_Stock_page({Key? key, required this.barcode, required this.isLogin}) : super(key: key);
+
+  static Database? db;
 
   @override
   State<add_Stock_page> createState() => _add_Stock_pageState();
@@ -20,42 +28,138 @@ class _add_Stock_pageState extends State<add_Stock_page> {
   late Image image;
   late DatabaseHelper dbHelper;
   late List<Stock> stocks;
+  var _codeIsEnable = false;
+  var _codeChecked = false;
 
-  void addToDB(dynamic image) {
+  _showErrorDialog() {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius:
+                  BorderRadius.circular(10.0)),
+              title: Column(
+                crossAxisAlignment:
+                CrossAxisAlignment.start,
+                children: const <Widget>[
+                  Text("오류"),
+                ],),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment:
+                CrossAxisAlignment.start,
+                children: const <Widget>[
+                  Text("이미 중복된 품목이 존재합니다.")
+                ],),
+              actions: <Widget>[
+                TextButton(
+                  style: TextButton.styleFrom(
+                    primary: Colors.black,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text("확인"),
+                ),]);
+        });
+  }
+
+  void addToDB(dynamic image) async {
     String name = productNameController.text;
     String amount = productAmountController.text;
+    String date = DateTime.now().toString().substring(0, 10);
+    String up = '--';
+    String down = '--';
+    String total = productAmountController.text;
+    String code = '';
+
+    DatabaseHelper.instance.onCreateLog(name);
+
+    log('${image.toString()}lfiehog');
+    if (productCodeController.text == '') {
+    } else {
+      code = productCodeController.text;
+    }
     String unit = _selectedValue.toString();
     log('addToDB');
     String fileEdit = "";
+    String img64 = '';
 
     // IF USER DOESN'T UPLOAD AN IMAGE
-    if(image != null){
-      File? file = File(image!.path);
-      fileEdit = file.toString();
-      fileEdit = fileEdit.substring(0, fileEdit.length -1);
-      fileEdit = fileEdit.replaceAll('File: \'', '');
+    if (image != null) {
+      var bytes = File(image!.path).readAsBytesSync();
+      img64 = base64Encode(bytes);
     }
-    if(amount.startsWith('.') == true){
+    if (amount.startsWith('.') == true) {
       amount = '0$amount';
     }
-    log(fileEdit);
     setState(() {
       stockList.insert(
-          0, Stock(name: name, amount: amount, unit: unit, image: fileEdit));
+          0,
+          Stock(
+              name: name,
+              amount: amount,
+              unit: unit,
+              image: img64,
+              code: code));
+      logdata.insert(0, LogData(date: date, up: up, down: down, total: total));
     });
+
+    DatabaseHelper.instance.insertLog(
+        LogData(
+          // num: num,
+          date: date,
+          up: up,
+          down: down,
+          total: total,
+        ),
+        name);
+
     DatabaseHelper.instance
-        .insert(Stock(name: name, amount: amount, unit: unit, image: fileEdit));
+        .insert(Stock(
+          name: name,
+          amount: amount,
+          unit: unit,
+          image: img64,
+          code: code,
+        ))
+        .onError((error, stackTrace) => _showErrorDialog())
+        .then((value) => Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => const mainPage()),
+            (route) => false));
+
+    if (widget.isLogin) {
+      //TODO 회원일경우 파이어베이스에 데이터 추가하기
+      print(widget.isLogin.toString());
+    }
   }
 
-
+  List<Stock> checkStocks = [];
   List<Stock> stockList = [];
+  List<LogData> logdata = [];
   final ImagePicker _picker = ImagePicker();
   dynamic _imageFile;
   final _unitValue = ['EA', 'kg', 'g', 'L', 'ml', 'cm', 'm', 'oz'];
   var _selectedValue = 'EA';
   final productNameController = TextEditingController();
   final productAmountController = TextEditingController();
+  final productCodeController = TextEditingController();
+  final productTotalController = TextEditingController();
   dynamic imageString;
+  dynamic blackColor = Colors.black;
+  dynamic greyColor = Colors.grey;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.barcode != '') {
+      productCodeController.text = widget.barcode.toString();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,10 +173,57 @@ class _add_Stock_pageState extends State<add_Stock_page> {
           gravity: ToastGravity.CENTER);
     }
 
+    Future<void> scanBarcodeNormal() async {
+      String barcodeScanRes;
+      // Platform messages may fail, so we use a try/catch PlatformException.
+      try {
+        barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+            '#ff6666', 'Cancel', true, ScanMode.BARCODE);
+        log(barcodeScanRes);
+      } on PlatformException {
+        barcodeScanRes = 'Failed to get platform version.';
+      }
+
+      if (!mounted) return;
+
+      setState(() {
+        if (barcodeScanRes != '-1') {
+          productCodeController.text = barcodeScanRes;
+        }
+      });
+    }
+
+
+    // void checkDB(String name, dynamic image) {
+    //
+    //     var isDub = true;
+    //   DatabaseHelper.instance.getSelectStock(name).onError((error, stackTrace) => addToDB(image)).then((value) {
+    //     // setState(() {
+    //     //
+    //     //   value.forEach((element) {
+    //     //     checkStocks.add(Stock(
+    //     //         name: element.name,
+    //     //         amount: element.amount,
+    //     //         unit: element.unit,
+    //     //         image: element.image,
+    //     //         code: element.code));
+    //     //   });
+    //     // });
+    //     _showErrorDialog();
+    //   }).catchError((error) {
+    //     isDub = false;
+    //     print(error);
+    //
+    //
+    //   });
+    // }
+
+
+
     void addProductDialog() {
       var name = productNameController.text;
       var amount = productAmountController.text;
-      if(amount.startsWith('.') == true){
+      if (amount.startsWith('.') == true) {
         amount = '0$amount';
       }
       if (name == "") {
@@ -93,39 +244,29 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                 title: Column(
                   children: const <Widget>[
                     Text("추가할 품목을 확인하세요."),
-                  ],
-                ),
+                  ],),
                 //
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      '품목명 : $name \n수량 : $amount($_selectedValue)\n 추가하시겠습니까?'),
+                        '품목명 : $name \n수량 : $amount($_selectedValue)\n 추가하시겠습니까?'),
                   ],
                 ),
                 actions: <Widget>[
                   TextButton(
-                    style: TextButton.styleFrom(
-                      primary: Colors.black,
-                    ),
+                    style: TextButton.styleFrom(primary: Colors.black),
                     onPressed: () {
                       Navigator.pop(context);
                     },
                     child: const Text("취소"),
                   ),
                   TextButton(
-                    style: TextButton.styleFrom(
-                      primary: Colors.black,
-                    ),
+                    style: TextButton.styleFrom(primary: Colors.black),
                     onPressed: () {
+                      //IF DB ALREADY HAS SAME NAMES' on DATABASE
                       addToDB(_imageFile);
-                      Navigator.pop(context);
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (BuildContext context) => mainPage()),
-                          (route) => false);
                     },
                     child: const Text("확인"),
                   ),
@@ -136,8 +277,8 @@ class _add_Stock_pageState extends State<add_Stock_page> {
     }
 
     return GestureDetector(
-        onTap: (){
-      FocusScopeNode currentFocus = FocusScope.of(context);
+        onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
 
       if(!currentFocus.hasPrimaryFocus) {
         currentFocus.unfocus();
@@ -151,7 +292,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
         elevation: 0.0,
       ),
       body: Container(
-        margin: const EdgeInsets.only(top: 70.0, left: 50.0, right: 50.0),
+        margin: const EdgeInsets.only(top: 70.0, left: 30.0, right: 30.0),
         child: Column(
           // crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -159,8 +300,6 @@ class _add_Stock_pageState extends State<add_Stock_page> {
           children: <Widget>[
             Column(children: <Widget>[
               SizedBox(
-                width: double.infinity,
-                height: 300,
                 child: TextButton(
                   onPressed: () {
                     showModalBottomSheet(
@@ -207,6 +346,43 @@ class _add_Stock_pageState extends State<add_Stock_page> {
                     labelText: '품목명',
                     labelStyle: TextStyle(color: Colors.black)),
                 controller: productNameController,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.35,
+                    child: TextField(
+                      style: !_codeIsEnable ? const TextStyle(color: Colors.grey) : const TextStyle(color: Colors.black),
+
+                      decoration: InputDecoration(
+                          enabled: _codeIsEnable,
+                          enabledBorder: const UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.black)),
+                          focusedBorder: const UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.black)),
+                          labelText: '상품코드',
+                          labelStyle: !_codeIsEnable ? const TextStyle(color: Colors.grey) : const TextStyle(color: Colors.black)
+                      ),
+                      controller: productCodeController,
+                    ),
+                  ),
+                  IconButton(onPressed: () => scanBarcodeNormal(), icon: const Icon(Icons.qr_code_scanner_rounded)),
+                  Row(
+                    children: [
+                      const Text('직접 입력'),
+                      Checkbox(value: _codeChecked, onChanged: (value) {
+                        setState(() {
+                          _codeChecked = value!;
+                          _codeIsEnable = value;
+                        });
+                      },
+                      ),
+
+                    ],
+                  )
+                ],
               ),
             ]),
             Row(
@@ -307,7 +483,7 @@ class _add_Stock_pageState extends State<add_Stock_page> {
   }
 
   takePhoto(ImageSource source) async {
-    final pickedFile = await _picker.pickImage(source: source);
+    final pickedFile = await _picker.pickImage(source: source, imageQuality: 30);
     setState(() {
       _imageFile = pickedFile;
     });
