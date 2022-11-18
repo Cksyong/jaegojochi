@@ -35,6 +35,7 @@ import 'firebase_options.dart';
 final GoogleSignIn googleSignIn = GoogleSignIn();
 
 class LoginMainPage extends StatefulWidget {
+
   const LoginMainPage({Key? key}) : super(key: key);
 
   @override
@@ -92,7 +93,7 @@ class _LoginMainPageState extends State<LoginMainPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -109,7 +110,7 @@ class _LoginMainPageState extends State<LoginMainPage> {
                   children: [
                     ElevatedButton.icon(
                       label: Text('회원(온라인) 모드'),
-                      icon: Icon(Icons.wifi),
+                      icon: Icon(Icons.account_balance_wallet_rounded),
                       onPressed: () {
                         signInWithGoogle().then((value) {
                           MySharedPreferences.instance.setBooleanValue("loggedin", true);
@@ -119,7 +120,7 @@ class _LoginMainPageState extends State<LoginMainPage> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => const mainPage())
-                          );
+                         );
                         });
                       },
                     ),
@@ -158,7 +159,7 @@ class _LoginMainPageState extends State<LoginMainPage> {
                     Text(
                       '등록한 물품은 기기에만 저장되며,\n저장된 데이터는 앱 삭제 시 사라집니다.\n백업하지 않은 데이터는 복구가 불가합니다.',
                       overflow: TextOverflow.ellipsis,
-                    )
+                    ),
                   ],
                 ),
               ],
